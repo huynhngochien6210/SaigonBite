@@ -112,7 +112,27 @@ const translations = {
         passwordLowercase: "One lowercase letter",
         passwordNumber: "One number",
         passwordSpecial: "One special character",
-
+        orderHistory: "Order History",
+        orderHistorySubtitle: "View your previous orders.",
+        searchOrderId: "Search Order ID",
+        orderId: "Order ID",
+        orderDate: "Order Date",
+        orderTotal: "Total",
+        orderItem: "Item",
+        allStatuses: "All Statuses",
+        status: "Status",
+        delivered: "Delivered",
+        cancelled: "Cancelled",
+        orderFailed: "Failed",
+        action: "Action",
+        viewDetails: "View Details",
+        orderDetails: "Order Details",
+        paymentMethod: "Payment Method",
+        totalOrders: "Total orders:",
+        noOrdersFound: "No orders found.",
+        close: "Close",
+        orderHistoryDemoNote:
+            "Demo order history. Backend is not connected.",
     },
 
     vi: {
@@ -226,7 +246,27 @@ const translations = {
         passwordLowercase: "Một chữ cái viết thường",
         passwordNumber: "Một chữ số",
         passwordSpecial: "Một ký tự đặc biệt",
-    
+        orderHistory: "Lịch sử đơn hàng",
+        orderHistorySubtitle: "Xem các đơn hàng trước đây.",
+        searchOrderId: "Tìm mã đơn hàng",
+        orderId: "Mã đơn hàng",
+        orderDate: "Ngày đặt hàng",
+        orderTotal: "Tổng tiền",
+        orderItem: "Món ăn",
+        allStatuses: "Tất cả trạng thái",
+        status: "Trạng thái",
+        delivered: "Đã giao",
+        cancelled: "Đã hủy",
+        orderFailed: "Thất bại",
+        action: "Thao tác",
+        viewDetails: "Xem chi tiết",
+        orderDetails: "Chi tiết đơn hàng",
+        paymentMethod: "Phương thức thanh toán",
+        totalOrders: "Tổng số đơn hàng:",
+        noOrdersFound: "Không tìm thấy đơn hàng.",
+        close: "Đóng",
+        orderHistoryDemoNote:
+            "Lịch sử đơn hàng mô phỏng. Backend chưa được kết nối.",
     }
 };
 

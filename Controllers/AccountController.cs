@@ -101,5 +101,9 @@ public class AccountController : Controller
     {
         return View();
     }
-    
+    [HttpGet]
+    public IActionResult OrderHistory()
+    {
+        return View();
+    }
 }

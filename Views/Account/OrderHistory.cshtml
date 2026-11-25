@@ -1,0 +1,298 @@
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Order History";
+
+    var orders = new[]
+    {
+        new {
+            Id = "SB001",
+            Date = "25/11/2026",
+            Item = "Pho Bo",
+            Total = 85000,
+            Status = "Delivered",
+            Payment = "MoMo"
+        },
+        new {
+            Id = "SB002",
+            Date = "23/11/2026",
+            Item = "Banh Mi",
+            Total = 45000,
+            Status = "Delivered",
+            Payment = "COD"
+        },
+        new {
+            Id = "SB003",
+            Date = "22/11/2026",
+            Item = "Com Tam",
+            Total = 65000,
+            Status = "Cancelled",
+            Payment = "COD"
+        },
+        new {
+            Id = "SB004",
+            Date = "20/11/2026",
+            Item = "Bun Bo Hue",
+            Total = 75000,
+            Status = "Failed",
+            Payment = "VNPay"
+        }
+    };
+}
+
+<div class="account-page">
+
+    @await Html.PartialAsync("_AccountSidebar")
+
+    <section class="account-content">
+
+        <div class="profile-heading">
+            <h1 data-i18n="orderHistory">
+                Order History
+            </h1>
+        </div>
+
+        <p class="password-subtitle"
+           data-i18n="orderHistorySubtitle">
+            View your previous orders.
+        </p>
+
+        <div class="history-toolbar">
+
+            <input type="search"
+                   id="orderSearch"
+                   class="form-control order-search"
+                   placeholder="Search Order ID"
+                   data-i18n-placeholder="searchOrderId">
+
+            <select id="orderStatusFilter"
+                    class="form-select history-filter">
+
+                <option value="all"
+                        data-i18n="allStatuses">
+                    All Statuses
+                </option>
+
+                <option value="Delivered"
+                        data-i18n="delivered">
+                    Delivered
+                </option>
+
+                <option value="Cancelled"
+                        data-i18n="cancelled">
+                    Cancelled
+                </option>
+
+                <option value="Failed"
+                        data-i18n="orderFailed">
+                    Failed
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table history-table">
+
+                <thead>
+                    <tr>
+                        <th data-i18n="orderId">
+                            Order ID
+                        </th>
+
+                        <th data-i18n="orderDate">
+                            Order Date
+                        </th>
+
+                        <th data-i18n="orderTotal">
+                            Total
+                        </th>
+
+                        <th data-i18n="status">
+                            Status
+                        </th>
+
+                        <th data-i18n="action">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody id="orderHistoryBody">
+
+                    @foreach (var order in orders)
+                    {
+                        <tr data-order-id="@order.Id"
+                            data-order-status="@order.Status">
+
+                            <td>
+                                <strong>#@order.Id</strong>
+                            </td>
+
+                            <td>@order.Date</td>
+
+                            <td>
+                                @order.Total.ToString("N0",
+                                    System.Globalization.CultureInfo
+                                    .GetCultureInfo("vi-VN")) ₫
+                            </td>
+
+                            <td>
+                                <span class="order-status @order.Status.ToLowerInvariant()"
+                                      data-i18n="@(order.Status == "Failed" ? "orderFailed" : order.Status.ToLowerInvariant())">
+                                    @order.Status
+                                </span>
+                            </td>
+
+                            <td>
+                                <button type="button"
+                                        class="order-detail-button"
+                                        data-order-detail
+                                        data-id="@order.Id"
+                                        data-date="@order.Date"
+                                        data-item="@order.Item"
+                                        data-total="@order.Total"
+                                        data-status="@order.Status"
+                                        data-payment="@order.Payment"
+                                        data-i18n="viewDetails">
+                                    View Details
+                                </button>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div id="emptyOrderHistory"
+             class="history-empty"
+             hidden>
+
+            <p data-i18n="noOrdersFound">
+                No orders found.
+            </p>
+
+        </div>
+
+        <div class="history-footer">
+
+            <span data-i18n="totalOrders">
+                Total orders:
+            </span>
+
+            <strong id="orderRecordCount">
+                @orders.Length
+            </strong>
+
+        </div>
+
+        <p class="profile-demo-note"
+           data-i18n="orderHistoryDemoNote">
+            Demo order history. Backend is not connected.
+        </p>
+
+    </section>
+
+</div>
+
+<!-- Order Detail Modal -->
+
+<div class="modal fade"
+     id="orderDetailModal"
+     tabindex="-1"
+     aria-labelledby="orderDetailTitle"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content order-modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="orderDetailTitle"
+                    data-i18n="orderDetails">
+                    Order Details
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="order-detail-row">
+                    <span data-i18n="orderId">
+                        Order ID
+                    </span>
+                    <strong id="detailOrderId"></strong>
+                </div>
+
+                <div class="order-detail-row">
+                    <span data-i18n="orderDate">
+                        Order Date
+                    </span>
+                    <strong id="detailOrderDate"></strong>
+                </div>
+
+                <div class="order-detail-row">
+                    <span data-i18n="orderItem">
+                        Item
+                    </span>
+                    <strong id="detailOrderItem"></strong>
+                </div>
+
+                <div class="order-detail-row">
+                    <span data-i18n="paymentMethod">
+                        Payment Method
+                    </span>
+                    <strong id="detailOrderPayment"></strong>
+                </div>
+
+                <div class="order-detail-row">
+                    <span data-i18n="status">
+                        Status
+                    </span>
+                    <strong id="detailOrderStatus"></strong>
+                </div>
+
+                <hr>
+
+                <div class="order-detail-row order-detail-total">
+                    <span data-i18n="orderTotal">
+                        Total
+                    </span>
+                    <strong id="detailOrderTotal"></strong>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="profile-save-button"
+                        data-bs-dismiss="modal"
+                        data-i18n="close">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="/js/order-history.js"></script>
+}
