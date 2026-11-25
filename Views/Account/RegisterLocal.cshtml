@@ -1,0 +1,11 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Local Customer Registration";
+    ViewData["AccountType"] = "local";
+}
+
+@await Html.PartialAsync("_RegisterForm")
+
+@section Scripts {
+    <script src="/js/register.js"></script>
+}
