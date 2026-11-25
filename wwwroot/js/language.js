@@ -45,6 +45,25 @@ const translations = {
         backToAccountType: "← Back to Account Type",
         alreadyHaveAccount: "Already have an account?",
         signIn: "Sign In",
+        registrationSuccessful: "Registration Successful!",
+        registrationSuccessDescription:
+            "Your account has been created. Please verify your account to continue.",
+        accountStatus: "Account Status:",
+        unverified: "Unverified",
+        verifyPhone: "Verify Phone",
+        verifyEmail: "Verify Email",
+        goHome: "Go Home",
+        verifyPhoneDescription:
+            "Enter the 6-digit verification code sent to your phone.",
+        verifyEmailDescription:
+            "Enter the 6-digit verification code sent to your email.",
+        verifyAccount: "Verify Account",
+        didNotReceiveCode: "Didn't receive the code?",
+        resendCodeIn: "Resend code in",
+        seconds: "seconds",
+        resendCode: "Resend Code",
+        verificationDemoNote:
+            "UI Preview - Backend is not connected.",
     },
 
     vi: {
@@ -91,6 +110,25 @@ const translations = {
         backToAccountType: "← Quay lại chọn loại tài khoản",
         alreadyHaveAccount: "Bạn đã có tài khoản?",
         signIn: "Đăng nhập",
+        registrationSuccessful: "Đăng ký thành công!",
+        registrationSuccessDescription:
+            "Tài khoản của bạn đã được tạo. Vui lòng xác thực tài khoản để tiếp tục.",
+        accountStatus: "Trạng thái tài khoản:",
+        unverified: "Chưa xác thực",
+        verifyPhone: "Xác thực số điện thoại",
+        verifyEmail: "Xác thực email",
+        goHome: "Về trang chủ",
+        verifyPhoneDescription:
+            "Nhập mã xác thực gồm 6 chữ số được gửi đến số điện thoại của bạn.",
+        verifyEmailDescription:
+            "Nhập mã xác thực gồm 6 chữ số được gửi đến email của bạn.",
+        verifyAccount: "Xác thực tài khoản",
+        didNotReceiveCode: "Bạn chưa nhận được mã?",
+        resendCodeIn: "Gửi lại mã sau",
+        seconds: "giây",
+        resendCode: "Gửi lại mã",
+        verificationDemoNote:
+            "Giao diện thử nghiệm - Chưa kết nối Backend.",
     }
 };
 

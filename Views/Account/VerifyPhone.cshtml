@@ -1,0 +1,11 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Verify Phone";
+    ViewData["AccountType"] = "local";
+}
+
+@await Html.PartialAsync("_VerificationForm")
+
+@section Scripts {
+    <script src="/js/verification.js"></script>
+}

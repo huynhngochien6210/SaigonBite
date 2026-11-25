@@ -179,10 +179,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Frontend Validation Completed
 
-        showMessage(
-            "Validation successful. Backend registration is not connected yet.",
-            "Dữ liệu hợp lệ. Chức năng đăng ký chưa được kết nối Backend."
-        );
+        // Temporary frontend navigation
+
+        const accountType = form.querySelector(
+            'input[name="accountType"]'
+        ).value;
+
+        window.location.href =
+            "/Account/RegistrationSuccess?type=" +
+            encodeURIComponent(accountType);
 
     });
 
