@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="sb-details-page">
+
+    <div class="sb-details-heading">
+        <a asp-controller="Order"
+           asp-action="Status"
+           class="sb-back-arrow">
+            ←
+        </a>
+
+        <h1>Chi tiết đơn hàng #SB10245</h1>
+    </div>
+
+
+    <div class="sb-details-layout">
+
+        <!-- LEFT -->
+        <div class="sb-details-card">
+
+            <div class="sb-detail-food">
+
+                <img src="~/image/com-tam.png"
+                     alt="Cơm tấm Sài Gòn">
+
+                <div>
+                    <h2>Cơm tấm Sài Gòn</h2>
+                    <strong>65.000 ₫</strong>
+                </div>
+
+                <span>x1</span>
+
+            </div>
+
+
+            <div class="sb-detail-food">
+
+                <img src="~/image/hu-tieu.png"
+                     alt="Hủ tiếu Nam Vang">
+
+                <div>
+                    <h2>Hủ tiếu Nam Vang</h2>
+                    <strong>62.000 ₫</strong>
+                </div>
+
+                <span>x1</span>
+
+            </div>
+
+
+            <div class="sb-price-list">
+
+                <div>
+                    <span>Tạm tính</span>
+                    <strong>127.000 ₫</strong>
+                </div>
+
+                <div>
+                    <span>Voucher</span>
+                    <strong>−20.000 ₫</strong>
+                </div>
+
+                <div>
+                    <span>Phí giao hàng</span>
+                    <strong>15.000 ₫</strong>
+                </div>
+
+                <div class="sb-total">
+                    <span>Tổng thanh toán</span>
+                    <strong>122.000 ₫</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div class="sb-details-card sb-tracking-card">
+
+            <h2>Trạng thái đơn hàng</h2>
+
+            <div class="sb-tracking">
+
+                <div class="sb-track-line"></div>
+
+                <div class="sb-track-step done">
+                    <div class="sb-track-circle">✓</div>
+                    <strong>Đã xác nhận</strong>
+                    <span>12:30</span>
+                </div>
+
+                <div class="sb-track-step done">
+                    <div class="sb-track-circle">✓</div>
+                    <strong>Đang chuẩn bị</strong>
+                    <span>12:32</span>
+                </div>
+
+                <div class="sb-track-step active">
+                    <div class="sb-track-circle">🚚</div>
+                    <strong>Đang giao</strong>
+                    <span>12:50</span>
+                </div>
+
+                <div class="sb-track-step">
+                    <div class="sb-track-circle">♢</div>
+                    <strong>Hoàn thành</strong>
+                </div>
+
+            </div>
+
+
+            <div class="sb-delivery-message">
+
+                <div class="sb-delivery-icon">
+                    🛵
+                </div>
+
+                <div>
+                    <h3>Đơn hàng đang được giao đến bạn!</h3>
+                    <p>Dự kiến giao trong 10 – 15 phút.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
