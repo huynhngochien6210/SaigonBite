@@ -11,53 +11,91 @@
 <body>
     <div class="saigonbite-page">
     <header>
-        <nav class="sb-navbar">
-            <div class="sb-navbar-inner">
+            <nav class="sb-navbar">
 
-                <!-- Logo -->
-                <a class="sb-brand" asp-controller="Home" asp-action="Index">
-                    <img src="~/image/Logo Chợ Bến Thành Cổ Điển.png" alt="SaigonBite">
-                    <span>SaigonBite</span>
-                </a>
+                <div class="sb-navbar-inner">
 
-                <!-- Navigation -->
-                <div class="sb-nav-links">
+                    <!-- LOGO -->
                     <a asp-controller="Home"
                        asp-action="Index"
-                       class="sb-nav-link active">
-                        Trang chủ
+                       class="sb-brand">
+
+                        <img src="~/image/Logo Chợ Bến Thành Cổ Điển.png" alt="SaigonBite">
+
+                        <span>SaigonBite</span>
                     </a>
 
-                    <a href="#" class="sb-nav-link">
-                        Đơn hàng
-                    </a>
 
-                    <a href="#" class="sb-nav-link">
-                        Trạng thái đơn hàng
-                    </a>
-                </div>
+                    <!-- MOBILE MENU BUTTON -->
+                    <button class="sb-menu-toggle"
+                            type="button"
+                            onclick="toggleSbMenu()">
+                        ☰
+                    </button>
 
-                <!-- Right -->
-                <div class="sb-nav-right">
 
-                    <a href="#" class="sb-cart">
-                        🛒
-                    </a>
+                    <!-- NAVIGATION -->
+                    <div class="sb-nav-menu" id="sbNavMenu">
 
-                    <div class="sb-user">
-                        <div class="sb-user-avatar">
-                            👤
+                        <div class="sb-nav-links">
+
+                            <!-- TRANG CHỦ -->
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="sb-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                                Trang chủ
+                            </a>
+
+
+                            <!-- ĐƠN HÀNG -->
+                            <a asp-controller="Order"
+                               asp-action="Confirm"
+                               class="sb-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Confirm" || ViewContext.RouteData.Values["action"]?.ToString() == "Complete" ? "active" : "")">
+                                Đơn hàng
+                            </a>
+
+
+                            <!-- TRẠNG THÁI -->
+                            <a asp-controller="Order"
+                               asp-action="Status"
+                               class="sb-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Status" || ViewContext.RouteData.Values["action"]?.ToString() == "Details" ? "active" : "")">
+                                Trạng thái đơn hàng
+                            </a>
+
                         </div>
 
-                        <span>Hiền</span>
 
-                        <span class="sb-arrow">⌄</span>
+                        <!-- RIGHT -->
+                        <div class="sb-nav-right">
+
+                            <!-- CART -->
+                            <a asp-controller="Cart"
+                               asp-action="Index"
+                               class="sb-cart">
+                                🛒
+                            </a>
+
+
+                            <!-- USER -->
+                            <div class="sb-user">
+
+                                <div class="sb-user-avatar">
+                                    👤
+                                </div>
+
+                                <span>Hiền</span>
+
+                                <span class="sb-arrow">⌄</span>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
-        </nav>
+            </nav>
     </header>
     <div>
         <main role="main">
@@ -75,5 +113,13 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     
+    <script>
+        function toggleSbMenu() {
+            document
+                .getElementById("sbNavMenu")
+                .classList.toggle("show");
+        }
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container-fluid sb-cart-page">
+
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col-12">
+            <h1 class="sb-cart-title">
+                Giỏ hàng <span>(2 món)</span>
+            </h1>
+        </div>
+    </div>
+
+
+    <!-- CART -->
+    <div class="row">
+        <div class="col-12">
+
+            <div class="sb-cart-list">
+
+                <!-- ITEM 1 -->
+                <div class="row align-items-center sb-cart-item">
+
+                    <!-- Product -->
+                    <div class="col-12 col-md-7">
+                        <div class="sb-cart-product">
+
+                            <img src="~/image/com-tam.png"
+                                 alt="Cơm tấm Sài Gòn"
+                                 class="sb-cart-image">
+
+                            <div class="sb-cart-info">
+                                <h2>Cơm tấm Sài Gòn</h2>
+                                <p>65.000 ₫</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Actions -->
+                    <div class="col-12 col-md-5">
+                        <div class="sb-cart-actions">
+
+                            <div class="sb-quantity">
+                                <button type="button">−</button>
+                                <span>1</span>
+                                <button type="button">+</button>
+                            </div>
+
+                            <button type="button"
+                                    class="sb-delete">
+                                🗑
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- ITEM 2 -->
+                <div class="row align-items-center sb-cart-item">
+
+                    <!-- Product -->
+                    <div class="col-12 col-md-7">
+                        <div class="sb-cart-product">
+
+                            <img src="~/image/hu-tieu.png"
+                                 alt="Hủ tiếu Nam Vang"
+                                 class="sb-cart-image">
+
+                            <div class="sb-cart-info">
+                                <h2>Hủ tiếu Nam Vang</h2>
+                                <p>62.000 ₫</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Actions -->
+                    <div class="col-12 col-md-5">
+                        <div class="sb-cart-actions">
+
+                            <div class="sb-quantity">
+                                <button type="button">−</button>
+                                <span>1</span>
+                                <button type="button">+</button>
+                            </div>
+
+                            <button type="button"
+                                    class="sb-delete">
+                                🗑
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="row">
+        <div class="col-12">
+
+            <div class="sb-cart-summary">
+
+                <div class="sb-subtotal">
+                    <span>Tạm tính</span>
+                    <strong>127.000 ₫</strong>
+                </div>
+
+                <a asp-controller="Order"
+                   asp-action="IndexOrder"
+                   class="sb-order-btn">
+                    Đặt hàng
+                    <span>→</span>
+                </a>
+
+            </div>
+    </div>
+
+
+</div>
