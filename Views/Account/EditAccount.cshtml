@@ -1,0 +1,118 @@
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Edit Account";
+}
+
+<div class="account-page">
+
+    @await Html.PartialAsync("_AccountSidebar")
+
+    <section class="account-content">
+
+        <div class="profile-heading">
+
+            <h1 data-i18n="editAccount">
+                Edit Account
+            </h1>
+
+        </div>
+
+        <h2 class="profile-section-title"
+            data-i18n="personalInformation">
+
+            Personal Information
+
+        </h2>
+
+        <form id="editProfileForm" method="post">
+
+            <div class="register-field">
+
+                <label for="editFullName"
+                       data-i18n="fullName">
+                    Full Name
+                </label>
+
+                <input type="text"
+                       id="editFullName"
+                       maxlength="100"
+                       autocomplete="name"
+                       required>
+
+            </div>
+
+            <div class="register-field">
+
+                <label for="editEmail"
+                       data-i18n="emailAddress">
+                    Email Address
+                </label>
+
+                <input type="email"
+                       id="editEmail"
+                       autocomplete="email">
+
+            </div>
+
+            <div class="register-field">
+
+                <label for="editPhone"
+                       data-i18n="phoneNumber">
+                    Phone Number
+                </label>
+
+                <input type="tel"
+                       id="editPhone"
+                       autocomplete="tel"
+                       required>
+
+            </div>
+
+            <div class="register-field">
+
+                <label for="editDateOfBirth"
+                       data-i18n="dateOfBirth">
+                    Date of Birth
+                </label>
+
+                <input type="date"
+                       id="editDateOfBirth"
+                       autocomplete="bday">
+
+            </div>
+
+            <p id="profileMessage"
+               role="status"></p>
+
+            <div class="profile-form-actions">
+
+                <a href="/Account/MyAccount"
+                   class="profile-cancel-button"
+                   data-i18n="cancel">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="profile-save-button"
+                        data-i18n="saveChanges">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <p class="profile-demo-note"
+           data-i18n="verificationDemoNote">
+
+            UI Preview - Backend is not connected.
+
+        </p>
+
+    </section>
+
+</div>

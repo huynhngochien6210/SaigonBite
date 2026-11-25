@@ -1,0 +1,253 @@
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background-color: var(--background, #fcf5ed);
+    color: var(--text, #454545);
+
+    font-family: Arial, sans-serif;
+
+    transition: background-color 0.25s ease,
+                color 0.25s ease;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.brand-header {
+    padding: 20px 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.brand-header img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+
+    border-radius: 8px;
+    mix-blend-mode: normal;
+}
+
+/* =========================
+   THEME SELECTOR
+========================= */
+
+.theme-control {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.theme-selector {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+
+    min-width: 150px;
+    padding: 10px 15px;
+
+    background-color: var(--card-background, #fff8f0);
+    color: var(--text, #454545);
+
+    border: 1px solid var(--border, #efc6ad);
+    border-radius: 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.portal-container {
+    max-width: 1250px;
+    padding-bottom: 40px;
+}
+
+/* =========================
+   HEADING
+========================= */
+
+.portal-heading {
+    margin: 15px 0 35px;
+}
+
+.portal-heading h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: bold;
+
+    color: var(--heading, #b90000);
+
+    margin-bottom: 15px;
+}
+
+.portal-heading p {
+    font-size: 23px;
+    color: var(--text, #454545);
+}
+
+/* =========================
+   INTERFACE CARD
+========================= */
+
+.portal-card {
+    height: 100%;
+    padding: 25px 30px;
+
+    background-color: var(--card-background, #fff8f0);
+
+    border: 2px solid var(--border, #efc6ad);
+    border-radius: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease,
+                background-color 0.25s ease;
+}
+
+.portal-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   IMAGES
+========================= */
+
+.portal-image {
+    display: block;
+
+    width: 100%;
+    max-width: 350px;
+    height: 210px;
+
+    object-fit: contain;
+
+    margin-bottom: 20px;
+    border-radius: 15px;
+
+    mix-blend-mode: normal;
+}
+
+/* =========================
+   CARD TEXT
+========================= */
+
+.portal-card h2 {
+    font-size: 28px;
+    font-weight: bold;
+
+    color: var(--card-heading, #350c08);
+}
+
+.portal-card p {
+    font-size: 19px;
+    line-height: 1.5;
+
+    color: var(--text, #454545);
+
+    margin: 15px 0 25px;
+}
+
+/* =========================
+   ACCESS BUTTON
+========================= */
+
+.access-button {
+    display: block;
+
+    width: 85%;
+    margin-top: auto;
+    padding: 13px;
+
+    background-color: var(--primary, #b90000);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 15px;
+
+    font-size: 23px;
+    font-weight: bold;
+
+    text-align: center;
+    text-decoration: none;
+
+    transition: background-color 0.2s ease;
+}
+
+.access-button:hover,
+.access-button:focus {
+    background-color: var(--primary-dark, #900000);
+    color: #ffffff;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .brand-header {
+        padding: 15px 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .brand-header img {
+        width: 180px;
+    }
+
+    .theme-selector {
+        min-width: 120px;
+        font-size: 13px;
+    }
+
+    .portal-heading p {
+        font-size: 18px;
+    }
+
+    .portal-card {
+        padding: 20px;
+    }
+
+    .portal-card h2 {
+        font-size: 24px;
+    }
+
+    .portal-image {
+        height: 180px;
+    }
+
+    .portal-card p {
+        font-size: 16px;
+    }
+
+    .access-button {
+        font-size: 18px;
+    }
+}

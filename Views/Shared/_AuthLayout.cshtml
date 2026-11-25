@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"] - SaigonBite</title>
+
+    <script src="/js/theme.js"></script>
+
+    <link rel="stylesheet"
+          href="/lib/bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/css/theme.css">
+
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/register.css">
+    <link rel="stylesheet" href="/css/verification.css">
+    <link rel="stylesheet" href="/css/forgot-password.css">
+</head>
+
+<body data-title-key="@ViewData["TitleKey"]">
+
+    <header class="auth-header">
+
+        <a href="/">
+            <img src="/images/brand-logo.jpg"
+                 class="brand-logo"
+                 alt="SaigonBite">
+        </a>
+
+        <div class="header-controls">
+
+            <!-- Language Switch -->
+
+            <div class="language-switch">
+
+                <button type="button"
+                        data-language="vi">
+                    VN
+                </button>
+
+                <span>|</span>
+
+                <button type="button"
+                        data-language="en">
+                    EN
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="auth-container">
+
+        <!-- Left Illustration -->
+
+        <section class="auth-illustration">
+
+            <img src="/images/ben-thanh.jpg"
+                 alt="Ben Thanh Market">
+
+        </section>
+
+        <!-- Right Content -->
+
+        <section class="auth-content">
+
+            @RenderBody()
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript -->
+
+    <script src="/js/language.js"></script>
+
+    <script src="/js/auth.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

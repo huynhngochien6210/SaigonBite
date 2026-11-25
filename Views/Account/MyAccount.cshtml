@@ -1,0 +1,132 @@
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "My Account";
+}
+
+<div class="account-page">
+
+    @await Html.PartialAsync("_AccountSidebar")
+
+    <section class="account-content">
+
+        <div class="profile-heading">
+
+            <h1 data-i18n="myAccount">
+                My Account
+            </h1>
+
+            <a href="/Account/EditAccount"
+               class="profile-edit-button">
+
+                <svg width="18" height="18"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8">
+
+                    <path d="m16 3 5 5-13 13H3v-5z"/>
+                    <path d="m13 6 5 5"/>
+
+                </svg>
+
+                <span data-i18n="edit">
+                    Edit
+                </span>
+
+            </a>
+
+        </div>
+
+        <h2 class="profile-section-title"
+            data-i18n="personalInformation">
+
+            Personal Information
+
+        </h2>
+
+        <div class="profile-fields">
+
+            <div class="profile-field">
+
+                <label data-i18n="fullName">
+                    Full Name
+                </label>
+
+                <div class="profile-value"
+                     id="displayFullName">
+                    Nguyen Van An
+                </div>
+
+            </div>
+
+            <div class="profile-field">
+
+                <label data-i18n="emailAddress">
+                    Email Address
+                </label>
+
+                <div class="profile-value"
+                     id="displayEmail">
+                    customer@example.com
+                </div>
+
+            </div>
+
+            <div class="profile-field">
+
+                <label data-i18n="phoneNumber">
+                    Phone Number
+                </label>
+
+                <div class="profile-value"
+                     id="displayPhone">
+                    0912345678
+                </div>
+
+            </div>
+
+            <div class="profile-field">
+
+                <label data-i18n="dateOfBirth">
+                    Date of Birth
+                </label>
+
+                <div class="profile-value"
+                     id="displayDateOfBirth">
+                    2004-05-15
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="profile-status">
+
+            <span data-i18n="accountStatus">
+                Account Status
+            </span>
+
+            <strong data-i18n="verified">
+                ✓ Verified
+            </strong>
+
+        </div>
+
+        <p id="profileSuccessMessage"
+           class="profile-success-message"
+           role="status"
+           hidden
+           data-i18n="profileUpdated">
+            Profile updated successfully (Demo).
+        </p>
+
+        <p class="profile-demo-note"
+           data-i18n="verificationDemoNote">
+
+            UI Preview - Backend is not connected.
+
+        </p>
+
+    </section>
+
+</div>

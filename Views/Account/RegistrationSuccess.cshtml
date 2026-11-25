@@ -1,0 +1,76 @@
+
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Registration Successful";
+
+    bool isLocal =
+        ViewData["AccountType"]?.ToString() == "local";
+
+    string verifyUrl = isLocal
+        ? "/Account/VerifyPhone"
+        : "/Account/VerifyEmail";
+
+    string verifyKey = isLocal
+        ? "verifyPhone"
+        : "verifyEmail";
+}
+
+<div class="verification-card">
+
+    <div class="verification-icon success-icon">
+
+        <svg width="50" height="50"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m7 12 3 3 7-7"/>
+
+        </svg>
+
+    </div>
+
+    <h1 data-i18n="registrationSuccessful">
+        Registration Successful!
+    </h1>
+
+    <p class="verification-description"
+       data-i18n="registrationSuccessDescription">
+        Your account has been created.
+        Please verify your account to continue.
+    </p>
+
+    <div class="verification-status">
+
+        <span data-i18n="accountStatus">
+            Account Status:
+        </span>
+
+        <strong data-i18n="unverified">
+            Unverified
+        </strong>
+
+    </div>
+
+    <a href="@verifyUrl"
+       class="verification-button"
+       data-i18n="@verifyKey">
+
+        @(isLocal ? "Verify Phone" : "Verify Email")
+
+    </a>
+
+    <a href="/"
+       class="verification-secondary-button"
+       data-i18n="goHome">
+        Go Home
+    </a>
+
+    <p class="verification-demo-note"
+       data-i18n="verificationDemoNote">
+        UI Preview - Backend is not connected.
+    </p>
+
+</div>

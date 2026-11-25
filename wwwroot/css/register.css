@@ -1,0 +1,295 @@
+
+.register-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 40px;
+
+    background: var(--card-background, #fffaf5);
+    border: 1px solid var(--border, #e8c8b4);
+    border-radius: 25px;
+
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.register-card h1 {
+    font-family: Georgia, serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--heading, #b90000);
+    margin-bottom: 12px;
+}
+
+.register-subtitle {
+    font-size: 16px;
+    color: var(--text, #454545);
+    margin-bottom: 30px;
+}
+
+/* Account type selection */
+
+.account-types {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.account-option {
+    display: block;
+    position: relative;
+    cursor: pointer;
+}
+
+.account-option input {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    accent-color: var(--primary, #b90000);
+    width: 18px;
+    height: 18px;
+    z-index: 1;
+}
+
+.account-option-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    min-height: 110px;
+    padding: 20px 45px 20px 20px;
+
+    border: 1px solid var(--border, #e8c8b4);
+    border-radius: 15px;
+
+    background: var(--card-background, #fffaf5);
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.account-option:hover .account-option-content {
+    border-color: var(--primary, #b90000);
+}
+
+.account-option input:checked + .account-option-content {
+    border-color: var(--primary, #b90000);
+    box-shadow: 0 0 0 1px var(--primary, #b90000);
+}
+
+.account-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+
+    color: var(--heading, #b90000);
+}
+
+.account-description h3 {
+    font-size: 19px;
+    font-weight: bold;
+    color: var(--card-heading, #351c14);
+    margin-bottom: 8px;
+}
+
+.account-description p {
+    font-size: 14px;
+    color: var(--text, #454545);
+    margin: 0;
+}
+
+/* Continue button */
+
+.register-button {
+    width: 100%;
+    padding: 14px;
+
+    background: var(--primary, #b90000);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    background: var(--primary-dark, #900000);
+}
+
+.register-back {
+    display: inline-block;
+    margin-top: 25px;
+
+    color: var(--text, #454545);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.register-back:hover {
+    color: var(--heading, #b90000);
+}
+
+@media (max-width: 576px) {
+    .register-card {
+        padding: 25px;
+    }
+
+    .register-card h1 {
+        font-size: 32px;
+    }
+
+    .account-option-content {
+        gap: 10px;
+        padding-left: 12px;
+    }
+
+    .account-description h3 {
+        font-size: 16px;
+    }
+}
+
+
+/* Registration Form */
+
+.registration-form-card {
+    max-width: 520px;
+    padding: 35px 40px;
+}
+
+.registration-form-card .register-subtitle {
+    margin-bottom: 25px;
+}
+
+/* Input Fields */
+
+.register-field {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.register-field label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--card-heading, #351c14);
+    margin-bottom: 8px;
+}
+
+.register-field input {
+    width: 100%;
+    height: 47px;
+    padding: 12px 15px;
+
+    background: var(--card-background, #fffaf5);
+    color: var(--text, #454545);
+
+    border: 1px solid var(--border, #e8c8b4);
+    border-radius: 9px;
+
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.register-field input:focus {
+    border-color: var(--primary, #b90000);
+    box-shadow: 0 0 0 2px rgba(185, 0, 0, 0.08);
+}
+
+/* Password Toggle */
+
+.register-password-wrapper {
+    position: relative;
+}
+
+.register-password-wrapper input {
+    padding-right: 48px;
+}
+
+.register-password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+    color: var(--text, #454545);
+    cursor: pointer;
+}
+
+/* Terms and Conditions */
+
+.register-terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 22px 0;
+    text-align: left;
+
+    font-size: 14px;
+    color: var(--text, #454545);
+    cursor: pointer;
+}
+
+.register-terms input {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    accent-color: var(--primary, #b90000);
+}
+
+/* Validation Message */
+
+#registerMessage {
+    color: var(--heading, #b90000);
+    font-size: 14px;
+    text-align: left;
+}
+
+#registerMessage:empty {
+    display: none;
+}
+
+/* Sign In Link */
+
+.register-login-link {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--text, #454545);
+}
+
+.register-login-link a {
+    color: var(--heading, #b90000);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+
+@media (max-width: 576px) {
+
+    .registration-form-card {
+        padding: 25px;
+    }
+
+    .register-field input {
+        font-size: 14px;
+    }
+
+    .register-terms {
+        font-size: 13px;
+    }
+}

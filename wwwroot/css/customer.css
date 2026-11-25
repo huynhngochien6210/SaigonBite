@@ -1,0 +1,133 @@
+.customer-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background, #fcf5ed);
+    color: var(--text, #454545);
+}
+
+/* Header */
+
+.customer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 18px 5%;
+    background: #fffaf5;
+    border-bottom: 1px solid #e8c8b4;
+}
+
+.customer-brand img {
+    display: block;
+    width: 220px;
+    height: auto;
+    mix-blend-mode: multiply;
+}
+
+/* Navigation */
+
+.customer-navigation {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.customer-navigation span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #351c14;
+}
+
+/* Header Actions */
+
+.customer-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.customer-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #b90000;
+    text-decoration: none;
+}
+
+.customer-icon-button:disabled {
+    opacity: 0.5;
+}
+
+/* Language */
+
+.customer-actions .language-switch {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.customer-actions .language-switch button {
+    padding: 6px 9px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #454545;
+    font-weight: 600;
+}
+
+.customer-actions .language-switch button.active {
+    background: #b90000;
+    color: #ffffff;
+}
+
+/* Main */
+
+.customer-main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 45px 5%;
+}
+
+/* Responsive */
+
+@media (max-width: 992px) {
+
+    .customer-navigation {
+        gap: 15px;
+    }
+
+    .customer-brand img {
+        width: 160px;
+    }
+
+    .customer-header {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .customer-navigation {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .customer-navigation span {
+        font-size: 13px;
+    }
+
+    .customer-actions {
+        gap: 10px;
+    }
+
+    .customer-brand img {
+        width: 130px;
+    }
+
+    .customer-main {
+        padding: 25px 15px;
+    }
+}
