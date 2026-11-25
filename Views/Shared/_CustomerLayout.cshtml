@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"] - SaigonBite</title>
+
+    <script src="/js/theme.js"></script>
+
+    <link rel="stylesheet"
+          href="/lib/bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/register.css">
+    <link rel="stylesheet" href="/css/customer.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+
+<body class="customer-body">
+
+    <header class="customer-header">
+
+        <a href="/" class="customer-brand">
+            <img src="/images/brand-logo.jpg"
+                 alt="SaigonBite">
+        </a>
+
+        <nav class="customer-navigation">
+
+            <span data-i18n="home">Home</span>
+
+            <span data-i18n="menu">Menu</span>
+
+            <span data-i18n="orderStatus">
+                Order Status
+            </span>
+
+        </nav>
+
+        <div class="customer-actions">
+
+            <button type="button"
+                    class="customer-icon-button"
+                    aria-label="Shopping cart"
+                    disabled>
+
+                <svg width="25" height="25"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.7">
+
+                    <path d="M2 3h3l3 12h11l3-9H6"/>
+                    <circle cx="9" cy="20" r="1"/>
+                    <circle cx="19" cy="20" r="1"/>
+
+                </svg>
+
+            </button>
+
+            <a href="/Account/MyAccount"
+               class="customer-icon-button"
+               aria-label="My Account">
+
+                <svg width="28" height="28"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.7">
+
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="9" r="3"/>
+                    <path d="M5 19a7 7 0 0 1 14 0"/>
+
+                </svg>
+
+            </a>
+
+            <div class="language-switch">
+
+                <button type="button"
+                        data-language="vi">
+                    VN
+                </button>
+
+                <span>|</span>
+
+                <button type="button"
+                        data-language="en">
+                    EN
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="customer-main container-fluid">
+
+        @RenderBody()
+
+    </main>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/language.js"></script>
+    <script src="/js/profile.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

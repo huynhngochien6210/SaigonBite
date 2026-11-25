@@ -1,0 +1,11 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Foreign Tourist Registration";
+    ViewData["AccountType"] = "foreign";
+}
+
+@await Html.PartialAsync("_RegisterForm")
+
+@section Scripts {
+    <script src="/js/register.js"></script>
+}

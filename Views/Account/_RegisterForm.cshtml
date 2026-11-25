@@ -1,0 +1,231 @@
+
+@{
+    bool isLocal =
+        ViewData["AccountType"]?.ToString() == "local";
+}
+
+<div class="register-card registration-form-card">
+
+    <h1 data-i18n="createAccount">
+        Create Account
+    </h1>
+
+    @if (isLocal)
+    {
+        <p class="register-subtitle"
+           data-i18n="localCustomer">
+            Local Customer
+        </p>
+    }
+    else
+    {
+        <p class="register-subtitle"
+           data-i18n="foreignTourist">
+            Foreign Tourist
+        </p>
+    }
+
+    <form id="registrationForm" method="post">
+
+        <input type="hidden"
+               name="accountType"
+               value="@(isLocal ? "local" : "foreign")">
+
+        <!-- Full Name -->
+
+        <div class="register-field">
+
+            <label for="fullName"
+                   data-i18n="fullName">
+                Full Name
+            </label>
+
+            <input type="text"
+                   id="fullName"
+                   name="fullName"
+                   placeholder="Enter your full name"
+                   data-i18n-placeholder="fullNamePlaceholder"
+                   autocomplete="name"
+                   required>
+
+        </div>
+
+        <!-- Phone or Email -->
+
+        @if (isLocal)
+        {
+            <div class="register-field">
+
+                <label for="phone"
+                       data-i18n="phoneNumber">
+                    Phone Number
+                </label>
+
+                <input type="tel"
+                       id="phone"
+                       name="phone"
+                       placeholder="Enter your phone number"
+                       data-i18n-placeholder="phonePlaceholder"
+                       autocomplete="tel"
+                       required>
+
+            </div>
+        }
+        else
+        {
+            <div class="register-field">
+
+                <label for="email"
+                       data-i18n="emailAddress">
+                    Email Address
+                </label>
+
+                <input type="email"
+                       id="email"
+                       name="email"
+                       placeholder="Enter your email address"
+                       data-i18n-placeholder="emailPlaceholder"
+                       autocomplete="email"
+                       required>
+
+            </div>
+        }
+
+        <!-- Password -->
+
+        <div class="register-field">
+
+            <label for="registerPassword"
+                   data-i18n="password">
+                Password
+            </label>
+
+            <div class="register-password-wrapper">
+
+                <input type="password"
+                       id="registerPassword"
+                       name="password"
+                       placeholder="Enter your password"
+                       data-i18n-placeholder="passwordPlaceholder"
+                       autocomplete="new-password"
+                       minlength="8"
+                       required>
+
+                <button type="button"
+                        class="register-password-toggle"
+                        data-toggle-password="registerPassword"
+                        aria-label="Show password">
+
+                    <svg width="20" height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
+                        <path d="M2 12s3.5-7 10-7
+                                 10 7 10 7-3.5 7-10 7
+                                 -10-7-10-7z"/>
+
+                        <circle cx="12" cy="12" r="3"/>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Confirm Password -->
+
+        <div class="register-field">
+
+            <label for="confirmPassword"
+                   data-i18n="confirmPassword">
+                Confirm Password
+            </label>
+
+            <div class="register-password-wrapper">
+
+                <input type="password"
+                       id="confirmPassword"
+                       name="confirmPassword"
+                       placeholder="Confirm your password"
+                       data-i18n-placeholder="confirmPasswordPlaceholder"
+                       autocomplete="new-password"
+                       required>
+
+                <button type="button"
+                        class="register-password-toggle"
+                        data-toggle-password="confirmPassword"
+                        aria-label="Show password">
+
+                    <svg width="20" height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
+                        <path d="M2 12s3.5-7 10-7
+                                 10 7 10 7-3.5 7-10 7
+                                 -10-7-10-7z"/>
+
+                        <circle cx="12" cy="12" r="3"/>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Terms and Conditions -->
+
+        <label class="register-terms">
+
+            <input type="checkbox"
+                   id="acceptTerms"
+                   name="acceptTerms"
+                   required>
+
+            <span data-i18n="acceptTerms">
+                I agree to the Terms and Conditions
+            </span>
+
+        </label>
+
+        <!-- Validation Message -->
+
+        <p id="registerMessage" role="status"></p>
+
+        <!-- Register Button -->
+
+        <button type="submit"
+                class="register-button"
+                data-i18n="registerButton">
+            Register
+        </button>
+
+    </form>
+
+    <a href="/Account/Register"
+       class="register-back"
+       data-i18n="backToAccountType">
+        ← Back to Account Type
+    </a>
+
+    <div class="register-login-link">
+
+        <span data-i18n="alreadyHaveAccount">
+            Already have an account?
+        </span>
+
+        <a href="/Account/Login"
+           data-i18n="signIn">
+            Sign In
+        </a>
+
+    </div>
+
+</div>
