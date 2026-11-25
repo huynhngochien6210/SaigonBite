@@ -1,0 +1,140 @@
+@{
+    bool isLocal =
+        ViewData["AccountType"]?.ToString() == "local";
+
+    bool isPasswordReset =
+        ViewData["IsPasswordReset"] is true;
+
+    string titleKey = isPasswordReset
+        ? "verifyResetCode"
+        : (isLocal ? "verifyPhone" : "verifyEmail");
+
+    string descriptionKey = isLocal
+        ? "verifyPhoneDescription"
+        : "verifyEmailDescription";
+}
+
+<div class="verification-card">
+
+    <div class="verification-icon">
+
+        @if (isLocal)
+        {
+            <svg width="45" height="45"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.7">
+
+                <rect x="6" y="2"
+                      width="12" height="20" rx="3"/>
+
+                <path d="M10 18h4"/>
+
+            </svg>
+        }
+        else
+        {
+            <svg width="45" height="45"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.7">
+
+                <rect x="2" y="4"
+                      width="20" height="16" rx="2"/>
+
+                <path d="m2 6 10 7 10-7"/>
+
+            </svg>
+        }
+
+    </div>
+
+    <h1 data-i18n="@titleKey">
+        @(isPasswordReset
+            ? "Verify Reset Code"
+            : (isLocal ? "Verify Phone" : "Verify Email"))
+    </h1>
+
+    <p class="verification-description"
+       data-i18n="@descriptionKey">
+
+        @(isLocal
+            ? "Enter the 6-digit verification code sent to your phone."
+            : "Enter the 6-digit verification code sent to your email.")
+
+    </p>
+
+    <form id="verificationForm"
+        data-purpose="@(isPasswordReset ? "reset" : "registration")">
+        <div class="otp-inputs">
+
+            @for (int i = 0; i < 6; i++)
+            {
+                <input type="text"
+                       class="otp-input"
+                       inputmode="numeric"
+                       maxlength="1"
+                       pattern="[0-9]"
+                       aria-label="OTP digit @(i + 1)"
+                       autocomplete="@(i == 0 ? "one-time-code" : "off")"
+                       required>
+            }
+
+        </div>
+
+        <p id="otpMessage" role="status"></p>
+
+        <button type="submit"
+                class="verification-button"
+                data-i18n="@(isPasswordReset ? "verifyCode" : "verifyAccount")">
+
+            @(isPasswordReset ? "Verify Code" : "Verify Account")
+
+        </button>
+
+    </form>
+
+    <div class="resend-section">
+
+        <p data-i18n="didNotReceiveCode">
+            Didn't receive the code?
+        </p>
+
+        <div id="resendCountdown">
+
+            <span data-i18n="resendCodeIn">
+                Resend code in
+            </span>
+
+            <strong id="countdown">60</strong>
+
+            <span data-i18n="seconds">
+                seconds
+            </span>
+
+        </div>
+
+        <button type="button"
+                id="resendButton"
+                class="resend-button"
+                data-i18n="resendCode"
+                disabled>
+            Resend Code
+        </button>
+
+    </div>
+
+    <a href="/Account/Login"
+       class="verification-back"
+       data-i18n="backToSignIn">
+        ← Back to Sign In
+    </a>
+
+    <p class="verification-demo-note"
+       data-i18n="verificationDemoNote">
+        UI Preview - Backend is not connected.
+    </p>
+
+</div>
