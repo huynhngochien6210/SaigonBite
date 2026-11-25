@@ -100,5 +100,10 @@ public class AccountController : Controller
     public IActionResult ChangePassword()
     {
         return View();
-}
+    }
+    [HttpGet]
+    public IActionResult LoginHistory()
+    {
+        return View();
+    }
 }

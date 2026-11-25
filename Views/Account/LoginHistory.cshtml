@@ -1,0 +1,212 @@
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Login History";
+
+    // Temporary demo data.
+    var loginRecords = new[]
+    {
+        new {
+            Date = "25/11/2026",
+            Time = "15:30",
+            Device = "Windows - Chrome",
+            IP = "192.0.2.10",
+            Status = "Success"
+        },
+        new {
+            Date = "24/11/2026",
+            Time = "20:15",
+            Device = "Android - Chrome",
+            IP = "198.51.100.20",
+            Status = "Success"
+        },
+        new {
+            Date = "24/11/2026",
+            Time = "19:50",
+            Device = "Windows - Edge",
+            IP = "203.0.113.15",
+            Status = "Failed"
+        },
+        new {
+            Date = "23/11/2026",
+            Time = "08:20",
+            Device = "iPhone - Safari",
+            IP = "192.0.2.25",
+            Status = "Success"
+        }
+    };
+}
+
+<div class="account-page">
+
+    @await Html.PartialAsync("_AccountSidebar")
+
+    <section class="account-content">
+
+        <div class="profile-heading">
+
+            <h1 data-i18n="loginHistory">
+                Login History
+            </h1>
+
+        </div>
+
+        <p class="password-subtitle"
+           data-i18n="loginHistorySubtitle">
+
+            Monitor recent login activities on your account.
+
+        </p>
+
+        <!-- Filter -->
+
+        <div class="history-toolbar">
+
+            <h2 data-i18n="recentActivity">
+                Recent Activity
+            </h2>
+
+            <select id="loginStatusFilter"
+                    class="form-select history-filter"
+                    aria-label="Filter login status">
+
+                <option value="all"
+                        data-i18n="allStatuses">
+                    All Statuses
+                </option>
+
+                <option value="Success"
+                        data-i18n="loginSuccess">
+                    Success
+                </option>
+
+                <option value="Failed"
+                        data-i18n="loginFailed">
+                    Failed
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- Login History Table -->
+
+        <div class="table-responsive">
+
+            <table class="table history-table">
+
+                <thead>
+
+                    <tr>
+                        <th data-i18n="loginDateTime">
+                            Date & Time
+                        </th>
+
+                        <th data-i18n="device">
+                            Device
+                        </th>
+
+                        <th data-i18n="ipAddress">
+                            IP Address
+                        </th>
+
+                        <th data-i18n="status">
+                            Status
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="loginHistoryBody">
+
+                    @foreach (var record in loginRecords)
+                    {
+                        <tr data-login-status="@record.Status">
+
+                            <td>
+
+                                <strong>@record.Date</strong>
+
+                                <div class="history-time">
+                                    @record.Time
+                                </div>
+
+                            </td>
+
+                            <td>
+                                @record.Device
+                            </td>
+
+                            <td>
+                                @record.IP
+                            </td>
+
+                            <td>
+
+                                @if (record.Status == "Success")
+                                {
+                                    <span class="login-status success"
+                                          data-i18n="loginSuccess">
+                                        Success
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="login-status failed"
+                                          data-i18n="loginFailed">
+                                        Failed
+                                    </span>
+                                }
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Empty State -->
+
+        <div id="emptyLoginHistory"
+             class="history-empty"
+             hidden>
+
+            <p data-i18n="noLoginRecords">
+                No login records found.
+            </p>
+
+        </div>
+
+        <!-- Record Count -->
+
+        <div class="history-footer">
+
+            <span data-i18n="totalRecords">
+                Total records:
+            </span>
+
+            <strong id="loginRecordCount">
+                @loginRecords.Length
+            </strong>
+
+        </div>
+
+        <p class="profile-demo-note"
+           data-i18n="loginHistoryDemoNote">
+
+            Demo login history. Backend is not connected.
+
+        </p>
+
+    </section>
+
+</div>
+
+@section Scripts {
+
+    <script src="/js/login-history.js"></script>
+
+}

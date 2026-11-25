@@ -112,6 +112,20 @@ const translations = {
         passwordLowercase: "One lowercase letter",
         passwordNumber: "One number",
         passwordSpecial: "One special character",
+        loginHistorySubtitle:
+        "Monitor recent login activities on your account.",
+        recentActivity: "Recent Activity",
+        allStatuses: "All Statuses",
+        loginDateTime: "Date & Time",
+        device: "Device",
+        ipAddress: "IP Address",
+        status: "Status",
+        loginSuccess: "Success",
+        loginFailed: "Failed",
+        totalRecords: "Total records:",
+        noLoginRecords: "No login records found.",
+        loginHistoryDemoNote:
+            "Demo login history. Backend is not connected.",
     },
 
     vi: {
@@ -225,6 +239,23 @@ const translations = {
         passwordLowercase: "Một chữ cái viết thường",
         passwordNumber: "Một chữ số",
         passwordSpecial: "Một ký tự đặc biệt",
+        loginHistorySubtitle:
+        "Theo dõi các hoạt động đăng nhập gần đây của tài khoản.",
+        recentActivity: "Hoạt động gần đây",
+        allStatuses: "Tất cả trạng thái",
+        loginDateTime: "Ngày và giờ",
+        device: "Thiết bị",
+        ipAddress: "Địa chỉ IP",
+        status: "Trạng thái",
+
+        loginSuccess: "Thành công",
+        loginFailed: "Thất bại",
+
+        totalRecords: "Tổng số bản ghi:",
+        noLoginRecords: "Không tìm thấy lịch sử đăng nhập.",
+
+        loginHistoryDemoNote:
+            "Lịch sử đăng nhập mô phỏng. Backend chưa được kết nối.",
     }
 };
 
