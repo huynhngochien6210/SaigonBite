@@ -1,49 +1,97 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SaigonBite</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/SaigonBite.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SaigonBite</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - SaigonBite - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <title>@ViewData["Title"] - SaigonBite</title>
+
+    <link rel="stylesheet" href="~/css/site.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="site-header">
+
+        <!-- LOGO -->
+        <a class="brand-logo"
+           asp-controller="Home"
+           asp-action="Index">
+
+            <span class="brand-symbol">
+                <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M5 22L24 7L43 22"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"/>
+                    <path d="M10 21V39H38V21"
+                          stroke="currentColor"
+                          stroke-width="3"/>
+                    <path d="M18 39V27H30V39"
+                          stroke="currentColor"
+                          stroke-width="2.5"/>
+                    <path d="M14 17V12H20V13"
+                          stroke="currentColor"
+                          stroke-width="2"/>
+                </svg>
+            </span>
+
+            <span>SaigonBite</span>
+        </a>
+
+        <!-- NAVIGATION -->
+        <nav class="top-navigation">
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="nav-link active">
+                Dashboard
+            </a>
+
+            <a asp-controller="Brand"
+               asp-action="Index"
+               class="nav-link">
+                Quản lý thương hiệu
+            </a>
+
+            <a asp-controller="MenuItem"
+               asp-action="Index"
+               class="nav-link">
+                Quản lý món ăn
+            </a>
+
+        </nav>
+
+        <!-- ADMIN -->
+        <div class="admin-profile">
+
+            <div class="admin-avatar">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="4"
+                            fill="white"/>
+                    <path d="M4 21C4 16.8 7.6 14 12 14C16.4 14 20 16.8 20 21"
+                          fill="white"/>
+                </svg>
+            </div>
+
+            <span>Admin</span>
+            <span class="admin-chevron">⌄</span>
+
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
