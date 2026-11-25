@@ -101,9 +101,5 @@ public class AccountController : Controller
     {
         return View();
     }
-    [HttpGet]
-    public IActionResult LoginHistory()
-    {
-        return View();
-    }
+    
 }
