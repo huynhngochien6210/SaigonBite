@@ -1,19 +1,11 @@
-<<<<<<< HEAD
 
-/* =========================================
+/* =====================================================
    1. GLOBAL SETTINGS
-========================================= */
+===================================================== */
 
 * {
     box-sizing: border-box;
-=======
-* {
     font-family: "Times New Roman", Times, serif;
-}
-
-html {
-  font-size: 14px;
->>>>>>> e05b9832426402f353a642bc3eae9f387187a3b9
 }
 
 html {
@@ -23,9 +15,8 @@ html {
 
 body {
     margin: 0;
-<<<<<<< HEAD
     min-height: 100vh;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Times New Roman", Times, serif;
     color: #25211e;
     background: #fffaf4;
 }
@@ -35,13 +26,20 @@ a {
     color: inherit;
 }
 
+button,
+input,
+select,
+textarea {
+    font-family: "Times New Roman", Times, serif;
+}
 
-/* =========================================
-   2. HEADER NAVIGATION
-========================================= */
+
+/* =====================================================
+   2. ADMIN HEADER NAVIGATION
+===================================================== */
 
 .site-header {
-    height: 76px;
+    height: 80px;
     width: 100%;
     padding: 0 3.2%;
     display: flex;
@@ -55,30 +53,50 @@ a {
     z-index: 10;
 }
 
+/* LOGO */
+
 .brand-logo {
     display: flex;
     align-items: center;
     gap: 10px;
     color: #98251f;
     font-family: "Times New Roman", Times, serif;
-    font-size: 29px;
+    font-size: 34px;
     font-weight: bold;
     font-style: italic;
     white-space: nowrap;
+    text-decoration: none;
 }
 
-.brand-symbol {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    color: #9d682e;
+/* Logo image */
+
+.brand-logo-img {
+    display: block !important;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    visibility: visible;
+    opacity: 1;
+    flex-shrink: 0;
 }
 
-    .brand-symbol svg {
-        width: 100%;
-        height: 100%;
-    }
+/* Hide old SVG logo */
+
+.brand-logo .brand-symbol {
+    display: none !important;
+}
+
+/* Brand name */
+
+.brand-logo span {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 34px;
+    font-weight: bold;
+    font-style: italic;
+    color: #98251f;
+}
+
+/* NAVIGATION */
 
 .top-navigation {
     height: 100%;
@@ -117,6 +135,8 @@ a {
             background: #a52b24;
         }
 
+/* ADMIN PROFILE */
+
 .admin-profile {
     display: flex;
     align-items: center;
@@ -147,9 +167,9 @@ a {
 }
 
 
-/* =========================================
+/* =====================================================
    3. MAIN CONTENT
-========================================= */
+===================================================== */
 
 .main-content {
     width: 100%;
@@ -159,158 +179,74 @@ a {
 }
 
 
-/* =========================================
-   4. DASHBOARD HERO
-========================================= */
+/* =====================================================
+   4. DASHBOARD HERO - BEN THANH MARKET
+===================================================== */
 
 .dashboard-hero {
-    min-height: 190px;
+    min-height: 210px;
     margin: 0 -2.5%;
     padding: 35px 4.3%;
     display: flex;
     align-items: center;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(90deg, #fff5e9 0%, #fff4e6 48%, #f5e6cb 100%);
+    background-image: linear-gradient( 90deg, rgba(255, 247, 237, 0.98) 0%, rgba(255, 247, 237, 0.88) 30%, rgba(255, 247, 237, 0.25) 65%, rgba(255, 247, 237, 0.05) 100% ), url('/image/background.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 0 0 12px 12px;
 }
+
+/* Dashboard content */
 
 .hero-content {
     position: relative;
     z-index: 2;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: translateY(12px);
 }
 
+    /* Dashboard title */
+
     .hero-content h1 {
-        margin: 0 0 6px;
+        margin: 0 0 8px;
+        padding: 0;
         color: #9c211c;
         font-family: "Times New Roman", Times, serif;
         font-size: clamp(32px, 4vw, 48px);
         font-weight: bold;
         font-style: italic;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
+
+    /* Dashboard subtitle */
 
     .hero-content p {
         margin: 0;
+        padding: 0;
         color: #68615a;
+        font-family: "Times New Roman", Times, serif;
         font-size: clamp(17px, 2vw, 24px);
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
-/* Ben Thanh CSS illustration */
+/* Remove old CSS illustration */
 
 .hero-art {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 56%;
-    height: 100%;
-    overflow: hidden;
-    opacity: 0.9;
-    background: linear-gradient(0deg, rgba(205, 163, 103, 0.12), transparent 70%);
-}
-
-.market-building {
-    position: absolute;
-    width: 65%;
-    height: 65px;
-    right: 8%;
-    bottom: 20px;
-    background: #e9c68d;
-    border: 3px solid #bd8b4c;
-    border-radius: 5px 5px 0 0;
-}
-
-.market-roof {
-    position: absolute;
-    width: 108%;
-    height: 23px;
-    left: -4%;
-    top: -19px;
-    background: #b97935;
-    clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
-}
-
-.market-tower {
-    position: absolute;
-    z-index: 2;
-    width: 92px;
-    height: 126px;
-    left: 43%;
-    bottom: 62px;
-    background: #eac98f;
-    border: 3px solid #b98043;
-    border-radius: 4px 4px 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.market-tower-roof {
-    position: absolute;
-    width: 125%;
-    height: 19px;
-    top: -17px;
-    left: -12%;
-    background: #a75b27;
-    clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
-}
-
-.market-clock {
-    width: 32px;
-    height: 32px;
-    border: 3px solid #8c5428;
-    border-radius: 50%;
-    background: #fff8df;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6b4628;
-    font-size: 10px;
-    font-weight: bold;
-}
-
-.market-doors {
-    height: 48px;
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    bottom: 0;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-}
-
-    .market-doors span {
-        width: 16%;
-        height: 39px;
-        background: #558b53;
-        border: 3px solid #a8bd7b;
-        border-radius: 12px 12px 0 0;
-    }
-
-.hero-tree {
-    position: absolute;
-    width: 65px;
-    height: 65px;
-    bottom: 65px;
-    background: #9aaf67;
-    border-radius: 50%;
-    opacity: 0.75;
-}
-
-.tree-one {
-    left: 12%;
-}
-
-.tree-two {
-    left: 29%;
-    width: 45px;
-    height: 45px;
-    bottom: 53px;
+    display: none !important;
 }
 
 
-/* =========================================
+/* =====================================================
    5. STATISTICS CARDS
-========================================= */
+===================================================== */
 
 .statistics-grid {
     display: grid;
@@ -331,6 +267,8 @@ a {
     box-shadow: 0 3px 10px rgba(90, 55, 25, 0.04);
 }
 
+/* Icon container */
+
 .stat-icon {
     width: 76px;
     height: 76px;
@@ -339,18 +277,46 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
 }
+
+    /* SVG illustration */
 
     .stat-icon svg {
         width: 47px;
         height: 47px;
+        display: block;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
-.icon-brand,
+        /* Remove white background shapes inside SVG */
+
+        .stat-icon svg rect[fill="white"],
+        .stat-icon svg rect[fill="#fff"],
+        .stat-icon svg rect[fill="#ffffff"],
+        .stat-icon svg [fill="white"],
+        .stat-icon svg [fill="#fff"],
+        .stat-icon svg [fill="#ffffff"] {
+            fill: transparent !important;
+        }
+
+/* Brand icon */
+
+.icon-brand {
+    color: #a63225;
+    background: #ffead8;
+}
+
+/* Food icon */
+
 .icon-food {
     color: #a63225;
     background: #ffead8;
 }
+
+/* Active icon */
 
 .icon-active {
     color: white;
@@ -369,6 +335,8 @@ a {
         font-weight: bold;
     }
 
+/* Unavailable icon */
+
 .icon-unavailable {
     color: #a32626;
     background: #fce5df;
@@ -379,12 +347,13 @@ a {
         font-weight: 400;
     }
 
+/* Statistics information */
+
 .stat-info p {
     margin: 0 0 4px;
     font-size: 16px;
     font-weight: 650;
 }
-
 
 .stat-info h2 {
     margin: 0;
@@ -397,10 +366,9 @@ a {
 }
 
 
-
-/* =========================================
-   6. REPORT CARDS
-========================================= */
+/* =====================================================
+   6. REPORT CARDS - R1 AND R2
+===================================================== */
 
 .reports-grid {
     display: grid;
@@ -426,6 +394,8 @@ a {
         transform: translateY(-3px);
         box-shadow: 0 7px 18px rgba(90, 55, 25, 0.1);
     }
+
+/* Report illustration */
 
 .report-illustration {
     position: relative;
@@ -475,6 +445,8 @@ a {
             width: 45%;
         }
 
+/* Bar chart illustration */
+
 .report-chart {
     position: absolute;
     bottom: 12px;
@@ -507,6 +479,8 @@ a {
             height: 46px;
         }
 
+/* Pie chart illustration */
+
 .report-pie {
     position: absolute;
     width: 29px;
@@ -516,6 +490,8 @@ a {
     border-radius: 50%;
     background: conic-gradient( #c45b1c 0 35%, #f1a63e 35% 70%, #e8d19e 70% 100% );
 }
+
+/* Hub performance gauge */
 
 .report-gauge {
     position: absolute;
@@ -539,6 +515,8 @@ a {
         transform-origin: left;
     }
 
+/* Report content */
+
 .report-content {
     flex: 1;
     min-width: 0;
@@ -557,6 +535,8 @@ a {
         line-height: 1.5;
     }
 
+/* Report button */
+
 .report-button {
     min-width: 210px;
     padding: 10px 17px;
@@ -564,27 +544,38 @@ a {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    color: white;
+    color: #ffffff !important;
     background: #a92220;
+    border: none;
     border-radius: 10px;
+    font-family: "Times New Roman", Times, serif;
     font-size: 16px;
     font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
     transition: background 0.2s ease;
 }
 
     .report-button:hover {
-        color: white;
+        color: #ffffff !important;
         background: #801a19;
+        text-decoration: none;
     }
 
     .report-button span {
+        display: inline-block;
+        color: #ffffff !important;
+        background: transparent !important;
         font-size: 21px;
+        line-height: 1;
+        padding: 0;
+        border: none;
     }
 
 
-/* =========================================
+/* =====================================================
    7. RECENT ACTIVITIES
-========================================= */
+===================================================== */
 
 .activity-section {
     padding: 17px 22px 12px;
@@ -684,155 +675,10 @@ a {
 }
 
 
-/* =========================================
-   8. RESPONSIVE DESIGN
-========================================= */
-
-@media (max-width: 1100px) {
-
-    .site-header {
-        padding: 0 2%;
-        gap: 12px;
-    }
-
-    .brand-logo {
-        font-size: 23px;
-    }
-
-    .top-navigation {
-        gap: 15px;
-    }
-
-    .nav-link {
-        font-size: 13px;
-    }
-
-    .statistics-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .reports-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 650px) {
-
-    .site-header {
-        height: auto;
-        min-height: 70px;
-        flex-wrap: wrap;
-        padding: 10px 15px;
-    }
-
-    .brand-logo {
-        font-size: 22px;
-    }
-
-    .brand-symbol {
-        width: 35px;
-        height: 35px;
-    }
-
-    .top-navigation {
-        order: 3;
-        width: 100%;
-        height: auto;
-        justify-content: space-between;
-        gap: 5px;
-        overflow-x: auto;
-    }
-
-    .nav-link {
-        min-height: 40px;
-        font-size: 12px;
-    }
-
-    .admin-profile {
-        font-size: 13px;
-    }
-
-    .admin-avatar {
-        width: 34px;
-        height: 34px;
-    }
-
-    .main-content {
-        padding: 0 12px 25px;
-    }
-
-    .dashboard-hero {
-        min-height: 155px;
-        padding: 20px;
-    }
-
-    .hero-art {
-        opacity: 0.25;
-        width: 75%;
-    }
-
-    .statistics-grid {
-        gap: 9px;
-    }
-
-    .stat-card {
-        min-height: 95px;
-        padding: 10px;
-        gap: 9px;
-    }
-
-    .stat-icon {
-        width: 45px;
-        min-width: 45px;
-        height: 45px;
-    }
-
-        .stat-icon svg {
-            width: 30px;
-            height: 30px;
-        }
-
-    .stat-info p {
-        font-size: 12px;
-    }
-
-    .stat-info h2 {
-        font-size: 25px;
-    }
-
-    .report-card {
-        padding: 15px;
-        gap: 15px;
-    }
-
-    .report-illustration {
-        width: 95px;
-        min-width: 95px;
-        height: 120px;
-    }
-
-    .report-content h3 {
-        font-size: 16px;
-    }
-
-    .report-content p {
-        font-size: 12px;
-    }
-
-    .report-button {
-        min-width: 0;
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-
-    .activity-section {
-        padding: 13px;
-    }
-}
-=======
-    background: #fffaf3;
-    font-family: "Times New Roman", Times, serif;
-}
+/* =====================================================
+   8. CUSTOMER LAYOUT - NAVIGATION
+   Preserve existing Customer interface
+===================================================== */
 
 .saigonbite-page {
     width: 100%;
@@ -840,15 +686,7 @@ a {
     background: #fffaf3;
 }
 
-main {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-/* =========================
-   SAIGONBITE NAVBAR
-   ========================= */
+/* Customer navbar */
 
 .sb-navbar {
     background: #fffaf3;
@@ -865,7 +703,7 @@ main {
     justify-content: space-between;
 }
 
-/* Logo */
+/* Customer logo */
 
 .sb-brand {
     display: flex;
@@ -884,11 +722,11 @@ main {
         color: #b32025;
         font-size: 36px;
         font-weight: 700;
-        font-family: Georgia, serif;
+        font-family: "Times New Roman", Times, serif;
         font-style: italic;
     }
 
-/* Navigation */
+/* Customer navigation */
 
 .sb-nav-links {
     display: flex;
@@ -905,10 +743,7 @@ main {
     font-weight: 600;
 }
 
-    .sb-nav-link:hover {
-        color: #b32025;
-    }
-
+    .sb-nav-link:hover,
     .sb-nav-link.active {
         color: #b32025;
     }
@@ -924,7 +759,7 @@ main {
             background: #b32025;
         }
 
-/* Right */
+/* Customer right navigation */
 
 .sb-nav-right {
     display: flex;
@@ -960,13 +795,11 @@ main {
 .sb-arrow {
     font-size: 22px;
 }
-/* =========================
-   SAIGONBITE HOME
-   ========================= */
 
-body {
-    background: #fffaf3;
-}
+
+/* =====================================================
+   9. CUSTOMER HOME PAGE
+===================================================== */
 
 .saigonbite-home {
     margin: 0 14px;
@@ -977,10 +810,7 @@ body {
     background: #fffaf3;
 }
 
-
-/* =========================
-   HERO BANNER
-   ========================= */
+/* Customer hero banner */
 
 .sb-hero {
     width: 100%;
@@ -991,10 +821,7 @@ body {
     background-repeat: no-repeat;
 }
 
-
-/* =========================
-   FOOD SECTION
-   ========================= */
+/* Food section */
 
 .sb-food-section {
     padding: 25px 45px 55px;
@@ -1002,11 +829,10 @@ body {
 
     .sb-food-section h2 {
         margin-bottom: 25px;
-        font-family: Georgia, serif;
+        font-family: "Times New Roman", Times, serif;
         font-size: 42px;
         font-weight: 700;
     }
-
 
 /* Categories */
 
@@ -1046,7 +872,6 @@ body {
     font-size: 32px;
 }
 
-
 /* Food grid */
 
 .sb-food-grid {
@@ -1055,7 +880,6 @@ body {
     gap: 25px;
 }
 
-
 /* Food card */
 
 .sb-food-card {
@@ -1063,7 +887,7 @@ body {
     border: 1px solid #eadccc;
     border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(70, 40, 20, .08);
+    box-shadow: 0 5px 15px rgba(70, 40, 20, 0.08);
 }
 
 .sb-food-image {
@@ -1088,7 +912,7 @@ body {
     height: 42px;
     border: none;
     border-radius: 50%;
-    background: rgba(0,0,0,.15);
+    background: rgba(0, 0, 0, 0.15);
     color: white;
     font-size: 32px;
     cursor: pointer;
@@ -1130,4 +954,233 @@ body {
     .sb-add-btn:hover {
         background: #92191d;
     }
->>>>>>> e05b9832426402f353a642bc3eae9f387187a3b9
+
+
+/* =====================================================
+   10. RESPONSIVE DESIGN
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .site-header {
+        padding: 0 2%;
+        gap: 12px;
+    }
+
+    .brand-logo {
+        font-size: 23px;
+    }
+
+    .brand-logo-img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .top-navigation {
+        gap: 15px;
+    }
+
+    .nav-link {
+        font-size: 13px;
+    }
+
+    .statistics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sb-food-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sb-categories {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+
+    /* Admin header */
+
+    .site-header {
+        height: auto;
+        min-height: 70px;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+
+    .brand-logo {
+        font-size: 22px;
+    }
+
+    .brand-logo-img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .brand-logo span {
+        font-size: 22px;
+    }
+
+    .top-navigation {
+        order: 3;
+        width: 100%;
+        height: auto;
+        justify-content: space-between;
+        gap: 5px;
+        overflow-x: auto;
+    }
+
+    .nav-link {
+        min-height: 40px;
+        font-size: 12px;
+    }
+
+    .admin-profile {
+        font-size: 13px;
+    }
+
+    .admin-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* Main content */
+
+    .main-content {
+        padding: 0 12px 25px;
+    }
+
+    /* Dashboard hero */
+
+    .dashboard-hero {
+        min-height: 155px;
+        padding: 20px;
+    }
+
+    .hero-content {
+        transform: translateY(8px);
+    }
+
+        .hero-content h1 {
+            font-size: 30px;
+        }
+
+        .hero-content p {
+            font-size: 15px;
+        }
+
+    /* Statistics */
+
+    .statistics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 9px;
+    }
+
+    .stat-card {
+        min-height: 95px;
+        padding: 10px;
+        gap: 9px;
+    }
+
+    .stat-icon {
+        width: 45px;
+        min-width: 45px;
+        height: 45px;
+    }
+
+        .stat-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+    .stat-info p {
+        font-size: 12px;
+    }
+
+    .stat-info h2 {
+        font-size: 25px;
+    }
+
+    /* Reports */
+
+    .report-card {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .report-illustration {
+        width: 95px;
+        min-width: 95px;
+        height: 120px;
+    }
+
+    .report-content h3 {
+        font-size: 16px;
+    }
+
+    .report-content p {
+        font-size: 12px;
+    }
+
+    .report-button {
+        min-width: 0;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    /* Activities */
+
+    .activity-section {
+        padding: 13px;
+    }
+
+    /* Customer interface */
+
+    .sb-navbar-inner {
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .sb-nav-links {
+        width: 100%;
+        gap: 12px;
+        overflow-x: auto;
+    }
+
+    .sb-nav-link {
+        font-size: 14px;
+        padding: 10px 4px;
+        white-space: nowrap;
+    }
+
+    .sb-nav-right {
+        gap: 12px;
+    }
+
+    .sb-food-section {
+        padding: 20px 15px;
+    }
+
+        .sb-food-section h2 {
+            font-size: 28px;
+        }
+
+    .sb-categories {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .sb-category {
+        font-size: 15px;
+    }
+
+    .sb-food-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
