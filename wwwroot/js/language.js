@@ -101,6 +101,17 @@ const translations = {
         signOut: "Sign Out",
         profileUpdated:
             "Profile updated successfully (Demo).",
+        changePasswordSubtitle:
+         "Update your password to keep your account secure.",
+        currentPassword: "Current Password",
+        newPassword: "New Password",
+        confirmNewPassword: "Confirm New Password",
+        passwordRequirements: "Password Requirements",
+        passwordMinLength: "At least 8 characters",
+        passwordUppercase: "One uppercase letter",
+        passwordLowercase: "One lowercase letter",
+        passwordNumber: "One number",
+        passwordSpecial: "One special character",
     },
 
     vi: {
@@ -203,6 +214,17 @@ const translations = {
         signOut: "Đăng xuất",
         profileUpdated:
             "Cập nhật thông tin thành công (Mô phỏng).",
+        changePasswordSubtitle:
+        "Cập nhật mật khẩu để bảo vệ tài khoản của bạn.",
+        currentPassword: "Mật khẩu hiện tại",
+        newPassword: "Mật khẩu mới",
+        confirmNewPassword: "Xác nhận mật khẩu mới",
+        passwordRequirements: "Yêu cầu mật khẩu",
+        passwordMinLength: "Ít nhất 8 ký tự",
+        passwordUppercase: "Một chữ cái viết hoa",
+        passwordLowercase: "Một chữ cái viết thường",
+        passwordNumber: "Một chữ số",
+        passwordSpecial: "Một ký tự đặc biệt",
     }
 };
 

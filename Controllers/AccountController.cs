@@ -95,5 +95,10 @@ public class AccountController : Controller
     public IActionResult EditAccount()
     {
         return View();
+    }
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
 }
 }

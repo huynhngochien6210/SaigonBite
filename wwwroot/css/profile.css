@@ -275,3 +275,86 @@ a.account-nav-item:hover {
         font-size: 28px;
     }
 }
+
+/* Change Password */
+
+.password-subtitle {
+    color: #777777;
+    font-size: 15px;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e8c8b4;
+}
+
+.account-content .register-password-wrapper {
+    position: relative;
+}
+
+.account-content .register-password-wrapper input {
+    padding-right: 50px;
+}
+
+.account-content .register-password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #777777;
+    cursor: pointer;
+}
+
+.password-requirements {
+    padding: 20px;
+    margin-top: 25px;
+    background: #fcf3e9;
+    border: 1px solid #e8c8b4;
+    border-radius: 12px;
+}
+
+.password-requirements h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #351c14;
+    margin-bottom: 15px;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 9px;
+}
+
+.password-requirements li::before {
+    content: "○";
+    margin-right: 10px;
+}
+
+.password-requirements li.valid {
+    color: #32834c;
+}
+
+.password-requirements li.valid::before {
+    content: "✓";
+}
+
+#changePasswordMessage {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #b90000;
+}
+
+#changePasswordMessage.validated {
+    color: #32834c;
+}
+
+#changePasswordMessage:empty {
+    display: none;
+}

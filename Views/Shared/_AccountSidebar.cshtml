@@ -48,10 +48,11 @@
 
         </a>
 
-        <span class="account-nav-item pending"
-              data-i18n="changePassword">
-            Change Password
-        </span>
+        <a href="/Account/ChangePassword"
+            class="account-nav-item @(currentAction == "ChangePassword" ? "active" : "")"
+            data-i18n="changePassword">
+                Change Password
+        </a>
 
         <span class="account-nav-item pending"
               data-i18n="loginHistory">
