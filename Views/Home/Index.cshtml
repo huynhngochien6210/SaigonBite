@@ -1,114 +1,146 @@
-﻿
-@{
-    Layout = null;
+﻿@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8">
+<div class="saigonbite-home">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <!-- HERO -->
+    <section class="sb-hero">
+    </section>
 
-    <title>SaigonBite System</title>
 
-    <script src="/js/theme.js"></script>
+    <!-- FOOD SECTION -->
+    <section class="sb-food-section">
 
-    <link rel="stylesheet"
-          href="/lib/bootstrap/dist/css/bootstrap.min.css">
+        <h2>Món ngon Sài Gòn</h2>
 
-    <link rel="stylesheet"
-          href="/css/theme.css">
+        <!-- Categories -->
+        <div class="sb-categories">
 
-    <link rel="stylesheet"
-          href="/css/portal.css">
-</head>
+            <button class="sb-category active">
+                <span class="category-icon">🍜</span>
+                <span>Tất cả</span>
+            </button>
 
-<body>
+            <button class="sb-category">
+                <span class="category-icon">🍴</span>
+                <span>Món chính</span>
+            </button>
 
-    <!-- Logo -->
-    <header class="brand-header">
+            <button class="sb-category">
+                <span class="category-icon">🍲</span>
+                <span>Món nước</span>
+            </button>
 
-    <img src="/images/brand-logo.jpg"
-         alt="SaigonBite Logo">
+            <button class="sb-category">
+                <span class="category-icon">🍢</span>
+                <span>Ăn vặt</span>
+            </button>
 
-    </header>
+            <button class="sb-category">
+                <span class="category-icon">🥤</span>
+                <span>Đồ uống</span>
+            </button>
 
-    <!-- Main Content -->
-    <main class="container portal-container">
+        </div>
 
-        <!-- Heading -->
-        <section class="portal-heading text-center">
 
-            <h1>SaigonBite System</h1>
+        <!-- Food cards -->
+        <div class="sb-food-grid">
 
-            <p>
-                Choose the appropriate interface to continue
-            </p>
+            <!-- Card 1 -->
+            <div class="sb-food-card">
 
-        </section>
+                <div class="sb-food-image">
+                    <div class="food-placeholder">🍚</div>
+                    <button class="favorite">♡</button>
+                </div>
 
-        <!-- Interface Cards -->
-        <div class="row g-4 justify-content-center">
+                <div class="sb-food-info">
+                    <h3>Cơm tấm Sài Gòn</h3>
 
-            <!-- User Interface -->
-            <div class="col-12 col-md-6">
+                    <div class="sb-food-bottom">
+                        <span class="sb-price">65.000 ₫</span>
 
-                <div class="portal-card">
-
-                    <img src="/images/customer.jpg"
-                         class="portal-image"
-                         alt="Customer">
-
-                    <h2>User Interface</h2>
-
-                    <p>
-                        For customers to browse restaurants,
-                        view menus, and manage their accounts.
-                    </p>
-
-                    <a href="/Account/Login"
-                       class="btn access-button">
-
-                        Access &nbsp; &rarr;
-
-                    </a>
-
+                        <button class="sb-add-btn">
+                            ＋ Thêm
+                        </button>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- Administrator Interface -->
-            <div class="col-12 col-md-6">
 
-                <div class="portal-card">
+            <!-- Card 2 -->
+            <div class="sb-food-card">
 
-                    <img src="/images/admin.jpg"
-                         class="portal-image"
-                         alt="Administrator">
+                <div class="sb-food-image">
+                    <div class="food-placeholder">🥖</div>
+                    <button class="favorite">♡</button>
+                </div>
 
-                    <h2>Administrator Interface</h2>
+                <div class="sb-food-info">
+                    <h3>Bánh mì thịt</h3>
 
-                    <p>
-                        For administrators to manage the system,
-                        restaurants, menus, orders, and accounts.
-                    </p>
+                    <div class="sb-food-bottom">
+                        <span class="sb-price">35.000 ₫</span>
 
-                    <a href="/Admin/Login"
-                       class="btn access-button">
+                        <button class="sb-add-btn">
+                            ＋ Thêm
+                        </button>
+                    </div>
+                </div>
 
-                        Access &nbsp; &rarr;
+            </div>
 
-                    </a>
 
+            <!-- Card 3 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <div class="food-placeholder">🍜</div>
+                    <button class="favorite">♡</button>
+                </div>
+
+                <div class="sb-food-info">
+                    <h3>Hủ tiếu Nam Vang</h3>
+
+                    <div class="sb-food-bottom">
+                        <span class="sb-price">62.000 ₫</span>
+
+                        <button class="sb-add-btn">
+                            ＋ Thêm
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Card 4 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <div class="food-placeholder">🥤</div>
+                    <button class="favorite">♡</button>
+                </div>
+
+                <div class="sb-food-info">
+                    <h3>Chè Sài Gòn</h3>
+
+                    <div class="sb-food-bottom">
+                        <span class="sb-price">28.000 ₫</span>
+
+                        <button class="sb-add-btn">
+                            ＋ Thêm
+                        </button>
+                    </div>
                 </div>
 
             </div>
 
         </div>
 
-    </main>
+    </section>
 
-</body>
-</html>
+</div>

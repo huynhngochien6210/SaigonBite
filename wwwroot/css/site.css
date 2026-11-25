@@ -1,3 +1,7 @@
+* {
+    font-family: "Times New Roman", Times, serif;
+}
+
 html {
   font-size: 14px;
 }
@@ -18,5 +22,304 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    background: #fffaf3;
+    font-family: "Times New Roman", Times, serif;
 }
+
+.saigonbite-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #fffaf3;
+}
+
+main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================
+   SAIGONBITE NAVBAR
+   ========================= */
+
+.sb-navbar {
+    background: #fffaf3;
+    border: 1px solid #e7d6c0;
+    border-radius: 28px 28px 0 0;
+    margin: 12px 14px 0;
+}
+
+.sb-navbar-inner {
+    min-height: 88px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+
+.sb-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+    .sb-brand img {
+        width: 72px;
+        height: 58px;
+        object-fit: contain;
+    }
+
+    .sb-brand span {
+        color: #b32025;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: Georgia, serif;
+        font-style: italic;
+    }
+
+/* Navigation */
+
+.sb-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+}
+
+.sb-nav-link {
+    position: relative;
+    padding: 30px 4px;
+    color: #161616;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+    .sb-nav-link:hover {
+        color: #b32025;
+    }
+
+    .sb-nav-link.active {
+        color: #b32025;
+    }
+
+        .sb-nav-link.active::after {
+            content: "";
+            position: absolute;
+            bottom: 17px;
+            left: 0;
+            right: 0;
+            height: 5px;
+            border-radius: 10px;
+            background: #b32025;
+        }
+
+/* Right */
+
+.sb-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.sb-cart {
+    color: #b32025;
+    font-size: 34px;
+    text-decoration: none;
+}
+
+.sb-user {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.sb-user-avatar {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #35a853;
+    font-size: 23px;
+}
+
+.sb-arrow {
+    font-size: 22px;
+}
+/* =========================
+   SAIGONBITE HOME
+   ========================= */
+
+body {
+    background: #fffaf3;
+}
+
+.saigonbite-home {
+    margin: 0 14px;
+    border-left: 1px solid #e7d6c0;
+    border-right: 1px solid #e7d6c0;
+    border-bottom: 1px solid #e7d6c0;
+    border-radius: 0 0 28px 28px;
+    background: #fffaf3;
+}
+
+
+/* =========================
+   HERO BANNER
+   ========================= */
+
+.sb-hero {
+    width: 100%;
+    aspect-ratio: 16 / 4;
+    background-image: url('/image/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* =========================
+   FOOD SECTION
+   ========================= */
+
+.sb-food-section {
+    padding: 25px 45px 55px;
+}
+
+    .sb-food-section h2 {
+        margin-bottom: 25px;
+        font-family: Georgia, serif;
+        font-size: 42px;
+        font-weight: 700;
+    }
+
+
+/* Categories */
+
+.sb-categories {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    margin-bottom: 45px;
+}
+
+.sb-category {
+    min-height: 105px;
+    border: none;
+    border-radius: 20px;
+    background: #fff0da;
+    color: #783d19;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .sb-category:hover {
+        background: #fbe0bd;
+    }
+
+    .sb-category.active {
+        background: #b82025;
+        color: white;
+    }
+
+.category-icon {
+    font-size: 32px;
+}
+
+
+/* Food grid */
+
+.sb-food-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+
+/* Food card */
+
+.sb-food-card {
+    background: #fff;
+    border: 1px solid #eadccc;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(70, 40, 20, .08);
+}
+
+.sb-food-image {
+    height: 205px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ddd2c4;
+    overflow: hidden;
+}
+
+.food-placeholder {
+    font-size: 100px;
+}
+
+.favorite {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,.15);
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.sb-food-info {
+    padding: 18px;
+}
+
+    .sb-food-info h3 {
+        margin-bottom: 16px;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+.sb-food-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sb-price {
+    color: #b32025;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.sb-add-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 14px;
+    background: #b82025;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .sb-add-btn:hover {
+        background: #92191d;
+    }
