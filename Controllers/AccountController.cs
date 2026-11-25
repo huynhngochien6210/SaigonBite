@@ -84,4 +84,16 @@ public class AccountController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult MyAccount()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult EditAccount()
+    {
+        return View();
+}
 }

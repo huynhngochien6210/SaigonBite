@@ -84,6 +84,23 @@ const translations = {
         passwordResetSuccessful: "Password Reset Successful!",
         passwordResetSuccessDescription:
             "Your password has been reset successfully. You can now sign in with your new password.",
+            home: "Home",
+        menu: "Menu",
+        orderStatus: "Order Status",
+        myAccount: "My Account",
+        editAccount: "Edit Account",
+        personalInformation: "Personal Information",
+        changePassword: "Change Password",
+        loginHistory: "Login History",
+        orderHistory: "Order History",
+        dateOfBirth: "Date of Birth",
+        verified: "✓ Verified",
+        edit: "Edit",
+        cancel: "Cancel",
+        saveChanges: "Save Changes",
+        signOut: "Sign Out",
+        profileUpdated:
+            "Profile updated successfully (Demo).",
     },
 
     vi: {
@@ -169,6 +186,23 @@ const translations = {
         passwordResetSuccessful: "Đặt lại mật khẩu thành công!",
         passwordResetSuccessDescription:
             "Mật khẩu của bạn đã được đặt lại thành công. Bạn có thể đăng nhập bằng mật khẩu mới.",
+            home: "Trang chủ",
+        menu: "Thực đơn",
+        orderStatus: "Trạng thái đơn hàng",
+        myAccount: "Tài khoản của tôi",
+        editAccount: "Chỉnh sửa tài khoản",
+        personalInformation: "Thông tin cá nhân",
+        changePassword: "Đổi mật khẩu",
+        loginHistory: "Lịch sử đăng nhập",
+        orderHistory: "Lịch sử đơn hàng",
+        dateOfBirth: "Ngày sinh",
+        verified: "✓ Đã xác thực",
+        edit: "Chỉnh sửa",
+        cancel: "Hủy",
+        saveChanges: "Lưu thay đổi",
+        signOut: "Đăng xuất",
+        profileUpdated:
+            "Cập nhật thông tin thành công (Mô phỏng).",
     }
 };
 
