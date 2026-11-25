@@ -64,6 +64,26 @@ const translations = {
         resendCode: "Resend Code",
         verificationDemoNote:
             "UI Preview - Backend is not connected.",
+        forgotPassword: "Forgot Password",
+        forgotPasswordDescription:
+            "Choose your recovery method.",
+        sendVerificationCode: "Send Verification Code",
+        verifyResetCode: "Verify Reset Code",
+        verifyCode: "Verify Code",
+        resetPassword: "Reset Password",
+        resetPasswordDescription:
+            "Create a new password for your account.",
+        newPassword: "New Password",
+        newPasswordPlaceholder: "Enter your new password",
+        passwordRequirements: "Password requirements:",
+        ruleLength: "At least 8 characters",
+        ruleUppercase: "At least one uppercase letter",
+        ruleLowercase: "At least one lowercase letter",
+        ruleNumber: "At least one number",
+        ruleSpecial: "At least one special character",
+        passwordResetSuccessful: "Password Reset Successful!",
+        passwordResetSuccessDescription:
+            "Your password has been reset successfully. You can now sign in with your new password.",
     },
 
     vi: {
@@ -129,6 +149,26 @@ const translations = {
         resendCode: "Gửi lại mã",
         verificationDemoNote:
             "Giao diện thử nghiệm - Chưa kết nối Backend.",
+            forgotPassword: "Quên mật khẩu",
+        forgotPasswordDescription:
+            "Lựa chọn phương thức khôi phục mật khẩu.",
+        sendVerificationCode: "Gửi mã xác thực",
+        verifyResetCode: "Xác thực mã khôi phục",
+        verifyCode: "Xác thực mã",
+        resetPassword: "Đặt lại mật khẩu",
+        resetPasswordDescription:
+            "Tạo mật khẩu mới cho tài khoản của bạn.",
+        newPassword: "Mật khẩu mới",
+        newPasswordPlaceholder: "Nhập mật khẩu mới",
+        passwordRequirements: "Yêu cầu mật khẩu:",
+        ruleLength: "Ít nhất 8 ký tự",
+        ruleUppercase: "Ít nhất một chữ hoa",
+        ruleLowercase: "Ít nhất một chữ thường",
+        ruleNumber: "Ít nhất một chữ số",
+        ruleSpecial: "Ít nhất một ký tự đặc biệt",
+        passwordResetSuccessful: "Đặt lại mật khẩu thành công!",
+        passwordResetSuccessDescription:
+            "Mật khẩu của bạn đã được đặt lại thành công. Bạn có thể đăng nhập bằng mật khẩu mới.",
     }
 };
 

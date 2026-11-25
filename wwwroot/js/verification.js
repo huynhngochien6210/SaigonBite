@@ -190,6 +190,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Temporary UI preview for password recovery
+
+        if (form.dataset.purpose === "reset") {
+
+            window.location.href = "/Account/ResetPassword";
+
+            return;
+        }
+
+        // Registration verification
+
         showMessage(
             "Valid OTP format. Backend verification is not connected.",
             "Định dạng OTP hợp lệ. Chưa kết nối xác thực Backend."

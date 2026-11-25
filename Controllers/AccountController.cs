@@ -52,4 +52,36 @@ public class AccountController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult VerifyResetCode(string type = "local")
+    {
+        if (type != "local" && type != "foreign")
+        {
+            return RedirectToAction("ForgotPassword");
+        }
+
+        ViewData["AccountType"] = type;
+        ViewData["IsPasswordReset"] = true;
+
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ResetPasswordSuccess()
+    {
+        return View();
+    }
 }

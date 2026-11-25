@@ -1,11 +1,13 @@
-
 @{
     bool isLocal =
         ViewData["AccountType"]?.ToString() == "local";
 
-    string titleKey = isLocal
-        ? "verifyPhone"
-        : "verifyEmail";
+    bool isPasswordReset =
+        ViewData["IsPasswordReset"] is true;
+
+    string titleKey = isPasswordReset
+        ? "verifyResetCode"
+        : (isLocal ? "verifyPhone" : "verifyEmail");
 
     string descriptionKey = isLocal
         ? "verifyPhoneDescription"
@@ -50,7 +52,9 @@
     </div>
 
     <h1 data-i18n="@titleKey">
-        @(isLocal ? "Verify Phone" : "Verify Email")
+        @(isPasswordReset
+            ? "Verify Reset Code"
+            : (isLocal ? "Verify Phone" : "Verify Email"))
     </h1>
 
     <p class="verification-description"
@@ -62,8 +66,8 @@
 
     </p>
 
-    <form id="verificationForm">
-
+    <form id="verificationForm"
+        data-purpose="@(isPasswordReset ? "reset" : "registration")">
         <div class="otp-inputs">
 
             @for (int i = 0; i < 6; i++)
@@ -84,8 +88,10 @@
 
         <button type="submit"
                 class="verification-button"
-                data-i18n="verifyAccount">
-            Verify Account
+                data-i18n="@(isPasswordReset ? "verifyCode" : "verifyAccount")">
+
+            @(isPasswordReset ? "Verify Code" : "Verify Account")
+
         </button>
 
     </form>
