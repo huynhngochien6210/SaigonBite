@@ -1,0 +1,115 @@
+@{
+    Layout = "_AdminAuthLayout";
+    ViewData["Title"] = "Admin Login";
+}
+
+<div class="admin-login-card">
+
+    <img src="/images/logo.jpg"
+         class="admin-logo"
+         alt="SaigonBite">
+
+    <h1 data-i18n="adminLogin">Admin Login</h1>
+
+    <p class="admin-subtitle" data-i18n="adminSubtitle">
+        Sign in to manage the SaigonBite system
+    </p>
+
+    <form id="adminLoginForm">
+
+        <div class="form-group">
+
+            <label for="username" data-i18n="username">
+                Username
+            </label>
+
+            <input type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                data-i18n-placeholder="usernamePlaceholder"
+                autocomplete="username"
+                required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="password" data-i18n="password">
+                Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        data-i18n-placeholder="passwordPlaceholder"
+                        autocomplete="current-password"
+                        required>
+
+                <button type="button"
+                        id="togglePassword"
+                        class="password-toggle"
+                        aria-label="Show password">
+                    <svg width="22" height="22"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8">
+
+                        <path d="M2 12s3.5-7 10-7
+                                 10 7 10 7-3.5 7-10 7
+                                 -10-7-10-7z"/>
+
+                        <circle cx="12" cy="12" r="3"/>
+
+                    </svg>
+                </button>
+
+            </div>
+
+        </div>
+
+        <button type="submit"
+                class="admin-login-button"
+                data-i18n="adminLoginButton">
+            Log In
+        </button>
+
+        <p id="loginMessage" role="status"></p>
+
+    </form>
+
+    <a href="/" class="back-link" data-i18n="backToPortal">
+        ← Back to System Portal
+    </a>
+
+</div>
+
+@section Scripts {
+    <script>
+        const password = document.getElementById("password");
+        const toggle = document.getElementById("togglePassword");
+
+        toggle.addEventListener("click", function () {
+            const hidden = password.type === "password";
+
+            password.type = hidden ? "text" : "password";
+
+            toggle.setAttribute(
+                "aria-label",
+                hidden ? "Hide password" : "Show password"
+            );
+        });
+
+        document.getElementById("adminLoginForm")
+            .addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                document.getElementById("loginMessage").textContent =
+                    "Authentication is not implemented yet.";
+            });
+    </script>
+}

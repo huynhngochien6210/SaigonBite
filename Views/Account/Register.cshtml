@@ -1,0 +1,119 @@
+
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Create Account";
+    ViewData["TitleKey"] = "createAccount";
+}
+
+<div class="register-card">
+
+    <h1 data-i18n="createAccount">
+        Create Account
+    </h1>
+
+    <p class="register-subtitle"
+       data-i18n="chooseAccountType">
+        Choose your account type
+    </p>
+
+    <div class="account-types">
+
+        <!-- Local Customer -->
+
+        <label class="account-option">
+
+            <input type="radio"
+                   name="accountType"
+                   value="local"
+                   checked>
+
+            <div class="account-option-content">
+
+                <div class="account-icon">
+                    <svg width="35" height="35"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.7">
+                        <rect x="6" y="2"
+                              width="12" height="20"
+                              rx="3"/>
+                        <path d="M10 18h4"/>
+                    </svg>
+                </div>
+
+                <div class="account-description">
+
+                    <h3 data-i18n="localCustomer">
+                        Local Customer
+                    </h3>
+
+                    <p data-i18n="localDescription">
+                        Register with your phone number
+                    </p>
+
+                </div>
+
+            </div>
+
+        </label>
+
+        <!-- Foreign Tourist -->
+
+        <label class="account-option">
+
+            <input type="radio"
+                   name="accountType"
+                   value="foreign">
+
+            <div class="account-option-content">
+
+                <div class="account-icon">
+                    <svg width="35" height="35"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.7">
+                        <circle cx="12" cy="12" r="10"/>
+                        <ellipse cx="12" cy="12"
+                                 rx="4" ry="10"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                </div>
+
+                <div class="account-description">
+
+                    <h3 data-i18n="foreignTourist">
+                        Foreign Tourist
+                    </h3>
+
+                    <p data-i18n="foreignDescription">
+                        Register with your email address
+                    </p>
+
+                </div>
+
+            </div>
+
+        </label>
+
+    </div>
+
+    <button type="button"
+            id="continueRegister"
+            class="register-button"
+            data-i18n="continueButton">
+        Continue →
+    </button>
+
+    <a href="/Account/Login"
+       class="register-back"
+       data-i18n="backToSignIn">
+        ← Back to Sign In
+    </a>
+
+</div>
+
+@section Scripts {
+    <script src="/js/register.js"></script>
+}

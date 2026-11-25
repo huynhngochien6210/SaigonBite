@@ -1,0 +1,245 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background, #fcf5ed);
+    color: var(--text, #454545);
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+.admin-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.admin-brand img {
+    display: block;
+    width: 240px;
+    height: auto;
+    mix-blend-mode: multiply;
+}
+
+.admin-brand-label {
+    font-family: Georgia, serif;
+    font-size: 27px;
+    font-weight: 700;
+    font-style: italic;
+    color: #a50000;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+[data-bs-theme="dark"] .admin-brand img {
+    mix-blend-mode: normal;
+}
+
+[data-bs-theme="dark"] .admin-brand-label {
+    color: var(--heading, #ff8b76);
+}
+
+/* Language */
+
+.language-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.language-switch button {
+    border: none;
+    background: transparent;
+    color: var(--text, #454545);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.language-switch button.active {
+    background: var(--primary, #b90000);
+    color: white;
+}
+
+/* Main container */
+
+.admin-container {
+    min-height: calc(100vh - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px 70px;
+}
+
+/* Login card */
+
+.admin-login-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 40px;
+
+    background: var(--card-background, #fffaf5);
+    border: 1px solid var(--border, #e8c8b4);
+    border-radius: 25px;
+
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.admin-logo {
+    width: 100px;
+    height: 85px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.admin-login-card h1 {
+    font-family: Georgia, serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--heading, #b90000);
+    margin-bottom: 12px;
+}
+
+.admin-subtitle {
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* Form */
+
+.form-group {
+    text-align: left;
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.form-group input {
+    width: 100%;
+    height: 48px;
+    padding: 12px 15px;
+
+    background: var(--card-background, #ffffff);
+    color: var(--text, #454545);
+
+    border: 1px solid var(--border, #e8c8b4);
+    border-radius: 9px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--primary, #b90000);
+}
+
+/* Password */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 50px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+    color: var(--text, #454545);
+    cursor: pointer;
+}
+
+/* Login button */
+
+.admin-login-button {
+    width: 100%;
+    padding: 14px;
+
+    background: var(--primary, #b90000);
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-login-button:hover {
+    background: var(--primary-dark, #900000);
+}
+
+#loginMessage {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+/* Back link */
+
+.back-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: var(--text, #454545);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--heading, #b90000);
+}
+
+/* Responsive */
+
+@media (max-width: 576px) {
+    .admin-header {
+        padding: 15px;
+    }
+
+    .admin-brand img {
+        width: 140px;
+    }
+
+    .admin-brand span {
+        font-size: 16px;
+    }
+
+    .admin-login-card {
+        padding: 25px;
+    }
+
+    .admin-login-card h1 {
+        font-size: 32px;
+    }
+}
+
+[data-bs-theme="light"] .admin-logo {
+    mix-blend-mode: multiply;
+}
+
+[data-bs-theme="dark"] .admin-logo {
+    mix-blend-mode: normal;
+}
