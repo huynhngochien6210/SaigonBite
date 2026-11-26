@@ -1,3 +1,7 @@
+
+@model SaigonBite.ViewModels.AccountProfileViewModel
+@using SaigonBite.Enums
+
 @{
     Layout = "_CustomerLayout";
     ViewData["Title"] = "My Account";
@@ -46,6 +50,7 @@
 
         <div class="profile-fields">
 
+            <!-- Full Name -->
             <div class="profile-field">
 
                 <label data-i18n="fullName">
@@ -54,11 +59,14 @@
 
                 <div class="profile-value"
                      id="displayFullName">
-                    Nguyen Van An
+
+                    @Model.FullName
+
                 </div>
 
             </div>
 
+            <!-- Email -->
             <div class="profile-field">
 
                 <label data-i18n="emailAddress">
@@ -67,11 +75,14 @@
 
                 <div class="profile-value"
                      id="displayEmail">
-                    customer@example.com
+
+                    @(Model.Email ?? "—")
+
                 </div>
 
             </div>
 
+            <!-- Phone Number -->
             <div class="profile-field">
 
                 <label data-i18n="phoneNumber">
@@ -80,11 +91,14 @@
 
                 <div class="profile-value"
                      id="displayPhone">
-                    0912345678
+
+                    @(Model.PhoneNumber ?? "—")
+
                 </div>
 
             </div>
 
+            <!-- Date of Birth -->
             <div class="profile-field">
 
                 <label data-i18n="dateOfBirth">
@@ -93,39 +107,79 @@
 
                 <div class="profile-value"
                      id="displayDateOfBirth">
-                    2004-05-15
+
+                    @(Model.DateOfBirth?.ToString("yyyy-MM-dd") ?? "—")
+
                 </div>
 
             </div>
 
+            <!-- Foreign Tourist Information -->
+            @if (Model.AccountType == AccountType.ForeignTourist)
+            {
+                <div class="profile-field">
+
+                    <label data-i18n="passportNumber">
+                        Passport Number
+                    </label>
+
+                    <div class="profile-value">
+
+                        @(Model.PassportNumber ?? "—")
+
+                    </div>
+
+                </div>
+
+                <div class="profile-field">
+
+                    <label data-i18n="nationality">
+                        Nationality
+                    </label>
+
+                    <div class="profile-value">
+
+                        @(Model.Nationality ?? "—")
+
+                    </div>
+
+                </div>
+            }
+
         </div>
 
+        <!-- Verification Status -->
         <div class="profile-status">
 
             <span data-i18n="accountStatus">
                 Account Status
             </span>
 
-            <strong data-i18n="verified">
-                ✓ Verified
-            </strong>
+            @if (Model.IsVerified)
+            {
+                <strong data-i18n="verified">
+                    ✓ Verified
+                </strong>
+            }
+            else
+            {
+                <strong class="text-warning">
+                    Unverified
+                </strong>
+            }
 
         </div>
 
-        <p id="profileSuccessMessage"
-           class="profile-success-message"
-           role="status"
-           hidden
-           data-i18n="profileUpdated">
-            Profile updated successfully (Demo).
-        </p>
+        <!-- Success Message -->
+        @if (TempData["ProfileSuccess"] != null)
+        {
+            <p class="profile-success-message"
+               role="status">
 
-        <p class="profile-demo-note"
-           data-i18n="verificationDemoNote">
+                @TempData["ProfileSuccess"]
 
-            UI Preview - Backend is not connected.
-
-        </p>
+            </p>
+        }
 
     </section>
 

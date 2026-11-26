@@ -12,8 +12,14 @@ namespace SaigonBite.Services;
 
 public class AccountService : IAccountService
 {
+    // ==========================================
+    // 1. DEPENDENCY INJECTION
+    // ==========================================
+
     private readonly ApplicationDbContext _context;
-    private readonly IPasswordHasher<UserAccount> _passwordHasher;
+
+    private readonly IPasswordHasher<UserAccount>
+        _passwordHasher;
 
     public AccountService(
         ApplicationDbContext context,
@@ -23,11 +29,15 @@ public class AccountService : IAccountService
         _passwordHasher = passwordHasher;
     }
 
-    // Register Local Customer
+
+    // ==========================================
+    // 2. REGISTER LOCAL CUSTOMER
+    // ==========================================
+
     public async Task<(bool Success, string Message, int UserId)>
         RegisterLocalAsync(RegisterLocalViewModel model)
     {
-        // 1. Validate input
+        // Validate input
         string? validationError = ValidateModel(model);
 
         if (validationError != null)
@@ -37,17 +47,20 @@ public class AccountService : IAccountService
 
         string phone = model.Phone.Trim();
 
-        // 2. Check duplicate phone number
+        // Check duplicate phone number
         bool phoneExists = await _context.LocalCustomers
             .AnyAsync(c => c.PhoneNumber == phone);
 
         if (phoneExists)
         {
-            return (false,
-                "Phone number is already registered.", 0);
+            return (
+                false,
+                "Phone number is already registered.",
+                0
+            );
         }
 
-        // 3. Create user account
+        // Create user account
         var user = new UserAccount
         {
             FullName = model.FullName.Trim(),
@@ -58,26 +71,31 @@ public class AccountService : IAccountService
             CreatedAt = DateTime.UtcNow
         };
 
-        // 4. Hash password
+        // Hash password
         user.PasswordHash = _passwordHasher.HashPassword(
-            user, model.Password);
+            user,
+            model.Password);
 
-        // 5. Create local customer profile
+        // Create local customer profile
         user.LocalCustomer = new LocalCustomer
         {
             PhoneNumber = phone,
             UserAccount = user
         };
 
-        // 6. Save to database
+        // Save to database
         return await SaveAccountAsync(user);
     }
 
-    // Register Foreign Tourist
+
+    // ==========================================
+    // 3. REGISTER FOREIGN TOURIST
+    // ==========================================
+
     public async Task<(bool Success, string Message, int UserId)>
         RegisterForeignAsync(RegisterForeignViewModel model)
     {
-        // 1. Validate input
+        // Validate input
         string? validationError = ValidateModel(model);
 
         if (validationError != null)
@@ -85,33 +103,41 @@ public class AccountService : IAccountService
             return (false, validationError, 0);
         }
 
-        string email = model.Email.Trim().ToLowerInvariant();
+        string email = model.Email
+            .Trim()
+            .ToLowerInvariant();
 
         string passport = model.PassportNumber
             .Trim()
             .ToUpperInvariant();
 
-        // 2. Check duplicate email
+        // Check duplicate email
         bool emailExists = await _context.ForeignTourists
             .AnyAsync(c => c.Email == email);
 
         if (emailExists)
         {
-            return (false,
-                "Email is already registered.", 0);
+            return (
+                false,
+                "Email is already registered.",
+                0
+            );
         }
 
-        // 3. Check duplicate passport number
+        // Check duplicate passport number
         bool passportExists = await _context.ForeignTourists
             .AnyAsync(c => c.PassportNumber == passport);
 
         if (passportExists)
         {
-            return (false,
-                "Passport number is already registered.", 0);
+            return (
+                false,
+                "Passport number is already registered.",
+                0
+            );
         }
 
-        // 4. Create user account
+        // Create user account
         var user = new UserAccount
         {
             FullName = model.FullName.Trim(),
@@ -122,11 +148,12 @@ public class AccountService : IAccountService
             CreatedAt = DateTime.UtcNow
         };
 
-        // 5. Hash password
+        // Hash password
         user.PasswordHash = _passwordHasher.HashPassword(
-            user, model.Password);
+            user,
+            model.Password);
 
-        // 6. Create foreign tourist profile
+        // Create foreign tourist profile
         user.ForeignTourist = new ForeignTourist
         {
             Email = email,
@@ -135,14 +162,232 @@ public class AccountService : IAccountService
             UserAccount = user
         };
 
-        // 7. Save to database
+        // Save to database
         return await SaveAccountAsync(user);
     }
 
-    // Validate DataAnnotations
+
+    // ==========================================
+    // 4. GET CUSTOMER PROFILE
+    // ==========================================
+
+    public async Task<AccountProfileViewModel?>
+        GetProfileAsync(int userId)
+    {
+        // Find active and verified customer
+        var user = await _context.UserAccounts
+            .AsNoTracking()
+            .Include(u => u.LocalCustomer)
+            .Include(u => u.ForeignTourist)
+            .FirstOrDefaultAsync(u =>
+                u.UserId == userId &&
+                u.Role == UserRole.Customer &&
+                u.IsActive &&
+                u.IsVerified);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        // Common account information
+        var profile = new AccountProfileViewModel
+        {
+            UserId = user.UserId,
+            FullName = user.FullName,
+            IsVerified = user.IsVerified,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt
+        };
+
+        // Local Customer profile
+        if (
+            user.AccountType == AccountType.LocalCustomer &&
+            user.LocalCustomer != null
+        )
+        {
+            profile.AccountType =
+                AccountType.LocalCustomer;
+
+            profile.PhoneNumber =
+                user.LocalCustomer.PhoneNumber;
+
+            profile.Email =
+                user.LocalCustomer.Email;
+
+            profile.DateOfBirth =
+                user.LocalCustomer.DateOfBirth;
+        }
+
+        // Foreign Tourist profile
+        else if (
+            user.AccountType == AccountType.ForeignTourist &&
+            user.ForeignTourist != null
+        )
+        {
+            profile.AccountType =
+                AccountType.ForeignTourist;
+
+            profile.Email =
+                user.ForeignTourist.Email;
+
+            profile.PhoneNumber =
+                user.ForeignTourist.PhoneNumber;
+
+            profile.PassportNumber =
+                user.ForeignTourist.PassportNumber;
+
+            profile.Nationality =
+                user.ForeignTourist.Nationality;
+
+            profile.DateOfBirth =
+                user.ForeignTourist.DateOfBirth;
+        }
+
+        // Invalid customer profile
+        else
+        {
+            return null;
+        }
+
+        return profile;
+    }
+
+
+    // ==========================================
+    // 5. UPDATE CUSTOMER PROFILE
+    // ==========================================
+
+    public async Task<(bool Success, string Message)>
+        UpdateProfileAsync(
+            int userId,
+            EditAccountViewModel model)
+    {
+        // Validate input
+        string? validationError = ValidateModel(model);
+
+        if (validationError != null)
+        {
+            return (false, validationError);
+        }
+
+        // Validate full name
+        if (string.IsNullOrWhiteSpace(model.FullName))
+        {
+            return (
+                false,
+                "Full name is required."
+            );
+        }
+
+        // Validate date of birth
+        if (
+            model.DateOfBirth.HasValue &&
+            model.DateOfBirth.Value.Date > DateTime.Today
+        )
+        {
+            return (
+                false,
+                "Date of birth cannot be in the future."
+            );
+        }
+
+        // Find active and verified customer
+        var user = await _context.UserAccounts
+            .Include(u => u.LocalCustomer)
+            .Include(u => u.ForeignTourist)
+            .FirstOrDefaultAsync(u =>
+                u.UserId == userId &&
+                u.Role == UserRole.Customer &&
+                u.IsActive &&
+                u.IsVerified);
+
+        if (user == null)
+        {
+            return (
+                false,
+                "Customer account not found."
+            );
+        }
+
+        // Update Local Customer
+        if (
+            user.AccountType == AccountType.LocalCustomer &&
+            user.LocalCustomer != null
+        )
+        {
+            user.LocalCustomer.Email =
+                string.IsNullOrWhiteSpace(model.Email)
+                    ? null
+                    : model.Email.Trim().ToLowerInvariant();
+
+            user.LocalCustomer.DateOfBirth =
+                model.DateOfBirth?.Date;
+
+            // Login phone number cannot be changed
+        }
+
+        // Update Foreign Tourist
+        else if (
+            user.AccountType == AccountType.ForeignTourist &&
+            user.ForeignTourist != null
+        )
+        {
+            // Validate nationality
+            if (string.IsNullOrWhiteSpace(model.Nationality))
+            {
+                return (
+                    false,
+                    "Nationality is required."
+                );
+            }
+
+            user.ForeignTourist.Nationality =
+                model.Nationality.Trim();
+
+            user.ForeignTourist.PhoneNumber =
+                string.IsNullOrWhiteSpace(model.PhoneNumber)
+                    ? null
+                    : model.PhoneNumber.Trim();
+
+            user.ForeignTourist.DateOfBirth =
+                model.DateOfBirth?.Date;
+
+            // Login email and passport cannot be changed
+        }
+
+        // Invalid customer profile
+        else
+        {
+            return (
+                false,
+                "Invalid customer profile."
+            );
+        }
+
+        // Update common account information
+        user.FullName = model.FullName.Trim();
+
+        user.UpdatedAt = DateTime.UtcNow;
+
+        // Save changes to database
+        await _context.SaveChangesAsync();
+
+        return (
+            true,
+            "Profile updated successfully."
+        );
+    }
+
+
+    // ==========================================
+    // 6. VALIDATE DATA ANNOTATIONS
+    // ==========================================
+
     private static string? ValidateModel(object model)
     {
         var context = new ValidationContext(model);
+
         var results = new List<ValidationResult>();
 
         bool isValid = Validator.TryValidateObject(
@@ -157,10 +402,14 @@ public class AccountService : IAccountService
         }
 
         return results.FirstOrDefault()?.ErrorMessage
-            ?? "Invalid registration information.";
+            ?? "Invalid account information.";
     }
 
-    // Save user account and customer profile
+
+    // ==========================================
+    // 7. SAVE ACCOUNT TO DATABASE
+    // ==========================================
+
     private async Task<(bool Success, string Message, int UserId)>
         SaveAccountAsync(UserAccount user)
     {
@@ -176,10 +425,15 @@ public class AccountService : IAccountService
                 user.UserId
             );
         }
+
         catch (DbUpdateException ex)
-            when (ex.InnerException is SqlException sqlEx
-                && (sqlEx.Number == 2601
-                    || sqlEx.Number == 2627))
+            when (
+                ex.InnerException is SqlException sqlEx &&
+                (
+                    sqlEx.Number == 2601 ||
+                    sqlEx.Number == 2627
+                )
+            )
         {
             _context.ChangeTracker.Clear();
 

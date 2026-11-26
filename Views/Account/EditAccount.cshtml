@@ -1,6 +1,17 @@
+
+@model SaigonBite.ViewModels.EditAccountViewModel
+@using SaigonBite.ViewModels
+@using SaigonBite.Enums
+
 @{
     Layout = "_CustomerLayout";
     ViewData["Title"] = "Edit Account";
+
+    var profile =
+        (AccountProfileViewModel)ViewData["Profile"]!;
+
+    bool isLocal =
+        profile.AccountType == AccountType.LocalCustomer;
 }
 
 <div class="account-page">
@@ -24,8 +35,18 @@
 
         </h2>
 
-        <form id="editProfileForm" method="post">
+        <form id="editProfileForm"
+              method="post"
+              action="@Url.Action("EditAccount", "Account")">
 
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All"
+                 class="text-danger"
+                 role="alert">
+            </div>
+
+            <!-- Full Name -->
             <div class="register-field">
 
                 <label for="editFullName"
@@ -33,7 +54,8 @@
                     Full Name
                 </label>
 
-                <input type="text"
+                <input asp-for="FullName"
+                       type="text"
                        id="editFullName"
                        maxlength="100"
                        autocomplete="name"
@@ -41,6 +63,7 @@
 
             </div>
 
+            <!-- Email Address -->
             <div class="register-field">
 
                 <label for="editEmail"
@@ -48,12 +71,29 @@
                     Email Address
                 </label>
 
-                <input type="email"
-                       id="editEmail"
-                       autocomplete="email">
+                @if (isLocal)
+                {
+                    <input asp-for="Email"
+                           type="email"
+                           id="editEmail"
+                           maxlength="254"
+                           autocomplete="email">
+                }
+                else
+                {
+                    <input type="email"
+                           id="editEmail"
+                           value="@profile.Email"
+                           readonly>
+
+                    <small class="text-muted">
+                        Login email cannot be changed here.
+                    </small>
+                }
 
             </div>
 
+            <!-- Phone Number -->
             <div class="register-field">
 
                 <label for="editPhone"
@@ -61,13 +101,29 @@
                     Phone Number
                 </label>
 
-                <input type="tel"
-                       id="editPhone"
-                       autocomplete="tel"
-                       required>
+                @if (isLocal)
+                {
+                    <input type="tel"
+                           id="editPhone"
+                           value="@profile.PhoneNumber"
+                           readonly>
+
+                    <small class="text-muted">
+                        Login phone number cannot be changed here.
+                    </small>
+                }
+                else
+                {
+                    <input asp-for="PhoneNumber"
+                           type="tel"
+                           id="editPhone"
+                           maxlength="20"
+                           autocomplete="tel">
+                }
 
             </div>
 
+            <!-- Date of Birth -->
             <div class="register-field">
 
                 <label for="editDateOfBirth"
@@ -75,14 +131,54 @@
                     Date of Birth
                 </label>
 
-                <input type="date"
+                <input asp-for="DateOfBirth"
+                       asp-format="{0:yyyy-MM-dd}"
+                       type="date"
                        id="editDateOfBirth"
                        autocomplete="bday">
 
             </div>
 
+            <!-- Foreign Tourist Information -->
+            @if (!isLocal)
+            {
+                <div class="register-field">
+
+                    <label for="editPassport"
+                           data-i18n="passportNumber">
+                        Passport Number
+                    </label>
+
+                    <input type="text"
+                           id="editPassport"
+                           value="@profile.PassportNumber"
+                           readonly>
+
+                    <small class="text-muted">
+                        Passport number cannot be changed here.
+                    </small>
+
+                </div>
+
+                <div class="register-field">
+
+                    <label for="editNationality"
+                           data-i18n="nationality">
+                        Nationality
+                    </label>
+
+                    <input asp-for="Nationality"
+                           type="text"
+                           id="editNationality"
+                           maxlength="100"
+                           required>
+
+                </div>
+            }
+
             <p id="profileMessage"
-               role="status"></p>
+               role="status">
+            </p>
 
             <div class="profile-form-actions">
 
@@ -105,13 +201,6 @@
             </div>
 
         </form>
-
-        <p class="profile-demo-note"
-           data-i18n="verificationDemoNote">
-
-            UI Preview - Backend is not connected.
-
-        </p>
 
     </section>
 
