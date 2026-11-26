@@ -1,0 +1,299 @@
+
+@{
+    ViewData["Title"] = "Sửa thương hiệu";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-brands.css"
+          asp-append-version="true" />
+}
+
+<div class="edit-brand-page">
+
+    <!-- BACKGROUND IMAGE -->
+    <section class="edit-brand-banner">
+    </section>
+
+
+    <!-- EDIT FORM -->
+    <section class="edit-brand-card">
+
+        <form id="editBrandForm" enctype="multipart/form-data">
+
+            <input type="hidden" id="editBrandId" value="1" />
+
+            <!-- BRAND NAME -->
+            <div class="edit-form-row">
+                <label for="editBrandName">
+                    Tên thương hiệu <span>*</span>
+                </label>
+
+                <div class="edit-form-field">
+                    <input type="text"
+                           id="editBrandName"
+                           name="BrandName"
+                           value="Cơm tấm Sài Gòn"
+                           maxlength="100"
+                           required />
+                </div>
+            </div>
+
+
+            <!-- DESCRIPTION -->
+            <div class="edit-form-row">
+                <label for="editBrandDescription">
+                    Mô tả ngắn <span>*</span>
+                </label>
+
+                <div class="edit-form-field">
+                    <textarea id="editBrandDescription"
+                              name="Description"
+                              rows="3"
+                              maxlength="200"
+                              required>Thương hiệu cơm tấm truyền thống Sài Gòn, nổi tiếng với sườn nướng, bì, chả và hương vị đậm đà đặc trưng.</textarea>
+                </div>
+            </div>
+
+
+            <!-- BRAND IMAGE -->
+            <div class="edit-form-row">
+                <label>
+                    Hình ảnh / Logo <span>*</span>
+                </label>
+
+                <div class="edit-form-field">
+                    <div class="edit-image-area">
+
+                        <div class="edit-current-image"
+                             id="editCurrentImage">
+                            <span>🍛</span>
+                        </div>
+
+                        <div class="edit-upload-area">
+                            <label for="editBrandLogo"
+                                   class="edit-upload-button">
+                                <span class="camera-icon">▧</span>
+                                <strong>Thay đổi ảnh</strong>
+                            </label>
+
+                            <input type="file"
+                                   id="editBrandLogo"
+                                   name="LogoFile"
+                                   accept=".jpg,.jpeg,.png"
+                                   hidden />
+
+                            <small>JPG, PNG (tối đa 2MB)</small>
+                            <span id="editFileError"
+                                  class="edit-file-error"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- STATUS -->
+            <div class="edit-form-row">
+                <label for="editBrandStatus">
+                    Trạng thái <span>*</span>
+                </label>
+
+                <div class="edit-form-field">
+                    <select id="editBrandStatus"
+                            name="IsActive"
+                            class="edit-status-select">
+                        <option value="active" selected>
+                            Đang hoạt động
+                        </option>
+
+                        <option value="paused">
+                            Tạm dừng
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="edit-form-divider"></div>
+
+
+            <!-- LINKED HUBS -->
+            <div class="edit-form-row edit-hub-row">
+                <label>Hub đã liên kết</label>
+
+                <div class="edit-form-field">
+
+                    <div class="edit-selected-hubs"
+                         id="editSelectedHubs">
+
+                        <!-- JavaScript sẽ render các Hub đã chọn -->
+
+                    </div>
+
+                    <button type="button"
+                            class="edit-manage-hub-button"
+                            onclick="openEditHubModal()">
+                        <span>♧</span>
+                        Quản lý hub
+                    </button>
+
+                </div>
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- FORM ACTIONS -->
+    <div class="edit-form-actions">
+
+        <a asp-controller="Admin"
+           asp-action="Brands"
+           class="edit-cancel-button">
+            Hủy
+        </a>
+
+        <button type="button"
+                class="edit-restore-button"
+                onclick="restoreEditBrand()">
+            <span>↶</span>
+            Khôi phục
+        </button>
+
+        <button type="button"
+                class="edit-save-button"
+                onclick="saveEditBrand()">
+            <span>▣</span>
+            Lưu thay đổi
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- HUB MANAGEMENT POPUP -->
+<div class="hub-modal-overlay" id="editHubModal">
+
+    <div class="hub-modal edit-hub-modal">
+
+        <div class="hub-modal-header">
+            <h2>Quản lý hub liên kết</h2>
+
+            <button type="button"
+                    class="hub-modal-close"
+                    onclick="closeEditHubModal()">
+                ×
+            </button>
+        </div>
+
+
+        <div class="hub-list">
+
+            <!-- HUB BEN THANH -->
+            <label class="hub-option">
+                <input type="checkbox"
+                       value="HBT"
+                       data-name="Hub Bến Thành"
+                       checked />
+
+                <span class="hub-checkbox"></span>
+
+                <span class="hub-information">
+                    <strong>Hub Bến Thành</strong>
+                    <small>Quận 1, TP. Hồ Chí Minh</small>
+                </span>
+            </label>
+
+
+            <!-- HUB 1 -->
+            <label class="hub-option">
+                <input type="checkbox"
+                       value="H1"
+                       data-name="Hub Quận 1"
+                       checked />
+
+                <span class="hub-checkbox"></span>
+
+                <span class="hub-information">
+                    <strong>Hub Quận 1</strong>
+                    <small>Quận 1, TP. Hồ Chí Minh</small>
+                </span>
+            </label>
+
+
+            <!-- HUB 3 -->
+            <label class="hub-option">
+                <input type="checkbox"
+                       value="H3"
+                       data-name="Hub Quận 3"
+                       checked />
+
+                <span class="hub-checkbox"></span>
+
+                <span class="hub-information">
+                    <strong>Hub Quận 3</strong>
+                    <small>Quận 3, TP. Hồ Chí Minh</small>
+                </span>
+            </label>
+
+
+            <!-- HUB 5 -->
+            <label class="hub-option">
+                <input type="checkbox"
+                       value="H5"
+                       data-name="Hub Quận 5" />
+
+                <span class="hub-checkbox"></span>
+
+                <span class="hub-information">
+                    <strong>Hub Quận 5</strong>
+                    <small>Quận 5, TP. Hồ Chí Minh</small>
+                </span>
+            </label>
+
+
+            <!-- HUB PHU NHUAN -->
+            <label class="hub-option">
+                <input type="checkbox"
+                       value="HPN"
+                       data-name="Hub Phú Nhuận" />
+
+                <span class="hub-checkbox"></span>
+
+                <span class="hub-information">
+                    <strong>Hub Phú Nhuận</strong>
+                    <small>Quận Phú Nhuận, TP. Hồ Chí Minh</small>
+                </span>
+            </label>
+
+        </div>
+
+
+        <div class="hub-modal-actions">
+
+            <button type="button"
+                    class="hub-close-button"
+                    onclick="closeEditHubModal()">
+                Đóng
+            </button>
+
+            <button type="button"
+                    class="hub-save-button"
+                    onclick="saveEditSelectedHubs()">
+                Lưu
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script src="~/js/admin-brands.js"
+            asp-append-version="true"></script>
+}
