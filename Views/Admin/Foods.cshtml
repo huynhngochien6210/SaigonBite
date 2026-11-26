@@ -1,0 +1,341 @@
+
+@{
+    ViewData["Title"] = "Quản lý món ăn";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-foods.css"
+          asp-append-version="true" />
+}
+
+<div class="food-page">
+
+    <!-- BANNER -->
+    <section class="food-hero">
+        <div class="food-hero-content">
+            <h1>Quản lý món ăn</h1>
+            <p>Tạo, cập nhật, xóa món ăn và quản lý trạng thái bán.</p>
+        </div>
+    </section>
+
+    <!-- SEARCH AND FILTER -->
+    <section class="food-toolbar">
+
+        <div class="food-search">
+            <span class="search-icon">⌕</span>
+            <input type="text"
+                   id="foodSearch"
+                   placeholder="Tìm kiếm món ăn theo tên..." />
+        </div>
+
+        <div class="food-filter">
+            <label for="brandFilter">Thương hiệu</label>
+            <select id="brandFilter">
+                <option value="all">Tất cả thương hiệu</option>
+                <option value="Sài Gòn">Sài Gòn</option>
+                <option value="Bình Dương">Bình Dương</option>
+            </select>
+        </div>
+
+        <div class="food-filter">
+            <label for="categoryFilter">Danh mục</label>
+            <select id="categoryFilter">
+                <option value="all">Tất cả danh mục</option>
+                <option value="Món chính">Món chính</option>
+                <option value="Món nước">Món nước</option>
+                <option value="Ăn vặt">Ăn vặt</option>
+                <option value="Đồ uống">Đồ uống</option>
+            </select>
+        </div>
+
+        <div class="food-filter">
+            <label for="statusFilter">Trạng thái</label>
+            <select id="statusFilter">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="available">Còn bán</option>
+                <option value="unavailable">Hết bán</option>
+            </select>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="CreateFood"
+           class="add-food-button">
+            <span>＋</span>
+            Thêm món ăn
+        </a>
+
+    </section>
+
+    <!-- FOOD TABLE -->
+    <section class="food-table-card">
+
+        <div class="food-table-scroll">
+
+            <table class="food-table" id="foodTable">
+
+                <thead>
+                    <tr>
+                        <th class="image-column">Hình ảnh</th>
+                        <th>Tên món</th>
+                        <th>Thương hiệu</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th>Trạng thái</th>
+                        <th class="action-column">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- FOOD 1 -->
+                    <tr data-id="1"
+                        data-brand="Sài Gòn"
+                        data-category="Món chính"
+                        data-status="available">
+
+                        <td>
+                            <div class="food-image food-image-rice">🍛</div>
+                        </td>
+
+                        <td class="food-name">Cơm tấm Sài Gòn</td>
+
+                        <td>
+                            <span class="food-brand">♧</span>
+                            Sài Gòn
+                        </td>
+
+                        <td>
+                            <span class="category-tag category-main">
+                                ♜ Món chính
+                            </span>
+                        </td>
+
+                        <td class="food-price">65.000 đ</td>
+
+                        <td>
+                            <span class="food-status status-available">
+                                <span>✓</span> Còn bán
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="food-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="ViewFood"
+                                   asp-route-id="1"
+                                   class="food-action view-action">
+                                    <span>◎</span> Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditFood"
+                                   asp-route-id="1"
+                                   class="food-action edit-action">
+                                    <span>✎</span> Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="food-action delete-action"
+                                        onclick="deleteFood(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- FOOD 2 -->
+                    <tr data-id="2"
+                        data-brand="Sài Gòn"
+                        data-category="Món nước"
+                        data-status="available">
+
+                        <td>
+                            <div class="food-image food-image-noodle">🍜</div>
+                        </td>
+
+                        <td class="food-name">Hủ tiếu Nam Vang</td>
+
+                        <td>
+                            <span class="food-brand">♧</span>
+                            Sài Gòn
+                        </td>
+
+                        <td>
+                            <span class="category-tag category-soup">
+                                ♨ Món nước
+                            </span>
+                        </td>
+
+                        <td class="food-price">62.000 đ</td>
+
+                        <td>
+                            <span class="food-status status-available">
+                                <span>✓</span> Còn bán
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="food-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="ViewFood"
+                                   asp-route-id="2"
+                                   class="food-action view-action">
+                                    <span>◎</span> Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditFood"
+                                   asp-route-id="2"
+                                   class="food-action edit-action">
+                                    <span>✎</span> Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="food-action delete-action"
+                                        onclick="deleteFood(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- FOOD 3 -->
+                    <tr data-id="3"
+                        data-brand="Sài Gòn"
+                        data-category="Ăn vặt"
+                        data-status="unavailable">
+
+                        <td>
+                            <div class="food-image food-image-banhmi">🥖</div>
+                        </td>
+
+                        <td class="food-name">Bánh mì thịt</td>
+
+                        <td>
+                            <span class="food-brand">♧</span>
+                            Sài Gòn
+                        </td>
+
+                        <td>
+                            <span class="category-tag category-snack">
+                                ▱ Ăn vặt
+                            </span>
+                        </td>
+
+                        <td class="food-price">35.000 đ</td>
+
+                        <td>
+                            <span class="food-status status-unavailable">
+                                <span>⊘</span> Hết bán
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="food-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="ViewFood"
+                                   asp-route-id="3"
+                                   class="food-action view-action">
+                                    <span>◎</span> Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditFood"
+                                   asp-route-id="3"
+                                   class="food-action edit-action">
+                                    <span>✎</span> Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="food-action delete-action"
+                                        onclick="deleteFood(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- FOOD 4 -->
+                    <tr data-id="4"
+                        data-brand="Sài Gòn"
+                        data-category="Đồ uống"
+                        data-status="available">
+
+                        <td>
+                            <div class="food-image food-image-dessert">🥤</div>
+                        </td>
+
+                        <td class="food-name">Chè Sài Gòn</td>
+
+                        <td>
+                            <span class="food-brand">♧</span>
+                            Sài Gòn
+                        </td>
+
+                        <td>
+                            <span class="category-tag category-drink">
+                                ♧ Đồ uống
+                            </span>
+                        </td>
+
+                        <td class="food-price">28.000 đ</td>
+
+                        <td>
+                            <span class="food-status status-available">
+                                <span>✓</span> Còn bán
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="food-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="ViewFood"
+                                   asp-route-id="4"
+                                   class="food-action view-action">
+                                    <span>◎</span> Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditFood"
+                                   asp-route-id="4"
+                                   class="food-action edit-action">
+                                    <span>✎</span> Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="food-action delete-action"
+                                        onclick="deleteFood(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="empty-food-message" id="emptyFoodMessage">
+                Không tìm thấy món ăn phù hợp.
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PAGINATION -->
+    <div class="food-pagination">
+        <span id="foodCount">Hiển thị 1 - 4 của 4 món ăn</span>
+
+        <div class="pagination-buttons">
+            <button type="button" disabled>‹</button>
+            <button type="button" class="current-page">1</button>
+            <button type="button" disabled>›</button>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-foods.js"
+            asp-append-version="true"></script>
+}
