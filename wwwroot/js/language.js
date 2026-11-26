@@ -38,6 +38,10 @@ const translations = {
         phonePlaceholder: "Enter your phone number",
         emailAddress: "Email Address",
         emailPlaceholder: "Enter your email address",
+        passportNumber: "Passport Number",
+        passportPlaceholder: "Enter your passport number",
+        nationality: "Nationality",
+        nationalityPlaceholder: "Enter your nationality",
         confirmPassword: "Confirm Password",
         confirmPasswordPlaceholder: "Confirm your password",
         acceptTerms: "I agree to the Terms and Conditions",
@@ -133,6 +137,8 @@ const translations = {
         close: "Close",
         orderHistoryDemoNote:
             "Demo order history. Backend is not connected.",
+        otpSimulationNote:
+        "Development mode - Check the server terminal for your verification code.",
     },
 
     vi: {
@@ -172,6 +178,10 @@ const translations = {
         phonePlaceholder: "Nhập số điện thoại",
         emailAddress: "Địa chỉ email",
         emailPlaceholder: "Nhập địa chỉ email",
+        passportNumber: "Số hộ chiếu",
+        passportPlaceholder: "Nhập số hộ chiếu",
+        nationality: "Quốc tịch",
+        nationalityPlaceholder: "Nhập quốc tịch",
         confirmPassword: "Xác nhận mật khẩu",
         confirmPasswordPlaceholder: "Nhập lại mật khẩu",
         acceptTerms: "Tôi đồng ý với các điều khoản và điều kiện",
@@ -267,6 +277,8 @@ const translations = {
         close: "Đóng",
         orderHistoryDemoNote:
             "Lịch sử đơn hàng mô phỏng. Backend chưa được kết nối.",
+        otpSimulationNote:
+        "Chế độ phát triển - Kiểm tra Terminal để lấy mã xác thực.",
     }
 };
 

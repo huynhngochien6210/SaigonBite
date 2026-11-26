@@ -1,115 +1,40 @@
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const storageKey = "saigonbite_demo_profile";
+    // Remove obsolete demo data
+    sessionStorage.removeItem("saigonbite_demo_profile");
 
-    const defaultProfile = {
-        fullName: "Nguyen Van An",
-        email: "customer@example.com",
-        phone: "0912345678",
-        dateOfBirth: "2004-05-15"
-    };
-
-    // Read profile
-
-    function getProfile() {
-
-        try {
-
-            const stored = sessionStorage.getItem(storageKey);
-
-            return stored
-                ? { ...defaultProfile, ...JSON.parse(stored) }
-                : { ...defaultProfile };
-
-        } catch {
-
-            return { ...defaultProfile };
-
-        }
-
-    }
-
-    const profile = getProfile();
-
-    // Display information
-
-    function setText(id, value) {
-
-        const element = document.getElementById(id);
-
-        if (element) {
-            element.textContent = value || "—";
-        }
-
-    }
-
-    setText("sidebarFullName", profile.fullName);
-    setText("displayFullName", profile.fullName);
-    setText("displayEmail", profile.email);
-    setText("displayPhone", profile.phone);
-    setText("displayDateOfBirth", profile.dateOfBirth);
-
-    // Show success message after saving
-
-    const successMessage =
-        document.getElementById("profileSuccessMessage");
-
-    if (successMessage) {
-
-        const updated = sessionStorage.getItem(
-            "saigonbite_profile_updated"
-        );
-
-        if (updated === "true") {
-
-            successMessage.hidden = false;
-
-            sessionStorage.removeItem(
-                "saigonbite_profile_updated"
-            );
-
-        }
-
-    }
-
-    // Demo sign out
-
-    const signOut = document.getElementById("demoSignOut");
-
-    if (signOut) {
-
-        signOut.addEventListener("click", function () {
-
-            sessionStorage.removeItem(storageKey);
-
-            sessionStorage.removeItem(
-                "saigonbite_profile_updated"
-            );
-
-        });
-
-    }
-
-    // Edit Account
+    sessionStorage.removeItem("saigonbite_profile_updated");
 
     const form = document.getElementById("editProfileForm");
 
     if (!form) return;
 
-    const fullName = document.getElementById("editFullName");
-    const email = document.getElementById("editEmail");
-    const phone = document.getElementById("editPhone");
-    const dateOfBirth = document.getElementById("editDateOfBirth");
-    const message = document.getElementById("profileMessage");
+    const fullName =
+        document.getElementById("editFullName");
 
-    // Fill existing profile
+    const email =
+        document.getElementById("editEmail");
 
-    fullName.value = profile.fullName;
-    email.value = profile.email;
-    phone.value = profile.phone;
-    dateOfBirth.value = profile.dateOfBirth;
+    const phone =
+        document.getElementById("editPhone");
 
-    // Prevent future date of birth
+    const dateOfBirth =
+        document.getElementById("editDateOfBirth");
+
+    const nationality =
+        document.getElementById("editNationality");
+
+    const message =
+        document.getElementById("profileMessage");
+
+    const submitButton =
+        form.querySelector('button[type="submit"]');
+
+
+    // ==========================================
+    // 1. DATE OF BIRTH LIMIT
+    // ==========================================
 
     const today = new Date();
 
@@ -123,31 +48,57 @@ document.addEventListener("DOMContentLoaded", function () {
         today.getDate()
     ).padStart(2, "0");
 
-    dateOfBirth.max = `${year}-${month}-${day}`;
+    if (dateOfBirth) {
 
-    // Bilingual validation message
-
-    function showMessage(en, vi) {
-
-        const isVietnamese =
-            document.documentElement.lang
-                .toLowerCase().startsWith("vi");
-
-        message.textContent = isVietnamese ? vi : en;
+        dateOfBirth.max = `${year}-${month}-${day}`;
 
     }
 
-    // Save changes
+
+    // ==========================================
+    // 2. BILINGUAL MESSAGE
+    // ==========================================
+
+    function showMessage(en, vi, isError = true) {
+
+        if (!message) return;
+
+        const isVietnamese =
+            document.documentElement.lang
+                .toLowerCase()
+                .startsWith("vi");
+
+        message.textContent =
+            isVietnamese ? vi : en;
+
+        message.classList.toggle(
+            "text-danger",
+            isError
+        );
+
+        message.classList.toggle(
+            "text-success",
+            !isError
+        );
+    }
+
+
+    // ==========================================
+    // 3. VALIDATE AND SUBMIT FORM
+    // ==========================================
 
     form.addEventListener("submit", function (event) {
 
-        event.preventDefault();
+        if (message) {
 
-        message.textContent = "";
+            message.textContent = "";
 
-        // Full name validation
+        }
 
+        // Full Name
         if (!fullName.value.trim()) {
+
+            event.preventDefault();
 
             showMessage(
                 "Please enter your full name.",
@@ -155,12 +106,16 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             return;
-
         }
 
-        // Email validation
+        // Editable Email
+        if (
+            email &&
+            !email.readOnly &&
+            !email.validity.valid
+        ) {
 
-        if (!email.validity.valid) {
+            event.preventDefault();
 
             showMessage(
                 "Invalid email address.",
@@ -168,28 +123,34 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             return;
-
         }
 
-        // Phone validation - BR18
+        // Foreign Tourist Phone Number
+        if (
+            phone &&
+            !phone.readOnly &&
+            phone.value.trim() &&
+            !/^\+?[0-9]{7,15}$/.test(phone.value.trim())
+        ) {
 
-        if (!/^0[35789][0-9]{8}$/.test(phone.value.trim())) {
+            event.preventDefault();
 
             showMessage(
-                "Invalid Vietnamese mobile number.",
-                "Số điện thoại Việt Nam không hợp lệ."
+                "Invalid phone number.",
+                "Số điện thoại không hợp lệ."
             );
 
             return;
-
         }
 
-        // Date of birth validation
-
+        // Date of Birth
         if (
+            dateOfBirth &&
             dateOfBirth.value &&
             dateOfBirth.value > dateOfBirth.max
         ) {
+
+            event.preventDefault();
 
             showMessage(
                 "Date of birth cannot be in the future.",
@@ -197,49 +158,61 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             return;
-
         }
 
-        // Updated profile
+        // Nationality
+        if (
+            nationality &&
+            !nationality.value.trim()
+        ) {
 
-        const updatedProfile = {
-
-            fullName: fullName.value.trim(),
-
-            email: email.value.trim(),
-
-            phone: phone.value.trim(),
-
-            dateOfBirth: dateOfBirth.value
-
-        };
-
-        // Temporary frontend storage
-
-        try {
-
-            sessionStorage.setItem(
-                storageKey,
-                JSON.stringify(updatedProfile)
-            );
-
-            sessionStorage.setItem(
-                "saigonbite_profile_updated",
-                "true"
-            );
-
-        } catch {
+            event.preventDefault();
 
             showMessage(
-                "Unable to save demo profile.",
-                "Không thể lưu thông tin thử nghiệm."
+                "Please enter your nationality.",
+                "Vui lòng nhập quốc tịch."
             );
 
             return;
+        }
+
+        // Normalize editable input
+        fullName.value = fullName.value.trim();
+
+        if (email && !email.readOnly) {
+
+            email.value = email.value.trim();
 
         }
 
-        window.location.href = "/Account/MyAccount";
+        if (phone && !phone.readOnly) {
+
+            phone.value = phone.value.trim();
+
+        }
+
+        if (nationality) {
+
+            nationality.value =
+                nationality.value.trim();
+
+        }
+
+        // Disable duplicate submission
+        if (submitButton) {
+
+            submitButton.disabled = true;
+
+        }
+
+        showMessage(
+            "Saving changes...",
+            "Đang lưu thay đổi...",
+            false
+        );
+
+        // Allow normal POST to AccountController
+        // Do not call event.preventDefault() here
 
     });
 

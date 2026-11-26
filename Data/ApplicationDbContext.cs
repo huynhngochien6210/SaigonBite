@@ -21,6 +21,12 @@ namespace SaigonBite.Data
 
         public DbSet<Voucher> Vouchers { get; set; }
 
+        // Use Case E - Manage User Accounts
+        public DbSet<UserAccount> UserAccounts { get; set; }
+        public DbSet<LocalCustomer> LocalCustomers { get; set; }
+        public DbSet<ForeignTourist> ForeignTourists { get; set; }
+        public DbSet<VerificationCode> VerificationCodes { get; set; }
+        public DbSet<PasswordReset> PasswordResets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,6 +89,163 @@ namespace SaigonBite.Data
                 .WithMany(v => v.Orders)
                 .HasForeignKey(o => o.VoucherId)
                 .OnDelete(DeleteBehavior.Restrict);
+                
+                
+            // ==========================================
+            // USER ACCOUNTS
+            // ==========================================
+
+            modelBuilder.Entity<UserAccount>(entity =>
+            {
+                entity.ToTable("UserAccounts");
+
+                entity.HasKey(x => x.UserId);
+
+                entity.HasIndex(x => x.Username)
+                    .IsUnique()
+                    .HasFilter("[Username] IS NOT NULL");
+
+                entity.Property(x => x.Role)
+                    .HasConversion<string>()
+                    .HasMaxLength(30);
+
+                entity.Property(x => x.AccountType)
+                    .HasConversion<string>()
+                    .HasMaxLength(30);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_UserAccounts_Role_AccountType",
+                    @"(
+                        [Role] = 'Customer'
+                        AND [AccountType] IS NOT NULL
+                        AND [AccountType] IN
+                            ('LocalCustomer', 'ForeignTourist')
+                    )
+                    OR
+                    (
+                        [Role] IN ('Admin', 'KitchenStaff', 'Shipper')
+                        AND [AccountType] IS NULL
+                        AND [Username] IS NOT NULL
+                    )"
+                ));
+            });
+
+            // ==========================================
+            // LOCAL CUSTOMERS
+            // ==========================================
+
+            modelBuilder.Entity<LocalCustomer>(entity =>
+            {
+                entity.ToTable("LocalCustomers");
+
+                entity.HasKey(x => x.UserId);
+
+                entity.HasIndex(x => x.PhoneNumber)
+                    .IsUnique();
+
+                entity.HasOne(x => x.UserAccount)
+                    .WithOne(x => x.LocalCustomer)
+                    .HasForeignKey<LocalCustomer>(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_LocalCustomers_PhoneNumber",
+                    @"LEN([PhoneNumber]) = 10
+                      AND LEFT([PhoneNumber], 2)
+                          IN ('03', '05', '07', '08', '09')
+                      AND [PhoneNumber] COLLATE Latin1_General_100_BIN2
+                          NOT LIKE '%[^0-9]%'"
+                ));
+            });
+
+            // ==========================================
+            // FOREIGN TOURISTS
+            // ==========================================
+
+            modelBuilder.Entity<ForeignTourist>(entity =>
+            {
+                entity.ToTable("ForeignTourists");
+
+                entity.HasKey(x => x.UserId);
+
+                entity.HasIndex(x => x.Email)
+                    .IsUnique();
+
+                entity.HasIndex(x => x.PassportNumber)
+                    .IsUnique();
+
+                entity.HasOne(x => x.UserAccount)
+                    .WithOne(x => x.ForeignTourist)
+                    .HasForeignKey<ForeignTourist>(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_ForeignTourists_PassportNumber",
+                    @"LEN([PassportNumber]) BETWEEN 6 AND 9
+                      AND [PassportNumber] COLLATE Latin1_General_100_BIN2
+                          NOT LIKE '%[^A-Za-z0-9]%'"
+                ));
+            });
+
+            // ==========================================
+            // VERIFICATION CODES
+            // ==========================================
+
+            modelBuilder.Entity<VerificationCode>(entity =>
+            {
+                entity.ToTable("VerificationCodes");
+
+                entity.HasKey(x => x.VerificationId);
+
+                entity.HasOne(x => x.UserAccount)
+                    .WithMany(x => x.VerificationCodes)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new
+                {
+                    x.UserId,
+                    x.IsUsed,
+                    x.ExpiresAt
+                });
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_VerificationCodes_FailedAttempts",
+                    "[FailedAttempts] >= 0"
+                ));
+            });
+
+            // ==========================================
+            // PASSWORD RESETS
+            // ==========================================
+
+            modelBuilder.Entity<PasswordReset>(entity =>
+            {
+                entity.ToTable("PasswordResets");
+
+                entity.HasKey(x => x.ResetId);
+
+                entity.HasOne(x => x.UserAccount)
+                    .WithMany(x => x.PasswordResets)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new
+                {
+                    x.UserId,
+                    x.IsUsed,
+                    x.ExpiresAt
+                });
+
+                entity.HasIndex(x => x.TokenHash)
+                    .IsUnique()
+                    .HasFilter("[TokenHash] IS NOT NULL");
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_PasswordResets_FailedAttempts",
+                    "[FailedAttempts] >= 0"
+                ));
+            });
         }
     }
 }
