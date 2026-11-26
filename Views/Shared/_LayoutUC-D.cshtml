@@ -77,15 +77,39 @@
 
 
                             <!-- USER -->
-                            <div class="sb-user">
+                            <<div class="sb-account-dropdown">
 
-                                <div class="sb-user-avatar">
-                                    👤
+                                <button type="button"
+                                        class="sb-account-toggle"
+                                        onclick="toggleAccountMenu()">
+
+                                    <div class="sb-account-avatar">
+                                        👤
+                                    </div>
+
+                                    <span class="sb-account-name">Hiền</span>
+
+                                </button>
+
+
+                                <div class="sb-account-menu" id="accountMenu">
+
+                                    <a asp-controller="Account"
+                                       asp-action="Index">
+                                        Tài khoản
+                                    </a>
+
+                                    <a asp-controller="Order"
+                                       asp-action="Status">
+                                        Lịch sử các đơn hàng
+                                    </a>
+
+                                    <a asp-controller="Account"
+                                       asp-action="Logout">
+                                        Đăng xuất
+                                    </a>
+
                                 </div>
-
-                                <span>Hiền</span>
-
-                                <span class="sb-arrow">⌄</span>
 
                             </div>
 
@@ -117,6 +141,14 @@
         function toggleSbMenu() {
             document
                 .getElementById("sbNavMenu")
+                .classList.toggle("show");
+        }
+    </script>
+
+    <script>
+        function toggleAccountMenu() {
+            document
+                .getElementById("accountMenu")
                 .classList.toggle("show");
         }
     </script>

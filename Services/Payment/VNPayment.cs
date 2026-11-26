@@ -4,7 +4,6 @@
     {
         public async Task<bool> PayAsync(decimal amount)
         {
-            // TODO: Integrate VNPay later
             await Task.CompletedTask;
 
             return true;

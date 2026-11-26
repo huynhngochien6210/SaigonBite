@@ -2,22 +2,22 @@
 {
     public class PaymentContext
     {
-        private IPaymentStrategy? _paymentStrategy;
+        private IPaymentStrategy? _strategy;
 
-        public void SetStrategy(IPaymentStrategy paymentStrategy)
+        public void SetStrategy(IPaymentStrategy strategy)
         {
-            _paymentStrategy = paymentStrategy;
+            _strategy = strategy;
         }
 
         public async Task<bool> PayAsync(decimal amount)
         {
-            if (_paymentStrategy == null)
+            if (_strategy == null)
             {
                 throw new InvalidOperationException(
                     "Payment strategy has not been selected.");
             }
 
-            return await _paymentStrategy.PayAsync(amount);
+            return await _strategy.PayAsync(amount);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
@@ -16,6 +15,8 @@ namespace SaigonBite.Controllers
         private readonly OrderService _orderService;
         private readonly IOrderRepository _orderRepository;
         private readonly ICustomerAccountService _customerAccountService;
+
+        private const string CheckoutKey = "OrderCheckout";
 
         public OrderController(
             OrderService orderService,
@@ -62,21 +63,88 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 3. INDEX
+        // 3. READ CART FROM SESSION
         // ==========================================
 
+        private List<OrderItemRequest> ReadCart()
+        {
+            var json = HttpContext.Session.GetString("Cart");
+
+            var cart = string.IsNullOrEmpty(json)
+                ? new List<CartItem>()
+                : JsonSerializer.Deserialize<List<CartItem>>(json)
+                    ?? new List<CartItem>();
+
+            return cart.Select(item => new OrderItemRequest
+            {
+                ItemName = item.ItemName,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice
+            }).ToList();
+        }
+
+        // ==========================================
+        // 4. PAYMENT VALIDATION - BR13
+        // ==========================================
+
+        private bool IsPaymentAllowed(string method)
+        {
+            var accountType = User.FindFirstValue("AccountType");
+
+            return accountType switch
+            {
+                "LocalCustomer" =>
+                    method is "MoMo" or "VNPay" or "COD",
+
+                "ForeignTourist" =>
+                    method is "ApplePay" or "PayPal" or "COD",
+
+                _ => false
+            };
+        }
+
+        // ==========================================
+        // 5. CALCULATE VOUCHER
+        // ==========================================
+
+        private async Task CalculateVoucherAsync(
+            PlaceOrderRequest request)
+        {
+            request.VoucherDiscount = 0;
+
+            if (request.VoucherId.HasValue)
+            {
+                var voucher = await _orderRepository
+                    .GetVoucherByIdAsync(request.VoucherId.Value);
+
+                if (voucher != null)
+                {
+                    decimal subtotal = request.Items.Sum(
+                        item => item.UnitPrice * item.Quantity);
+
+                    request.VoucherDiscount =
+                        voucher.CalculateDiscount(subtotal);
+                }
+            }
+        }
+
+        // ==========================================
+        // 6. INDEX
+        // ==========================================
+
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
         // ==========================================
-        // 4. CONFIRM ORDER - GET
+        // 7. INDEX ORDER - GET
         // ==========================================
 
         [Authorize(Roles = "Customer")]
         [HttpGet]
-        public async Task<IActionResult> Confirm()
+        public async Task<IActionResult> IndexOrder()
         {
             var userId = GetCurrentUserId();
 
@@ -85,22 +153,14 @@ namespace SaigonBite.Controllers
                 return Forbid();
             }
 
-            const string CartKey = "Cart";
+            var items = ReadCart();
 
-            var json = HttpContext.Session.GetString(CartKey);
-
-            if (string.IsNullOrEmpty(json))
+            if (items.Count == 0)
             {
                 return RedirectToAction("Index", "Cart");
             }
 
-            var cart = JsonSerializer.Deserialize<List<CartItem>>(json)
-                       ?? new List<CartItem>();
-
-            if (!cart.Any())
-            {
-                return RedirectToAction("Index", "Cart");
-            }
+            HttpContext.Session.Remove(CheckoutKey);
 
             var customerId = await _customerAccountService
                 .GetCustomerIdAsync(userId.Value);
@@ -111,45 +171,130 @@ namespace SaigonBite.Controllers
 
                 HubId = 1,
 
-                DistanceKm = 3,
-
-                DeliveryAddress =
-                    "19 Nguyễn Trãi, Quận 1, TP.HCM",
-
-                VoucherId = 1,
-
-                Items = cart.Select(item => new OrderItemRequest
-                {
-                    ItemName = item.ItemName,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice
-                }).ToList(),
+                Items = items,
 
                 QuietKitchenDiscount = 0,
+
                 DeliveryFee = 15000,
+
                 RushHourSurcharge = 0,
+
                 HeavyRainSurcharge = 0,
 
                 PaymentMethod = "COD"
             };
 
-            var voucher = await _orderRepository
-                .GetVoucherByIdAsync(1);
-
-            decimal subtotal = request.Items.Sum(
-                item => item.UnitPrice * item.Quantity);
-
-            if (voucher != null)
-            {
-                request.VoucherDiscount =
-                    voucher.CalculateDiscount(subtotal);
-            }
-
-            return View(request);
+            return View("IndexOrder", request);
         }
 
         // ==========================================
-        // 5. CONFIRM ORDER - POST
+        // 8. INDEX ORDER - POST
+        // ==========================================
+
+        [Authorize(Roles = "Customer")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IndexOrder(
+            PlaceOrderRequest request)
+        {
+            var userId = GetCurrentUserId();
+
+            if (userId == null)
+            {
+                return Forbid();
+            }
+
+            HttpContext.Session.Remove(CheckoutKey);
+
+            // Read cart from server session
+
+            request.Items = ReadCart();
+
+            if (request.Items.Count == 0)
+            {
+                return RedirectToAction("Index", "Cart");
+            }
+
+            // Get CustomerId from authenticated user
+
+            request.CustomerId = await _customerAccountService
+                .GetCustomerIdAsync(userId.Value) ?? 0;
+
+            // Remove validation for server-controlled fields
+
+            foreach (var key in ModelState.Keys.Where(k =>
+                k == "CustomerId" ||
+                k == "Items" ||
+                k.StartsWith("Items[") ||
+                k.StartsWith("Items.")).ToList())
+            {
+                ModelState.Remove(key);
+            }
+
+            // Validate delivery address
+
+            if (string.IsNullOrWhiteSpace(request.DeliveryAddress) ||
+                request.DeliveryAddress.Length > 255)
+            {
+                ModelState.AddModelError(
+                    "DeliveryAddress",
+                    "Vui lòng nhập địa chỉ giao hàng hợp lệ.");
+            }
+
+            // Validate delivery distance
+
+            if (request.DistanceKm <= 0 ||
+                request.DistanceKm > 8)
+            {
+                ModelState.AddModelError(
+                    "DistanceKm",
+                    "Khoảng cách giao hàng phải lớn hơn 0 và không quá 8 km.");
+            }
+
+            // Validate payment method - BR13
+
+            if (!IsPaymentAllowed(request.PaymentMethod))
+            {
+                ModelState.AddModelError(
+                    "PaymentMethod",
+                    "Phương thức thanh toán không phù hợp với tài khoản.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("IndexOrder", request);
+            }
+
+            // Calculate voucher discount
+
+            await CalculateVoucherAsync(request);
+
+            // Store checkout information in server session
+
+            HttpContext.Session.SetString(
+                CheckoutKey,
+                JsonSerializer.Serialize(request));
+
+            HttpContext.Session.SetInt32(
+                CheckoutKey + "UserId",
+                userId.Value);
+
+            return View("Confirm", request);
+        }
+
+        // ==========================================
+        // 9. CONFIRM ORDER - GET
+        // ==========================================
+
+        [Authorize(Roles = "Customer")]
+        [HttpGet]
+        public IActionResult Confirm()
+        {
+            return RedirectToAction(nameof(IndexOrder));
+        }
+
+        // ==========================================
+        // 10. CONFIRM ORDER - POST
         // ==========================================
 
         [Authorize(Roles = "Customer")]
@@ -165,55 +310,68 @@ namespace SaigonBite.Controllers
                 return Forbid();
             }
 
-            if (!ModelState.IsValid)
+            // Read checkout information from session
+
+            var json = HttpContext.Session.GetString(
+                CheckoutKey);
+
+            var checkoutUserId = HttpContext.Session.GetInt32(
+                CheckoutKey + "UserId");
+
+            if (string.IsNullOrEmpty(json) ||
+                checkoutUserId != userId.Value)
             {
-                return BadRequest("Invalid order information.");
+                return RedirectToAction(nameof(IndexOrder));
             }
 
-            // BR13: Payment methods by account type
+            var saved = JsonSerializer
+                .Deserialize<PlaceOrderRequest>(json);
 
-            var accountType = User.FindFirstValue("AccountType");
-
-            bool validPayment = accountType switch
+            if (saved == null)
             {
-                "LocalCustomer" =>
-                    request.PaymentMethod is "MoMo" or "VNPay" or "COD",
-
-                "ForeignTourist" =>
-                    request.PaymentMethod is "ApplePay" or "PayPal" or "COD",
-
-                _ => false
-            };
-
-            if (!validPayment)
-            {
-                return BadRequest(
-                    "Payment method is not allowed for this account.");
+                return RedirectToAction(nameof(IndexOrder));
             }
 
-            // Read cart from server session
+            // Use saved checkout instead of client hidden inputs
 
-            var json = HttpContext.Session.GetString("Cart");
+            request = saved;
 
-            if (string.IsNullOrEmpty(json))
+            ModelState.Clear();
+
+            // Check current cart
+
+            var items = ReadCart();
+
+            if (items.Count == 0)
             {
                 return RedirectToAction("Index", "Cart");
             }
 
-            var cart = JsonSerializer.Deserialize<List<CartItem>>(json)
-                       ?? new List<CartItem>();
+            // Return to checkout if cart has changed
 
-            if (!cart.Any())
+            if (JsonSerializer.Serialize(items) !=
+                JsonSerializer.Serialize(request.Items))
             {
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction(nameof(IndexOrder));
             }
+
+            // Validate payment method again
+
+            if (!IsPaymentAllowed(request.PaymentMethod))
+            {
+                return Forbid();
+            }
+
+            await CalculateVoucherAsync(request);
 
             try
             {
-                // Get customer from authenticated account
+                // Get or create customer linked to UserAccount
 
                 var customer = await _customerAccountService
                     .GetOrCreateCustomerAsync(userId.Value);
+
+                // Create order
 
                 var order = new Order
                 {
@@ -225,26 +383,37 @@ namespace SaigonBite.Controllers
 
                     VoucherId = request.VoucherId,
 
-                    OrderItems = cart.Select(item => new OrderItem
+                    OrderItems = items.Select(item => new OrderItem
                     {
                         ItemName = item.ItemName,
+
                         Quantity = item.Quantity,
+
                         UnitPrice = item.UnitPrice
+
                     }).ToList()
                 };
+
+                // Payment Strategy Pattern
 
                 IPaymentStrategy paymentStrategy =
                     request.PaymentMethod switch
                     {
-                        "MoMo" => new MoMoPayment(),
-                        "VNPay" => new VNPayPayment(),
                         "COD" => new CODPayment(),
+
+                        "MoMo" => new MoMoPayment(),
+
+                        "VNPay" => new VNPayPayment(),
+
                         "ApplePay" => new ApplePayPayment(),
+
                         "PayPal" => new PayPalPayment(),
 
                         _ => throw new InvalidOperationException(
                             "Invalid payment method.")
                     };
+
+                // Create order using business service
 
                 await _orderService.CreateOrderAsync(
                     order,
@@ -255,7 +424,16 @@ namespace SaigonBite.Controllers
                     request.HeavyRainSurcharge,
                     paymentStrategy);
 
+                // Clear cart and checkout session
+
                 HttpContext.Session.Remove("Cart");
+
+                HttpContext.Session.Remove(CheckoutKey);
+
+                HttpContext.Session.Remove(
+                    CheckoutKey + "UserId");
+
+                // Redirect to complete page
 
                 return RedirectToAction(
                     nameof(Complete),
@@ -263,12 +441,16 @@ namespace SaigonBite.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                ModelState.AddModelError(
+                    string.Empty,
+                    ex.Message);
+
+                return View("Confirm", request);
             }
         }
 
         // ==========================================
-        // 6. ORDER COMPLETE
+        // 11. ORDER COMPLETE
         // ==========================================
 
         [Authorize(Roles = "Customer")]
@@ -286,7 +468,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 7. ORDER STATUS
+        // 12. ORDER STATUS
         // ==========================================
 
         [Authorize(Roles = "Customer")]
@@ -315,7 +497,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 8. ORDER DETAILS
+        // 13. ORDER DETAILS
         // ==========================================
 
         [Authorize(Roles = "Customer,Admin")]
@@ -339,16 +521,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 9. INDEX ORDER
-        // ==========================================
-
-        public IActionResult IndexOrder()
-        {
-            return View("IndexOrder");
-        }
-
-        // ==========================================
-        // 10. EDIT ORDER - GET
+        // 14. EDIT ORDER - GET
         // ==========================================
 
         [Authorize(Roles = "Customer")]
@@ -377,7 +550,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 11. EDIT ORDER - POST
+        // 15. EDIT ORDER - POST
         // ==========================================
 
         [Authorize(Roles = "Customer")]
@@ -394,7 +567,8 @@ namespace SaigonBite.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid order information.");
+                return BadRequest(
+                    "Invalid order information.");
             }
 
             try
@@ -418,7 +592,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 12. UPDATE ORDER STATUS
+        // 16. UPDATE ORDER STATUS
         // ==========================================
 
         [Authorize(Roles = "Admin")]
@@ -431,7 +605,8 @@ namespace SaigonBite.Controllers
             if (!ModelState.IsValid ||
                 !Enum.IsDefined(typeof(OrderStatus), status))
             {
-                return BadRequest("Invalid order status.");
+                return BadRequest(
+                    "Invalid order status.");
             }
 
             try
@@ -451,7 +626,7 @@ namespace SaigonBite.Controllers
         }
 
         // ==========================================
-        // 13. CANCEL ORDER
+        // 17. CANCEL ORDER
         // ==========================================
 
         [Authorize(Roles = "Customer")]
