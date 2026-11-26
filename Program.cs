@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SaigonBite.Data;
+using Microsoft.AspNetCore.Identity;
+using SaigonBite.Models;
+using SaigonBite.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register Account Services
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddScoped<
+    IPasswordHasher<UserAccount>,
+    PasswordHasher<UserAccount>>();
 
 var app = builder.Build();
 
