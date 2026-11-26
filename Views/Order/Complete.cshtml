@@ -51,6 +51,7 @@
 
             <a asp-controller="Order"
                asp-action="Details"
+               asp-route-id="@ViewBag.OrderId"
                class="sb-track-order-btn">
                 Theo dõi đơn hàng →
             </a>
@@ -108,11 +109,20 @@
 
 
             <!-- HỦY → TRẠNG THÁI ĐƠN -->
-            <a asp-controller="Order"
-               asp-action="Status"
-               class="sb-confirm-cancel-btn">
-                Xác nhận hủy
-            </a>
+            <form asp-controller="Order"
+                  asp-action="Cancel"
+                  method="post">
+
+                <input type="hidden"
+                       name="id"
+                       value="@ViewBag.OrderId" />
+
+                <button type="submit"
+                        class="sb-confirm-cancel-btn">
+                    Xác nhận hủy
+                </button>
+
+            </form>
 
         </div>
 

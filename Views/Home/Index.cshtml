@@ -8,7 +8,6 @@
     <section class="sb-hero">
     </section>
 
-
     <!-- FOOD SECTION -->
     <section class="sb-food-section">
 
@@ -52,22 +51,41 @@
             <div class="sb-food-card">
 
                 <div class="sb-food-image">
-                    <div class="food-placeholder">🍚</div>
-                    <button class="favorite">♡</button>
+                    <img src="~/image/cơm tấm long xuyên.png"
+                         alt="Cơm tấm Long Xuyên" />
                 </div>
 
                 <div class="sb-food-info">
-                    <h3>Cơm tấm Sài Gòn</h3>
+
+                    <h3>Cơm tấm Long Xuyên</h3>
 
                     <div class="sb-food-bottom">
-                        <span class="sb-price">65.000 ₫</span>
 
-                        <button class="sb-add-btn">
-                            ＋ Thêm
-                        </button>
+                        <span class="sb-price">
+                            35.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Cơm tấm Long Xuyên" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="35000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
                     </div>
                 </div>
-
             </div>
 
 
@@ -75,22 +93,41 @@
             <div class="sb-food-card">
 
                 <div class="sb-food-image">
-                    <div class="food-placeholder">🥖</div>
-                    <button class="favorite">♡</button>
+                    <img src="~/image/Bánh mì.png"
+                         alt="Bánh mì heo quay" />
                 </div>
 
                 <div class="sb-food-info">
-                    <h3>Bánh mì thịt</h3>
+
+                    <h3>Bánh mì heo quay</h3>
 
                     <div class="sb-food-bottom">
-                        <span class="sb-price">35.000 ₫</span>
 
-                        <button class="sb-add-btn">
-                            ＋ Thêm
-                        </button>
+                        <span class="sb-price">
+                            25.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Bánh mì heo quay" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="25000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
                     </div>
                 </div>
-
             </div>
 
 
@@ -98,22 +135,41 @@
             <div class="sb-food-card">
 
                 <div class="sb-food-image">
-                    <div class="food-placeholder">🍜</div>
-                    <button class="favorite">♡</button>
+                    <img src="~/image/Bún bò.png"
+                         alt="Bún bò" />
                 </div>
 
                 <div class="sb-food-info">
-                    <h3>Hủ tiếu Nam Vang</h3>
+
+                    <h3>Bún bò</h3>
 
                     <div class="sb-food-bottom">
-                        <span class="sb-price">62.000 ₫</span>
 
-                        <button class="sb-add-btn">
-                            ＋ Thêm
-                        </button>
+                        <span class="sb-price">
+                            35.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Bún bò" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="35000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
                     </div>
                 </div>
-
             </div>
 
 
@@ -121,26 +177,295 @@
             <div class="sb-food-card">
 
                 <div class="sb-food-image">
-                    <div class="food-placeholder">🥤</div>
-                    <button class="favorite">♡</button>
+                    <img src="~/image/Bún mộc.png"
+                         alt="Bún mọc" />
                 </div>
 
                 <div class="sb-food-info">
-                    <h3>Chè Sài Gòn</h3>
+
+                    <h3>Bún mọc</h3>
 
                     <div class="sb-food-bottom">
-                        <span class="sb-price">28.000 ₫</span>
 
-                        <button class="sb-add-btn">
-                            ＋ Thêm
-                        </button>
+                        <span class="sb-price">
+                            30.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Bún mọc" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="30000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
                     </div>
                 </div>
+            </div>
 
+
+            <!-- Card 5 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/bún đậu.png"
+                         alt="Bún đậu mắm tôm" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Bún đậu mắm tôm</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            65.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Bún đậu mắm tôm" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="65000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 6 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/chè thái.png"
+                         alt="Chè Thái" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Chè Thái</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            20.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Chè Thái" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="20000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 7 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/Chả lụi.png"
+                         alt="Chả lụi" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Chả lụi</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            70.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Chả lụi" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="70000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 8 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/Trà sữa.png"
+                         alt="Trà sữa" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Trà sữa</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            25.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Trà sữa" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="25000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 9 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/Lẩu thái.png"
+                         alt="Lẩu Thái" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Lẩu Thái</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            150.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Lẩu Thái" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="150000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 10 -->
+            <div class="sb-food-card">
+
+                <div class="sb-food-image">
+                    <img src="~/image/starbucks.png"
+                         alt="Starbucks" />
+                </div>
+
+                <div class="sb-food-info">
+
+                    <h3>Starbucks</h3>
+
+                    <div class="sb-food-bottom">
+
+                        <span class="sb-price">
+                            100.000 ₫
+                        </span>
+
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="itemName"
+                                   value="Starbucks" />
+
+                            <input type="hidden"
+                                   name="unitPrice"
+                                   value="100000" />
+
+                            <button type="submit"
+                                    class="sb-add-btn">
+                                ＋ Thêm
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
             </div>
 
         </div>
-
     </section>
-
 </div>

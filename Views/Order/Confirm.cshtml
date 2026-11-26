@@ -1,150 +1,260 @@
-﻿@{
+﻿@model SaigonBite.ViewModels.PlaceOrderRequest
+
+@{
     ViewData["Title"] = "Xác nhận đơn hàng";
 }
 
-<div class="sb-confirm-page">
+<form asp-controller="Order"
+      asp-action="Confirm"
+      method="post">
 
-    <!-- Progress -->
-    <div class="sb-confirm-progress">
+    <div class="sb-confirm-page">
 
-        <div class="sb-confirm-step completed">
-            <div class="sb-confirm-number">✓</div>
-            <span>Đặt hàng</span>
-        </div>
+        <!-- Progress -->
+        <div class="sb-confirm-progress">
 
-        <div class="sb-confirm-line"></div>
-
-        <div class="sb-confirm-step active">
-            <div class="sb-confirm-number">2</div>
-            <span>Xác nhận</span>
-        </div>
-
-        <div class="sb-confirm-line"></div>
-
-        <div class="sb-confirm-step">
-            <div class="sb-confirm-number">3</div>
-            <span>Hoàn tất</span>
-        </div>
-
-    </div>
-
-    <h1 class="sb-confirm-title">Xác nhận đặt hàng</h1>
-
-    <div class="sb-confirm-layout">
-
-        <!-- LEFT -->
-        <div class="sb-confirm-left">
-
-            <!-- Delivery -->
-            <div class="sb-confirm-card">
-
-                <h2>Thông tin giao hàng</h2>
-
-                <div class="sb-confirm-address">
-                    <span>📍</span>
-                    <span>19 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</span>
-                </div>
-
-                <p class="sb-confirm-note">
-                    <strong>Ghi chú:</strong>
-                    Giao giờ trưa, xin cảm ơn!
-                </p>
-
+            <div class="sb-confirm-step completed">
+                <div class="sb-confirm-number">✓</div>
+                <span>Đặt hàng</span>
             </div>
 
-            <!-- Payment -->
-            <div class="sb-confirm-card">
+            <div class="sb-confirm-line"></div>
 
-                <h2>Phương thức thanh toán</h2>
+            <div class="sb-confirm-step active">
+                <div class="sb-confirm-number">2</div>
+                <span>Xác nhận</span>
+            </div>
 
-                <div class="sb-confirm-payment">
+            <div class="sb-confirm-line"></div>
 
-                    <img src="~/image/cod.png"
-                         alt="COD"
-                         class="sb-confirm-payment-logo">
-
-                    <span>Thanh toán khi nhận hàng (COD)</span>
-
-                </div>
-
+            <div class="sb-confirm-step">
+                <div class="sb-confirm-number">3</div>
+                <span>Hoàn tất</span>
             </div>
 
         </div>
 
-        <!-- RIGHT -->
-        <div class="sb-confirm-summary">
 
-            <h2>Chi tiết đơn hàng</h2>
-
-            <div class="sb-confirm-product">
-
-                <img src="~/image/com-tam.png"
-                     alt="Cơm tấm Sài Gòn">
-
-                <div>
-                    <h3>Cơm tấm Sài Gòn</h3>
-                    <strong>65.000 ₫</strong>
-                </div>
-
-                <span>x1</span>
-
-            </div>
-
-            <div class="sb-confirm-product">
-
-                <img src="~/image/hu-tieu.png"
-                     alt="Hủ tiếu Nam Vang">
-
-                <div>
-                    <h3>Hủ tiếu Nam Vang</h3>
-                    <strong>62.000 ₫</strong>
-                </div>
-
-                <span>x1</span>
-
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Tạm tính</span>
-                <strong>127.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Voucher</span>
-                <strong>−20.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Phí giao hàng</span>
-                <strong>15.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-total">
-                <span>Tổng thanh toán</span>
-                <strong>122.000 ₫</strong>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Buttons -->
-    <div class="sb-confirm-buttons">
-
-        <a asp-controller="Order"
-           asp-action="IndexOrder"
-           class="sb-back-btn">
-            ←
-            <span>Quay lại</span>
-        </a>
-
-        <a asp-controller="Order"
-           asp-action="Complete"
-           class="sb-confirm-btn">
+        <h1 class="sb-confirm-title">
             Xác nhận đặt hàng
-            <span>→</span>
-        </a>
+        </h1>
+
+
+        <div class="sb-confirm-layout">
+
+            <!-- LEFT -->
+            <div class="sb-confirm-left">
+
+                <!-- Delivery -->
+                <div class="sb-confirm-card">
+
+                    <h2>Thông tin giao hàng</h2>
+
+                    <div class="sb-confirm-address">
+                        <span>📍</span>
+
+                        <span>
+                            19 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh
+                        </span>
+                    </div>
+
+                    <p class="sb-confirm-note">
+                        <strong>Ghi chú:</strong>
+                        Giao giờ trưa, xin cảm ơn!
+                    </p>
+
+                </div>
+
+
+                <!-- Payment -->
+                <div class="sb-confirm-card">
+
+                    <h2>Phương thức thanh toán</h2>
+
+                    <div class="sb-confirm-payment">
+
+                        <img src="~/image/cod.png"
+                             alt="COD"
+                             class="sb-confirm-payment-logo">
+
+                        <span>
+                            Thanh toán khi nhận hàng (COD)
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <div class="sb-confirm-summary">
+
+                <h2>Chi tiết đơn hàng</h2>
+
+
+                <!-- Product 1 -->
+                <div class="sb-confirm-product">
+
+                    <img src="~/image/com-tam.png"
+                         alt="Cơm tấm Sài Gòn">
+
+                    <div>
+                        <h3>Cơm tấm Sài Gòn</h3>
+                        <strong>65.000 ₫</strong>
+                    </div>
+
+                    <span>x1</span>
+
+                </div>
+
+
+                <!-- Product 2 -->
+                <div class="sb-confirm-product">
+
+                    <img src="~/image/hu-tieu.png"
+                         alt="Hủ tiếu Nam Vang">
+
+                    <div>
+                        <h3>Hủ tiếu Nam Vang</h3>
+                        <strong>62.000 ₫</strong>
+                    </div>
+
+                    <span>x1</span>
+
+                </div>
+
+
+                <!-- Price -->
+                <div class="sb-confirm-price">
+                    <span>Tạm tính</span>
+                    <strong>127.000 ₫</strong>
+                </div>
+
+
+                <div class="sb-confirm-price">
+                    <span>Voucher</span>
+                    <strong>−25.400 ₫</strong>
+                </div>
+
+
+                <div class="sb-confirm-price">
+                    <span>Phí giao hàng</span>
+                    <strong>15.000 ₫</strong>
+                </div>
+
+
+                <div class="sb-confirm-total">
+                    <span>Tổng thanh toán</span>
+                    <strong>117.000 ₫</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Validation -->
+        <div asp-validation-summary="All"
+             style="color:red; margin-bottom:20px;">
+        </div>
+
+
+        <!-- Hidden data -->
+
+        <input type="hidden"
+               name="CustomerId"
+               value="1" />
+
+        <input type="hidden"
+               name="HubId"
+               value="1" />
+
+        <input type="hidden"
+               name="DistanceKm"
+               value="3" />
+
+        <input type="hidden"
+               name="DeliveryAddress"
+               value="19 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh" />
+
+        <input type="hidden"
+               name="VoucherId"
+               value="1" />
+
+        <input type="hidden"
+               name="PaymentMethod"
+               value="COD" />
+
+        <input type="hidden"
+               name="QuietKitchenDiscount"
+               value="0" />
+
+        <input type="hidden"
+               name="DeliveryFee"
+               value="15000" />
+
+        <input type="hidden"
+               name="RushHourSurcharge"
+               value="0" />
+
+        <input type="hidden"
+               name="HeavyRainSurcharge"
+               value="0" />
+
+
+        <!-- Item 1 -->
+        <input type="hidden"
+               name="Items[0].ItemName"
+               value="Cơm tấm Sài Gòn" />
+
+        <input type="hidden"
+               name="Items[0].Quantity"
+               value="1" />
+
+        <input type="hidden"
+               name="Items[0].UnitPrice"
+               value="65000" />
+
+
+        <!-- Item 2 -->
+        <input type="hidden"
+               name="Items[1].ItemName"
+               value="Hủ tiếu Nam Vang" />
+
+        <input type="hidden"
+               name="Items[1].Quantity"
+               value="1" />
+
+        <input type="hidden"
+               name="Items[1].UnitPrice"
+               value="62000" />
+
+
+        <!-- Buttons -->
+        <div class="sb-confirm-buttons">
+
+            <a asp-controller="Order"
+               asp-action="IndexOrder"
+               class="sb-back-btn">
+
+                ←
+                <span>Quay lại</span>
+
+            </a>
+
+
+            <button type="submit"
+                    class="sb-confirm-btn">
+
+                Xác nhận đặt hàng
+                <span>→</span>
+
+            </button>
+
+        </div>
 
     </div>
 
-</div>
+</form>
