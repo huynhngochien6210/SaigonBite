@@ -137,6 +137,8 @@ const translations = {
         close: "Close",
         orderHistoryDemoNote:
             "Demo order history. Backend is not connected.",
+        otpSimulationNote:
+        "Development mode - Check the server terminal for your verification code.",
     },
 
     vi: {
@@ -275,6 +277,8 @@ const translations = {
         close: "Đóng",
         orderHistoryDemoNote:
             "Lịch sử đơn hàng mô phỏng. Backend chưa được kết nối.",
+        otpSimulationNote:
+        "Chế độ phát triển - Kiểm tra Terminal để lấy mã xác thực.",
     }
 };
 
