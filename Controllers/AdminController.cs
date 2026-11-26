@@ -9,5 +9,12 @@ namespace SaigonBite.Controllers
         {
             return View();
         }
+
+        // Trang tổng quan quản lý UC-A
+        [HttpGet]
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
     }
 }

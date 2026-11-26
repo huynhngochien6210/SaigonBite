@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - SaigonBite Admin</title>
+
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+</head>
+
+<body>
+    <header class="admin-navbar">
+        <a asp-controller="Admin"
+           asp-action="Dashboard"
+           class="navbar-brand">
+
+            <img src="~/image/Logo Chợ Bến Thành Cổ Điển.png"
+                 alt="Logo Chợ Bến Thành"
+                 class="navbar-logo" />
+
+            <span class="brand-name">SaigonBite</span>
+        </a>
+
+        <nav class="navbar-menu">
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="nav-link active">
+                Dashboard
+            </a>
+
+            <a href="/Admin/Brands" class="nav-link">
+                Quản lý thương hiệu
+            </a>
+
+            <a href="/Admin/MenuItems" class="nav-link">
+                Quản lý món ăn
+            </a>
+        </nav>
+
+        <details class="admin-account">
+            <summary>
+                <span class="admin-avatar">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" fill="currentColor" />
+                        <path d="M4 21c0-4.2 3.2-7 8-7s8 2.8 8 7"
+                              fill="currentColor" />
+                    </svg>
+                </span>
+
+                <span>Admin</span>
+
+                <span class="dropdown-arrow">⌄</span>
+            </summary>
+
+            <div class="account-dropdown">
+                <a asp-controller="Admin" asp-action="Login">
+                    Đăng xuất
+                </a>
+            </div>
+        </details>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,3 +1,24 @@
-﻿@{
-    Layout = "_Layout";
+﻿
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    // Khu vực Admin
+    if (controller == "Admin")
+    {
+        if (action == "Login")
+        {
+            Layout = "~/Views/Shared/_AdminAuthLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+        }
+    }
+
+    // Các khu vực còn lại
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutUC-D.cshtml";
+    }
 }
