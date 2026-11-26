@@ -2,7 +2,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Show / Hide Password
-
     document.querySelectorAll(".password-toggle")
         .forEach(button => {
 
@@ -14,9 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!input) return;
 
-                const isHidden = input.type === "password";
+                const isHidden =
+                    input.type === "password";
 
-                input.type = isHidden ? "text" : "password";
+                input.type =
+                    isHidden ? "text" : "password";
 
                 const key = isHidden
                     ? "hidePassword"
@@ -31,33 +32,53 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-    // Login Form Testing
-
+    // Customer Login
     const loginForm =
         document.getElementById("loginForm");
 
-    if (loginForm) {
+    if (!loginForm) return;
 
-        loginForm.addEventListener("submit", event => {
+    loginForm.addEventListener("submit", event => {
+
+        const identifier =
+            document.getElementById("identifier")
+                .value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const message =
+            document.getElementById("loginMessage");
+
+        const submitButton =
+            loginForm.querySelector(
+                'button[type="submit"]'
+            );
+
+        // Validate required fields
+        if (!identifier || !password) {
 
             event.preventDefault();
 
-            const identifier =
-                document.getElementById("identifier")
-                    .value.trim();
+            message.dataset.i18n = "requiredFields";
 
-            const password =
-                document.getElementById("password").value;
+            message.textContent =
+                translate("requiredFields");
 
-            const message =
-                document.getElementById("loginMessage");
+            message.style.color = "#b90000";
 
-            const key = (!identifier || !password)
-                ? "requiredFields"
-                : "loginDemo";
+            return;
+        }
 
-            message.dataset.i18n = key;
-            message.textContent = translate(key);
-        });
-    }
+        // Prevent duplicate submissions
+        submitButton.disabled = true;
+
+        message.removeAttribute("data-i18n");
+
+        message.style.color = "#16803c";
+
+        message.textContent = "Signing in...";
+
+        // Allow form submission to AccountController
+    });
 });
