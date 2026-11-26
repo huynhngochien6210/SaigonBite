@@ -1,132 +1,184 @@
-﻿@{
+﻿@model List<SaigonBite.Models.CartItem>
+
+@{
     ViewData["Title"] = "Giỏ hàng";
+    decimal subtotal = Model.Sum(item => item.UnitPrice * item.Quantity);
 }
 
-<div class="container-fluid sb-cart-page">
+<div class="sb-cart-page">
 
-    <!-- TITLE -->
-    <div class="row">
-        <div class="col-12">
-            <h1 class="sb-cart-title">
-                Giỏ hàng <span>(2 món)</span>
-            </h1>
-        </div>
+    <div class="sb-cart-heading">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="sb-back-arrow">
+            ←
+        </a>
+
+        <h1>Giỏ hàng</h1>
     </div>
 
 
-    <!-- CART -->
-    <div class="row">
-        <div class="col-12">
+    @if (!Model.Any())
+    {
+        <div class="sb-cart-empty">
 
-            <div class="sb-cart-list">
+            <h2>Giỏ hàng đang trống</h2>
 
-                <!-- ITEM 1 -->
-                <div class="row align-items-center sb-cart-item">
+            <p>
+                Hãy chọn món ngon Sài Gòn mà bạn yêu thích nhé!
+            </p>
 
-                    <!-- Product -->
-                    <div class="col-12 col-md-7">
-                        <div class="sb-cart-product">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="sb-cart-back-btn">
+                Xem món ăn
+            </a>
 
-                            <img src="~/image/com-tam.png"
-                                 alt="Cơm tấm Sài Gòn"
-                                 class="sb-cart-image">
+        </div>
+    }
+    else
+    {
+        <div class="sb-cart-layout">
 
-                            <div class="sb-cart-info">
-                                <h2>Cơm tấm Sài Gòn</h2>
-                                <p>65.000 ₫</p>
-                            </div>
+            <!-- DANH SÁCH MÓN -->
+            <div class="sb-cart-items">
 
-                        </div>
-                    </div>
+                @foreach (var item in Model)
+                {
+                    <div class="sb-cart-item">
 
+                        <div class="sb-cart-item-info">
 
-                    <!-- Actions -->
-                    <div class="col-12 col-md-5">
-                        <div class="sb-cart-actions">
+                            <h3>
+                                @item.ItemName
+                            </h3>
 
-                            <div class="sb-quantity">
-                                <button type="button">−</button>
-                                <span>1</span>
-                                <button type="button">+</button>
-                            </div>
-
-                            <button type="button"
-                                    class="sb-delete">
-                                🗑
-                            </button>
+                            <span class="sb-cart-item-price">
+                                @item.UnitPrice.ToString("N0") ₫
+                            </span>
 
                         </div>
-                    </div>
-
-                </div>
 
 
-                <!-- ITEM 2 -->
-                <div class="row align-items-center sb-cart-item">
+                        <div class="sb-cart-item-actions">
 
-                    <!-- Product -->
-                    <div class="col-12 col-md-7">
-                        <div class="sb-cart-product">
+                            <!-- GIẢM -->
+                            <form asp-controller="Cart"
+                                  asp-action="Decrease"
+                                  method="post">
 
-                            <img src="~/image/hu-tieu.png"
-                                 alt="Hủ tiếu Nam Vang"
-                                 class="sb-cart-image">
+                                <input type="hidden"
+                                       name="itemName"
+                                       value="@item.ItemName" />
 
-                            <div class="sb-cart-info">
-                                <h2>Hủ tiếu Nam Vang</h2>
-                                <p>62.000 ₫</p>
-                            </div>
+                                <button type="submit"
+                                        class="sb-quantity-btn">
+                                    −
+                                </button>
+
+                            </form>
+
+
+                            <!-- SỐ LƯỢNG -->
+                            <span class="sb-cart-quantity">
+                                @item.Quantity
+                            </span>
+
+
+                            <!-- TĂNG -->
+                            <form asp-controller="Cart"
+                                  asp-action="Increase"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="itemName"
+                                       value="@item.ItemName" />
+
+                                <button type="submit"
+                                        class="sb-quantity-btn">
+                                    +
+                                </button>
+
+                            </form>
+
+
+                            <!-- THÀNH TIỀN -->
+                            <strong class="sb-cart-item-total">
+                                @item.Total.ToString("N0") ₫
+                            </strong>
+
+
+                            <!-- XÓA -->
+                            <form asp-controller="Cart"
+                                  asp-action="Remove"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="itemName"
+                                       value="@item.ItemName" />
+
+                                <button type="submit"
+                                        class="sb-cart-remove">
+                                    ×
+                                </button>
+
+                            </form>
 
                         </div>
+
                     </div>
-
-
-                    <!-- Actions -->
-                    <div class="col-12 col-md-5">
-                        <div class="sb-cart-actions">
-
-                            <div class="sb-quantity">
-                                <button type="button">−</button>
-                                <span>1</span>
-                                <button type="button">+</button>
-                            </div>
-
-                            <button type="button"
-                                    class="sb-delete">
-                                🗑
-                            </button>
-
-                        </div>
-                    </div>
-
-                </div>
+                }
 
             </div>
 
-        </div>
-    </div>
 
-
-    <!-- SUMMARY -->
-    <div class="row">
-        <div class="col-12">
-
+            <!-- TỔNG TIỀN -->
             <div class="sb-cart-summary">
 
-                <div class="sb-subtotal">
+                <h2>Tóm tắt đơn hàng</h2>
+
+                <div class="sb-cart-summary-row">
+
                     <span>Tạm tính</span>
-                    <strong>127.000 ₫</strong>
+
+                    <strong>
+                        @subtotal.ToString("N0") ₫
+                    </strong>
+
                 </div>
 
+
+                <div class="sb-cart-summary-row">
+
+                    <span>Phí giao hàng</span>
+
+                    <span>
+                        15.000 ₫
+                    </span>
+
+                </div>
+
+
+                <div class="sb-cart-summary-total">
+
+                    <span>Tổng cộng</span>
+
+                    <strong>
+                        @((subtotal + 15000).ToString("N0")) ₫
+                    </strong>
+
+                </div>
+
+
                 <a asp-controller="Order"
-                   asp-action="IndexOrder"
-                   class="sb-order-btn">
-                    Đặt hàng
-                    <span>→</span>
+                   asp-action="Confirm"
+                   class="sb-cart-checkout-btn">
+                    Tiến hành đặt hàng
                 </a>
 
             </div>
-    </div>
 
+        </div>
+    }
 
 </div>
