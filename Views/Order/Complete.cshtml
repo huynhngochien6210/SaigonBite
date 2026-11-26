@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Hoàn tất đơn hàng";
+}
+
+<div class="sb-complete-page">
+
+    <!-- Progress -->
+    <div class="sb-complete-progress">
+
+        <div class="sb-complete-step completed">
+            <div class="sb-complete-number">✓</div>
+            <span>Đặt hàng</span>
+        </div>
+
+        <div class="sb-complete-line"></div>
+
+        <div class="sb-complete-step completed">
+            <div class="sb-complete-number">✓</div>
+            <span>Xác nhận</span>
+        </div>
+
+        <div class="sb-complete-line"></div>
+
+        <div class="sb-complete-step active">
+            <div class="sb-complete-number">3</div>
+            <span>Hoàn tất</span>
+        </div>
+
+    </div>
+
+    <h1 class="sb-complete-title">Hoàn tất đơn hàng</h1>
+
+    <div class="sb-complete-layout">
+
+        <!-- ĐẶT HÀNG THÀNH CÔNG -->
+        <div class="sb-success-card">
+
+            <div class="sb-success-icon">
+                ✓
+            </div>
+
+            <h2>Đặt hàng thành công!</h2>
+
+            <p>
+                Đơn hàng <strong>#SB10245</strong> đã được tạo.
+            </p>
+
+            <p>
+                Dự kiến giao trong 10 – 15 phút.
+            </p>
+
+            <a asp-controller="Order"
+               asp-action="Details"
+               class="sb-track-order-btn">
+                Theo dõi đơn hàng →
+            </a>
+
+            <button type="button"
+                    class="sb-cancel-btn"
+                    onclick="showCancelPanel()">
+                🗑
+                <span>Hủy đơn hàng</span>
+            </button>
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="sb-home-link">
+                Về trang chủ
+            </a>
+
+        </div>
+
+
+        <!-- KHUNG HỦY ĐƠN -->
+        <div class="sb-cancel-card" id="cancelPanel">
+
+            <button type="button"
+                    class="sb-close-btn"
+                    onclick="hideCancelPanel()">
+                ×
+            </button>
+
+            <h2>Hủy đơn hàng</h2>
+
+            <p>
+                Bạn có chắc chắn muốn hủy<br>
+                đơn hàng <strong>#SB10245</strong>?
+            </p>
+
+            <div class="sb-cancel-warning">
+
+                <span>ⓘ</span>
+
+                <span>
+                    Đơn hàng sẽ được hủy và<br>
+                    không thể khôi phục.
+                </span>
+
+            </div>
+
+
+            <!-- GIỮ ĐƠN → XÁC NHẬN -->
+            <a asp-controller="Order"
+               asp-action="Confirm"
+               class="sb-keep-btn">
+                Không, giữ đơn
+            </a>
+
+
+            <!-- HỦY → TRẠNG THÁI ĐƠN -->
+            <a asp-controller="Order"
+               asp-action="Status"
+               class="sb-confirm-cancel-btn">
+                Xác nhận hủy
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    function showCancelPanel() {
+        document.querySelector(".sb-success-card").style.display = "none";
+        document.getElementById("cancelPanel").style.display = "block";
+    }
+
+    function hideCancelPanel() {
+        document.getElementById("cancelPanel").style.display = "none";
+        document.querySelector(".sb-success-card").style.display = "flex";
+    }
+</script>
