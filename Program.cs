@@ -35,6 +35,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IVerificationService,
     VerificationService>();
+    
+builder.Services.AddScoped<
+    IPasswordResetService,
+    PasswordResetService>();
 
 builder.Services.AddScoped<
     IAuthenticationService,

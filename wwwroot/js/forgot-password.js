@@ -1,68 +1,88 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Bilingual messages
+    "use strict";
 
-    function showMessage(element, en, vi) {
-
-        const isVietnamese =
-            document.documentElement.lang
-                .toLowerCase().startsWith("vi");
-
-        element.textContent = isVietnamese ? vi : en;
-
+    function translateMessage(en, vi) {
+        return document.documentElement.lang
+            .toLowerCase()
+            .startsWith("vi") ? vi : en;
     }
 
-    // ========================================
-    // FORGOT PASSWORD
-    // ========================================
+
+    // ==========================================
+    // 1. FORGOT PASSWORD FORM
+    // ==========================================
 
     const forgotForm =
         document.getElementById("forgotPasswordForm");
 
     if (forgotForm) {
 
-        const methods = document.querySelectorAll(
-            'input[name="recoveryMethod"]'
+        const methods = forgotForm.querySelectorAll(
+            'input[name="RecoveryMethod"]'
         );
 
-        const phoneField =
-            document.getElementById("recoveryPhoneField");
+        const phone = forgotForm.querySelector(
+            'input[name="Phone"]'
+        );
 
-        const emailField =
-            document.getElementById("recoveryEmailField");
-
-        const phoneInput =
-            document.getElementById("recoveryPhone");
-
-        const emailInput =
-            document.getElementById("recoveryEmail");
+        const email = forgotForm.querySelector(
+            'input[name="Email"]'
+        );
 
         const message =
             document.getElementById("forgotPasswordMessage");
 
-        function updateRecoveryMethod() {
+        const submitButton =
+            forgotForm.querySelector('button[type="submit"]');
 
-            const selected = document.querySelector(
-                'input[name="recoveryMethod"]:checked'
-            );
-
-            const usePhone = selected.value === "local";
-
-            phoneField.hidden = !usePhone;
-            emailField.hidden = usePhone;
-
-            phoneInput.disabled = !usePhone;
-            emailInput.disabled = usePhone;
-
-            phoneInput.required = usePhone;
-            emailInput.required = !usePhone;
-
-            message.textContent = "";
-
+        function showMessage(en, vi) {
+            if (message) {
+                message.textContent =
+                    translateMessage(en, vi);
+            }
         }
 
-        methods.forEach(function (method) {
+        function updateRecoveryMethod() {
+
+            const selected = forgotForm.querySelector(
+                'input[name="RecoveryMethod"]:checked'
+            );
+
+            const isLocal =
+                selected?.value !== "foreign";
+
+            if (phone) {
+
+                phone.disabled = !isLocal;
+                phone.required = isLocal;
+
+                const wrapper =
+                    phone.closest(".register-field")
+                    || phone.parentElement;
+
+                wrapper.hidden = !isLocal;
+            }
+
+            if (email) {
+
+                email.disabled = isLocal;
+                email.required = !isLocal;
+
+                const wrapper =
+                    email.closest(".register-field")
+                    || email.parentElement;
+
+                wrapper.hidden = isLocal;
+            }
+
+            if (message) {
+                message.textContent = "";
+            }
+        }
+
+        methods.forEach(method => {
 
             method.addEventListener(
                 "change",
@@ -71,201 +91,248 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
-        forgotForm.addEventListener("submit", function (event) {
-
-            event.preventDefault();
-
-            const selected = document.querySelector(
-                'input[name="recoveryMethod"]:checked'
-            );
-
-            const type = selected.value;
-
-            message.textContent = "";
-
-            if (type === "local") {
-
-                const phone = phoneInput.value.trim();
-
-                if (!/^0[0-9]{9}$/.test(phone)) {
-
-                    showMessage(
-                        message,
-                        "Please enter a valid 10-digit phone number.",
-                        "Vui lòng nhập số điện thoại hợp lệ gồm 10 chữ số."
-                    );
-
-                    return;
-
-                }
-
-            } else {
-
-                if (!emailInput.validity.valid) {
-
-                    showMessage(
-                        message,
-                        "Please enter a valid email address.",
-                        "Vui lòng nhập địa chỉ email hợp lệ."
-                    );
-
-                    return;
-
-                }
-
-            }
-
-            // Temporary frontend navigation
-
-            window.location.href =
-                "/Account/VerifyResetCode?type=" +
-                encodeURIComponent(type);
-
-        });
-
         updateRecoveryMethod();
 
+        forgotForm.addEventListener("submit", function (event) {
+
+            const selected = forgotForm.querySelector(
+                'input[name="RecoveryMethod"]:checked'
+            );
+
+            const method = selected?.value;
+
+            if (method === "local") {
+
+                const value = phone.value.trim();
+
+                if (!/^0[35789][0-9]{8}$/.test(value)) {
+
+                    event.preventDefault();
+
+                    showMessage(
+                        "Invalid Vietnamese phone number.",
+                        "Số điện thoại Việt Nam không hợp lệ."
+                    );
+
+                    return;
+                }
+
+                phone.value = value;
+            }
+            else if (method === "foreign") {
+
+                const value = email.value.trim();
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+
+                    event.preventDefault();
+
+                    showMessage(
+                        "Invalid email address.",
+                        "Địa chỉ email không hợp lệ."
+                    );
+
+                    return;
+                }
+
+                email.value = value;
+            }
+            else {
+
+                event.preventDefault();
+
+                showMessage(
+                    "Please select a recovery method.",
+                    "Vui lòng chọn phương thức khôi phục."
+                );
+
+                return;
+            }
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            showMessage(
+                "Processing your request...",
+                "Đang xử lý yêu cầu..."
+            );
+
+            // Allow HTTP POST to AccountController
+        });
+
+        window.addEventListener("pageshow", function () {
+
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+
+            updateRecoveryMethod();
+        });
     }
 
-    // ========================================
-    // RESET PASSWORD
-    // ========================================
+
+    // ==========================================
+    // 2. RESET PASSWORD FORM
+    // ==========================================
 
     const resetForm =
         document.getElementById("resetPasswordForm");
 
     if (resetForm) {
 
-        const passwordInput =
+        const password =
             document.getElementById("newPassword");
 
-        const confirmInput =
+        const confirmPassword =
             document.getElementById("confirmNewPassword");
 
         const message =
             document.getElementById("resetPasswordMessage");
 
+        const submitButton =
+            resetForm.querySelector('button[type="submit"]');
+
+
         // Show / Hide Password
 
-        resetForm.querySelectorAll("[data-toggle-password]")
-            .forEach(function (button) {
+        resetForm.querySelectorAll("[data-password-target]")
+            .forEach(button => {
 
                 button.addEventListener("click", function () {
 
-                    const input = document.getElementById(
-                        button.dataset.togglePassword
+                    const target = document.getElementById(
+                        button.dataset.passwordTarget
                     );
 
-                    if (!input) return;
+                    if (!target) return;
 
-                    const isHidden = input.type === "password";
+                    const hidden =
+                        target.type === "password";
 
-                    input.type = isHidden
-                        ? "text"
-                        : "password";
+                    target.type =
+                        hidden ? "text" : "password";
 
                     button.setAttribute(
                         "aria-label",
-                        isHidden ? "Hide password" : "Show password"
+                        hidden ? "Hide password" : "Show password"
                     );
+                });
+            });
 
+
+        // Password requirements
+
+        const rules = {
+
+            ruleLength: value =>
+                value.length >= 8 &&
+                value.length <= 128,
+
+            ruleUppercase: value =>
+                /[A-Z]/.test(value),
+
+            ruleLowercase: value =>
+                /[a-z]/.test(value),
+
+            ruleNumber: value =>
+                /[0-9]/.test(value),
+
+            ruleSpecial: value =>
+                /[^A-Za-z0-9\s]/.test(value)
+        };
+
+        function validatePassword() {
+
+            let valid = true;
+
+            Object.entries(rules)
+                .forEach(([id, rule]) => {
+
+                    const passed = rule(password.value);
+
+                    const element =
+                        document.getElementById(id);
+
+                    if (element) {
+
+                        element.classList.toggle(
+                            "valid",
+                            passed
+                        );
+                    }
+
+                    if (!passed) {
+                        valid = false;
+                    }
                 });
 
-            });
-
-        // Password validation rules
-
-        function getPasswordRules(password) {
-
-            return {
-
-                ruleLength: password.length >= 8,
-
-                ruleUppercase: /[A-Z]/.test(password),
-
-                ruleLowercase: /[a-z]/.test(password),
-
-                ruleNumber: /[0-9]/.test(password),
-
-                ruleSpecial: /[^A-Za-z0-9\s]/.test(password)
-
-            };
-
+            return valid;
         }
 
-        // Realtime password validation
+        function showResetMessage(en, vi) {
 
-        function updatePasswordRules() {
+            if (message) {
 
-            const rules = getPasswordRules(
-                passwordInput.value
-            );
-
-            Object.entries(rules).forEach(function ([id, valid]) {
-
-                const element = document.getElementById(id);
-
-                element.classList.toggle("valid", valid);
-
-            });
-
-            return Object.values(rules).every(Boolean);
-
+                message.textContent =
+                    translateMessage(en, vi);
+            }
         }
 
-        passwordInput.addEventListener("input", function () {
+        password.addEventListener(
+            "input",
+            validatePassword
+        );
 
-            updatePasswordRules();
 
-            message.textContent = "";
-
-        });
-
-        confirmInput.addEventListener("input", function () {
-
-            message.textContent = "";
-
-        });
-
-        // Submit reset password
+        // Submit new password
 
         resetForm.addEventListener("submit", function (event) {
 
-            event.preventDefault();
+            if (!validatePassword()) {
 
-            if (!updatePasswordRules()) {
+                event.preventDefault();
 
-                showMessage(
-                    message,
-                    "Password does not meet all requirements.",
-                    "Mật khẩu chưa đáp ứng đầy đủ các yêu cầu."
+                showResetMessage(
+                    "Password does not meet the requirements.",
+                    "Mật khẩu chưa đáp ứng yêu cầu."
                 );
 
                 return;
-
             }
 
-            if (passwordInput.value !== confirmInput.value) {
+            if (password.value !== confirmPassword.value) {
 
-                showMessage(
-                    message,
+                event.preventDefault();
+
+                showResetMessage(
                     "Passwords do not match.",
                     "Mật khẩu xác nhận không trùng khớp."
                 );
 
                 return;
-
             }
 
-            // Temporary frontend navigation
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
 
-            window.location.href =
-                "/Account/ResetPasswordSuccess";
+            showResetMessage(
+                "Resetting password...",
+                "Đang đặt lại mật khẩu..."
+            );
 
+            // Allow HTTP POST to AccountController
         });
 
-        updatePasswordRules();
+        window.addEventListener("pageshow", function () {
 
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+
+            validatePassword();
+        });
     }
 
 });

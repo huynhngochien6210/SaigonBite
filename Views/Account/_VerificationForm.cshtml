@@ -135,20 +135,18 @@
         ← Back to Sign In
     </a>
 
-    @if (isPasswordReset)
-    {
-        <p class="verification-demo-note"
-        data-i18n="verificationDemoNote">
-            UI Preview - Backend is not connected.
-        </p>
-    }
-    else
-    {
+    
+    <environment include="Development">
+
         <p class="verification-demo-note"
         data-i18n="otpSimulationNote">
+
             Development mode - Check the server terminal
             for your verification code.
+
         </p>
-    }
+
+    </environment>
+
 
 </div>
