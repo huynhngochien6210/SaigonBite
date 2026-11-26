@@ -26,8 +26,13 @@ namespace SaigonBite.Controllers
             return View();
         }
 
+
+        // =========================================================
+        // ĐẶT HÀNG - BƯỚC 1
+        // =========================================================
+
         [HttpGet]
-        public async Task<IActionResult> Confirm()
+        public IActionResult IndexOrder()
         {
             const string CartKey = "Cart";
 
@@ -54,11 +59,6 @@ namespace SaigonBite.Controllers
             {
                 CustomerId = 1,
                 HubId = 1,
-                DistanceKm = 3,
-                DeliveryAddress =
-                    "19 Nguyễn Trãi, Quận 1, TP.HCM",
-
-                VoucherId = 1,
 
                 Items = cart.Select(item => new OrderItemRequest
                 {
@@ -75,27 +75,112 @@ namespace SaigonBite.Controllers
                 PaymentMethod = "COD"
             };
 
-            // Tính voucher để hiển thị trên Confirm
-            var voucher = await _orderRepository
-                .GetVoucherByIdAsync(1);
-
-            decimal subtotal = request.Items.Sum(
-                item => item.UnitPrice * item.Quantity);
-
-            if (voucher != null)
-            {
-                request.VoucherDiscount =
-                    voucher.CalculateDiscount(subtotal);
-            }
-
-            return View(request);
+            return View("IndexOrder", request);
         }
 
+
+        // =========================================================
+        // ĐẶT HÀNG → XÁC NHẬN
+        // =========================================================
+
         [HttpPost]
-        public async Task<IActionResult> Confirm(PlaceOrderRequest request)
+        public async Task<IActionResult> IndexOrder(
+            PlaceOrderRequest request)
+        {
+            // Kiểm tra địa chỉ
+            if (string.IsNullOrWhiteSpace(
+                request.DeliveryAddress))
+            {
+                ModelState.AddModelError(
+                    "DeliveryAddress",
+                    "Vui lòng nhập địa chỉ giao hàng.");
+            }
+
+            // Kiểm tra khoảng cách
+            if (request.DistanceKm <= 0)
+            {
+                ModelState.AddModelError(
+                    "DistanceKm",
+                    "Vui lòng nhập khoảng cách giao hàng.");
+            }
+            else if (request.DistanceKm > 8)
+            {
+                ModelState.AddModelError(
+                    "DistanceKm",
+                    "Khoảng cách giao hàng không được vượt quá 8 km.");
+            }
+
+            // Kiểm tra giỏ hàng
+            if (request.Items == null ||
+                !request.Items.Any())
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Cart");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("IndexOrder", request);
+            }
+
+            // Tính voucher để hiển thị ở Confirm
+            if (request.VoucherId.HasValue)
+            {
+                var voucher =
+                    await _orderRepository
+                        .GetVoucherByIdAsync(
+                            request.VoucherId.Value);
+
+                if (voucher != null)
+                {
+                    decimal subtotal = request.Items.Sum(
+                        item =>
+                            item.UnitPrice *
+                            item.Quantity);
+
+                    request.VoucherDiscount =
+                        voucher.CalculateDiscount(
+                            subtotal);
+                }
+            }
+            else
+            {
+                request.VoucherDiscount = 0;
+            }
+
+            return View("Confirm", request);
+        }
+
+
+        // =========================================================
+        // XÁC NHẬN - BƯỚC 2
+        // =========================================================
+
+        [HttpGet]
+        public IActionResult Confirm()
+        {
+            // Không cho truy cập Confirm trực tiếp.
+            // Người dùng phải đi qua trang Đặt hàng.
+            return RedirectToAction(
+                nameof(IndexOrder));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Confirm(
+            PlaceOrderRequest request)
         {
             try
             {
+                if (request.Items == null ||
+                    !request.Items.Any())
+                {
+                    return RedirectToAction(
+                        "Index",
+                        "Cart");
+                }
+
                 var order = new Order
                 {
                     CustomerId = request.CustomerId,
@@ -103,20 +188,22 @@ namespace SaigonBite.Controllers
                     DeliveryAddress = request.DeliveryAddress,
                     VoucherId = request.VoucherId,
 
-                    OrderItems = request.Items.Select(item => new OrderItem
-                    {
-                        ItemName = item.ItemName,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice
-                    }).ToList()
+                    OrderItems = request.Items
+                        .Select(item => new OrderItem
+                        {
+                            ItemName = item.ItemName,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice
+                        })
+                        .ToList()
                 };
 
                 IPaymentStrategy paymentStrategy =
                     request.PaymentMethod switch
                     {
+                        "COD" => new CODPayment(),
                         "MoMo" => new MoMoPayment(),
                         "VNPay" => new VNPayPayment(),
-                        "COD" => new CODPayment(),
                         "ApplePay" => new ApplePayPayment(),
                         "PayPal" => new PayPalPayment(),
 
@@ -133,24 +220,30 @@ namespace SaigonBite.Controllers
                     request.HeavyRainSurcharge,
                     paymentStrategy);
 
+                // Đặt hàng thành công → xóa giỏ hàng
                 HttpContext.Session.Remove("Cart");
 
                 return RedirectToAction(
                     nameof(Complete),
-                    new { id = order.OrderId });
+                    new
+                    {
+                        id = order.OrderId
+                    });
             }
-            //catch (Exception ex)
-            //{
-            //    ModelState.AddModelError("", ex.Message);
-
-            //    return View(request);
-            //}
-
             catch (Exception ex)
             {
-                return Content(ex.ToString());
+                ModelState.AddModelError(
+                    "",
+                    ex.Message);
+
+                return View("Confirm", request);
             }
         }
+
+
+        // =========================================================
+        // HOÀN TẤT - BƯỚC 3
+        // =========================================================
 
         public IActionResult Complete(int id)
         {
@@ -159,17 +252,31 @@ namespace SaigonBite.Controllers
             return View();
         }
 
+
+        // =========================================================
+        // XEM DANH SÁCH ĐƠN
+        // =========================================================
+
         public async Task<IActionResult> Status()
         {
             // Tạm thời dùng CustomerId = 1
-            var orders = await _orderService.GetCustomerOrdersAsync(1);
+            var orders =
+                await _orderService
+                    .GetCustomerOrdersAsync(1);
 
             return View(orders);
         }
 
+
+        // =========================================================
+        // CHI TIẾT ĐƠN
+        // =========================================================
+
         public async Task<IActionResult> Details(int id)
         {
-            var order = await _orderService.GetOrderAsync(id);
+            var order =
+                await _orderService
+                    .GetOrderAsync(id);
 
             if (order == null)
             {
@@ -179,15 +286,17 @@ namespace SaigonBite.Controllers
             return View(order);
         }
 
-        public IActionResult IndexOrder()
-        {
-            return View("IndexOrder");
-        }
+
+        // =========================================================
+        // CHỈNH SỬA ĐƠN
+        // =========================================================
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var order = await _orderService.GetOrderAsync(id);
+            var order =
+                await _orderService
+                    .GetOrderAsync(id);
 
             if (order == null)
             {
@@ -202,6 +311,7 @@ namespace SaigonBite.Controllers
 
             return View(order);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Edit(
@@ -220,13 +330,22 @@ namespace SaigonBite.Controllers
 
                 return RedirectToAction(
                     nameof(Details),
-                    new { id = id });
+                    new
+                    {
+                        id = id
+                    });
             }
             catch (Exception ex)
             {
-                return Content(ex.ToString());
+                return Content(
+                    ex.ToString());
             }
         }
+
+
+        // =========================================================
+        // UPDATE STATUS
+        // =========================================================
 
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(
@@ -235,34 +354,50 @@ namespace SaigonBite.Controllers
         {
             try
             {
-                await _orderService.UpdateOrderStatusAsync(
-                    id,
-                    status);
+                await _orderService
+                    .UpdateOrderStatusAsync(
+                        id,
+                        status);
 
                 return RedirectToAction(
                     nameof(Details),
-                    new { id = id });
+                    new
+                    {
+                        id = id
+                    });
             }
             catch (Exception ex)
             {
-                return Content(ex.Message);
+                return Content(
+                    ex.Message);
             }
         }
 
+
+        // =========================================================
+        // CANCEL
+        // =========================================================
+
         [HttpPost]
-        public async Task<IActionResult> Cancel(int id)
+        public async Task<IActionResult> Cancel(
+            int id)
         {
             try
             {
-                await _orderService.CancelOrderAsync(id);
+                await _orderService
+                    .CancelOrderAsync(id);
 
                 return RedirectToAction(
                     nameof(Details),
-                    new { id = id });
+                    new
+                    {
+                        id = id
+                    });
             }
             catch (Exception ex)
             {
-                return Content(ex.Message);
+                return Content(
+                    ex.Message);
             }
         }
     }

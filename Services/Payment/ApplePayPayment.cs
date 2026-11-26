@@ -4,7 +4,6 @@
     {
         public async Task<bool> PayAsync(decimal amount)
         {
-            // TODO: Integrate Apple Pay later
             await Task.CompletedTask;
 
             return true;
