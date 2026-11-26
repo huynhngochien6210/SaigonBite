@@ -1,0 +1,2307 @@
+
+/* =====================================================
+   SAIGONBITE - BRAND MANAGEMENT
+   Dùng chung cho Brands.cshtml và CreateBrand.cshtml
+===================================================== */
+
+
+/* =====================================================
+   1. BRAND MANAGEMENT PAGE
+===================================================== */
+
+.brand-page {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 0 2.4% 35px;
+    color: #292929;
+}
+
+
+/* HERO */
+
+.brand-hero {
+    min-height: 190px;
+    display: flex;
+    align-items: center;
+    padding: 25px 28px;
+    background-color: #fff5eb;
+    background-image: linear-gradient( 90deg, rgba(255, 247, 239, 0.97) 0%, rgba(255, 247, 239, 0.90) 28%, rgba(255, 247, 239, 0.08) 58%, rgba(255, 247, 239, 0) 100% ), url("/image/background.png");
+    background-repeat: no-repeat;
+    background-position: center, right center;
+    background-size: cover, auto 100%;
+}
+
+    .brand-hero h1 {
+        margin: 0 0 8px;
+        color: #a51f19;
+        font-family: "Times New Roman", serif;
+        font-size: clamp(35px, 3.5vw, 54px);
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .brand-hero p {
+        margin: 0;
+        color: #68635e;
+        font-size: clamp(16px, 1.6vw, 23px);
+    }
+
+
+/* =====================================================
+   2. SEARCH AND FILTER TOOLBAR
+===================================================== */
+
+.brand-toolbar {
+    display: grid;
+    grid-template-columns: minmax(230px, 2fr) minmax(190px, 1fr) minmax(210px, 1.1fr) auto;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 27px;
+}
+
+.brand-search {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 18px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid #ddc6b3;
+    border-radius: 14px;
+    box-shadow: 0 2px 5px rgba(70, 40, 15, 0.05);
+}
+
+.search-icon {
+    color: #88351c;
+    font-size: 32px;
+    line-height: 1;
+    transform: rotate(-20deg);
+}
+
+.brand-search input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 17px;
+    color: #292929;
+}
+
+    .brand-search input::placeholder {
+        color: #8c8985;
+    }
+
+.filter-group {
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid #e4cdb8;
+    border-radius: 13px;
+    box-shadow: 0 2px 5px rgba(70, 40, 15, 0.05);
+}
+
+    .filter-group label {
+        white-space: nowrap;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .filter-group select {
+        min-width: 100px;
+        flex: 1;
+        height: 46px;
+        padding: 0 10px;
+        border: 1px solid #e2c7ad;
+        border-radius: 12px;
+        background: #fffaf4;
+        color: #282828;
+        font-size: 15px;
+        outline: none;
+        cursor: pointer;
+    }
+
+        .filter-group select:focus {
+            border-color: #b51d16;
+            box-shadow: 0 0 0 3px rgba(181, 29, 22, 0.08);
+        }
+
+.add-brand-button {
+    height: 54px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    white-space: nowrap;
+    background: #b81512;
+    color: white;
+    border: none;
+    border-radius: 13px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .add-brand-button:hover {
+        background: #8f1511;
+        transform: translateY(-2px);
+    }
+
+    .add-brand-button span {
+        font-size: 27px;
+        line-height: 1;
+    }
+
+    .add-brand-button,
+    .add-brand-button:hover,
+    .add-brand-button:focus,
+    .add-brand-button:active {
+        text-decoration: none !important;
+    }
+
+
+/* =====================================================
+   3. BRAND TABLE
+===================================================== */
+
+.brand-table-card {
+    width: 100%;
+    padding: 7px 9px 0;
+    background: rgba(255, 250, 244, 0.88);
+    border: 1px solid #e8d8ca;
+    border-radius: 19px;
+    box-shadow: 0 4px 10px rgba(70, 40, 15, 0.07);
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.brand-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 16px;
+}
+
+    .brand-table thead {
+        background: #f8ead9;
+    }
+
+    .brand-table th {
+        padding: 15px 12px;
+        font-size: 17px;
+        font-weight: bold;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+        .brand-table th:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .brand-table th:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+    .brand-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eaded3;
+        vertical-align: middle;
+    }
+
+    .brand-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .brand-table tbody tr:hover {
+        background: rgba(255, 239, 224, 0.5);
+    }
+
+    .brand-table tbody tr[hidden] {
+        display: none !important;
+    }
+
+
+/* COLUMN WIDTHS */
+
+.logo-column {
+    width: 12%;
+}
+
+.name-column {
+    width: 16%;
+}
+
+.description-column {
+    width: 27%;
+}
+
+.hub-column {
+    width: 7%;
+}
+
+.status-column {
+    width: 14%;
+}
+
+.action-column {
+    width: 24%;
+}
+
+
+/* BRAND THUMBNAIL */
+
+.brand-thumbnail {
+    width: 110px;
+    height: 75px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    font-size: 42px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(50, 30, 10, 0.12);
+}
+
+.food-rice {
+    background: linear-gradient(135deg, #f4d5a6, #d9a56f);
+}
+
+.food-pho {
+    background: linear-gradient(135deg, #f5e4ca, #d9bd91);
+}
+
+.food-banhmi {
+    background: linear-gradient(135deg, #f6d38c, #d99b38);
+}
+
+.food-dessert {
+    background: linear-gradient(135deg, #f5d9c4, #d9a58a);
+}
+
+
+/* BRAND NAME AND DESCRIPTION */
+
+.brand-name-cell {
+    font-size: 19px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.brand-table td:nth-child(3) {
+    line-height: 1.55;
+    font-size: 15px;
+}
+
+.hub-number {
+    text-align: center;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+
+/* STATUS */
+
+.brand-status {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    margin: auto;
+    padding: 8px 10px;
+    text-align: center;
+    border-radius: 25px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: #dff2bd;
+    color: #197b29;
+}
+
+.status-paused {
+    background: #fbe2da;
+    color: #b51d16;
+}
+
+
+/* =====================================================
+   4. ACTION BUTTONS
+===================================================== */
+
+.brand-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.action-button {
+    min-width: 80px;
+    height: 43px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid #e8b99a;
+    border-radius: 13px;
+    color: #a33b1c;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    /* Loại bỏ gạch chân ở các nút thao tác dạng liên kết, bao gồm nút Sửa */
+    .action-button,
+    .action-button:hover,
+    .action-button:focus,
+    .action-button:active,
+    .action-button:visited {
+        text-decoration: none !important;
+    }
+
+        .action-button span {
+            font-size: 21px;
+            line-height: 1;
+        }
+
+        .action-button:hover {
+            background: #fff0e5;
+            transform: translateY(-2px);
+        }
+
+.delete-button {
+    border-color: #ffaaa0;
+    color: #d11d19;
+}
+
+    .delete-button:hover {
+        background: #fff0ed;
+    }
+
+.empty-brand-message {
+    display: none;
+    padding: 35px;
+    text-align: center;
+    color: #8b7770;
+    font-size: 16px;
+}
+
+
+/* =====================================================
+   5. ADD / EDIT / VIEW MODALS
+===================================================== */
+
+.brand-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(35, 22, 15, 0.48);
+    backdrop-filter: blur(3px);
+}
+
+    .brand-modal-overlay.show {
+        display: flex;
+    }
+
+.brand-modal {
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px;
+    background: #fffaf4;
+    border: 1px solid #ead8c8;
+    border-radius: 19px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+    .modal-header h2 {
+        margin: 0 0 6px;
+        color: #a51f19;
+        font-size: 24px;
+    }
+
+    .modal-header p {
+        margin: 0;
+        color: #82756d;
+        font-size: 14px;
+    }
+
+.modal-close {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 50%;
+    background: #f5e7dc;
+    color: #8c251d;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+
+        .form-group label span {
+            color: #c51e1b;
+        }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1px solid #dfc9b7;
+        border-radius: 10px;
+        outline: none;
+        background: white;
+        font-family: inherit;
+        font-size: 15px;
+    }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #b51d16;
+            box-shadow: 0 0 0 3px rgba(181, 29, 22, 0.09);
+        }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.cancel-button,
+.save-button {
+    min-width: 115px;
+    padding: 11px 17px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background: white;
+    border: 1px solid #d9c3b1;
+    color: #62534a;
+}
+
+.save-button {
+    background: #b51d16;
+    border: 1px solid #b51d16;
+    color: white;
+}
+
+    .save-button:hover {
+        background: #8f1511;
+    }
+
+.brand-detail-content {
+    padding: 15px;
+    background: #fff2e5;
+    border-radius: 12px;
+    line-height: 1.7;
+}
+
+    .brand-detail-content h3 {
+        color: #a51f19;
+        margin-top: 0;
+    }
+
+
+/* =====================================================
+   6. CREATE BRAND PAGE
+===================================================== */
+
+.create-brand-page {
+    position: relative;
+    min-height: calc(100vh - 78px);
+    padding-bottom: 35px;
+    background: #fff9f3;
+}
+
+
+/* CLEAR BACKGROUND IMAGE */
+
+.create-brand-banner {
+    width: 100%;
+    height: 255px;
+    background-image: url("/image/background.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    /* Không gradient, không overlay, không blur */
+}
+
+
+/* FORM CARD */
+
+.create-brand-card {
+    position: relative;
+    z-index: 1;
+    width: 92%;
+    max-width: 1500px;
+    margin: -10px auto 0;
+    padding: 25px 28px 17px;
+    background: rgba(255, 250, 244, 0.94);
+    border: 1px solid #ead7c7;
+    border-radius: 23px;
+    box-shadow: 0 5px 13px rgba(85, 47, 24, 0.09);
+}
+
+
+/* FORM ROWS */
+
+.create-form-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 15px;
+}
+
+    .create-form-row > label {
+        padding: 10px 0 0 18px;
+        color: #252525;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+        .create-form-row > label span {
+            color: #b71916;
+        }
+
+.form-field {
+    min-width: 0;
+}
+
+    .form-field input[type="text"],
+    .form-field textarea {
+        width: 100%;
+        padding: 11px 17px;
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid #d9c7bb;
+        border-radius: 12px;
+        color: #292929;
+        font-family: inherit;
+        font-size: 16px;
+        outline: none;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-field input[type="text"] {
+        height: 46px;
+    }
+
+    .form-field textarea {
+        min-height: 76px;
+        resize: vertical;
+    }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: #b51d16;
+            box-shadow: 0 0 0 3px rgba(181, 29, 22, 0.08);
+        }
+
+        .form-field input::placeholder,
+        .form-field textarea::placeholder {
+            color: #827b75;
+        }
+
+
+/* CHARACTER COUNT */
+
+.character-count {
+    text-align: right;
+    margin-top: 4px;
+    color: #9b8c80;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   7. LOGO UPLOAD
+===================================================== */
+
+.upload-box {
+    min-height: 97px;
+    width: 100%;
+    padding: 14px 42px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    border: 1.5px dashed #e5a99c;
+    border-radius: 13px;
+    background: rgba(255, 248, 241, 0.65);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .upload-box:hover {
+        background: #fff0e8;
+        border-color: #b51d16;
+    }
+
+.upload-icon {
+    width: 80px;
+    height: 65px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ae211b;
+    background: #fce9e1;
+    border: 1px solid #f4d3c8;
+    border-radius: 14px;
+}
+
+    .upload-icon span {
+        font-size: 39px;
+    }
+
+.upload-text strong {
+    display: block;
+    font-size: 17px;
+    color: #292929;
+}
+
+.upload-text p {
+    margin: 5px 0 0;
+    color: #77716d;
+    font-size: 14px;
+}
+
+.logo-preview {
+    display: none;
+    width: 75px;
+    height: 65px;
+    margin-left: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+    .logo-preview.show {
+        display: block;
+    }
+
+.file-error {
+    display: block;
+    margin-top: 5px;
+    color: #c51e1b;
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   8. STATUS TOGGLE
+===================================================== */
+
+.status-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    cursor: pointer;
+}
+
+    .status-toggle input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.toggle-slider {
+    position: relative;
+    width: 67px;
+    height: 35px;
+    flex-shrink: 0;
+    background: #aaa;
+    border-radius: 30px;
+    transition: 0.25s;
+}
+
+    .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 27px;
+        height: 27px;
+        left: 4px;
+        top: 4px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+        transition: 0.25s;
+    }
+
+.status-toggle input:checked + .toggle-slider {
+    background: #38a84b;
+}
+
+    .status-toggle input:checked + .toggle-slider::before {
+        transform: translateX(32px);
+    }
+
+.toggle-status-text {
+    min-width: 175px;
+    padding: 7px 16px;
+    color: #222;
+    background: #e3f2c8;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.status-toggle input:not(:checked) ~ .toggle-status-text {
+    background: #f9ded7;
+    color: #a51f19;
+}
+
+
+/* =====================================================
+   9. DIVIDERS
+===================================================== */
+
+.form-divider {
+    height: 1px;
+    margin: 17px 0;
+    background: #e7d7c9;
+}
+
+.bottom-divider {
+    margin-top: 23px;
+    margin-bottom: 17px;
+}
+
+
+/* =====================================================
+   10. HUB SELECTION
+===================================================== */
+
+.hub-create-row {
+    margin-bottom: 8px;
+}
+
+.choose-hub-button {
+    min-width: 275px;
+    height: 45px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    background: rgba(255, 255, 255, 0.55);
+    color: #ae1b16;
+    border: 1.5px solid #c51e1b;
+    border-radius: 11px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .choose-hub-button:hover {
+        background: #fff0e9;
+    }
+
+    .choose-hub-button span {
+        font-size: 26px;
+        line-height: 1;
+    }
+
+.selected-hubs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.no-hub-text {
+    color: #97877c;
+    font-size: 14px;
+}
+
+.hub-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 12px 7px 16px;
+    background: #fce5dc;
+    color: #ad241c;
+    border: 1px solid #f6d2c6;
+    border-radius: 22px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+    .hub-chip button {
+        padding: 0;
+        border: none;
+        background: none;
+        color: #a51f19;
+        font-size: 19px;
+        cursor: pointer;
+    }
+
+
+/* =====================================================
+   11. FORM BUTTONS
+===================================================== */
+
+.create-form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 24px;
+    width: 58%;
+    margin: 0 auto;
+}
+
+.form-cancel-button,
+.form-save-button {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.form-cancel-button {
+    background: transparent;
+    border: 1.5px solid #dc7b53;
+    color: #a51f19;
+}
+
+    .form-cancel-button:hover {
+        background: #fff0e8;
+    }
+
+.form-save-button {
+    background: #b51315;
+    border: 1px solid #b51315;
+    color: white;
+}
+
+    .form-save-button:hover {
+        background: #8e1112;
+    }
+
+
+/* =====================================================
+   12. HUB MODAL
+   Hiển thị phía bên phải theo Figma
+===================================================== */
+
+.hub-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 19vh 5vw 20px;
+    /* Không làm tối hoặc làm mờ toàn bộ background */
+    background: transparent;
+}
+
+    .hub-modal-overlay.show {
+        display: flex;
+    }
+
+.hub-modal {
+    width: 100%;
+    max-width: 575px;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 20px 24px;
+    background: #fffaf4;
+    border: 1px solid #e5d3c5;
+    border-radius: 19px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    animation: modalAppear 0.2s ease;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hub-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+    .hub-modal-header h2 {
+        margin: 0;
+        font-size: 25px;
+        color: #181818;
+    }
+
+.hub-modal-close {
+    width: 35px;
+    height: 35px;
+    border: none;
+    background: transparent;
+    color: #b51d16;
+    font-size: 33px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+
+/* HUB LIST */
+
+.hub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hub-option {
+    min-height: 72px;
+    display: grid;
+    grid-template-columns: 38px 58px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .hub-option:hover {
+        background: #fff0e8;
+    }
+
+    .hub-option:has(input:checked) {
+        background: #fce9e2;
+    }
+
+    .hub-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+.hub-checkbox {
+    width: 26px;
+    height: 26px;
+    position: relative;
+    border: 1.5px solid #9c897e;
+    border-radius: 5px;
+    background: white;
+}
+
+.hub-option input:checked + .hub-checkbox {
+    background: #b51d16;
+    border-color: #b51d16;
+}
+
+    .hub-option input:checked + .hub-checkbox::after {
+        content: "✓";
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+.hub-location-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b51d16;
+    background: #fff0dc;
+    border: 1px solid #f2d5b5;
+    border-radius: 12px;
+    font-size: 27px;
+}
+
+.hub-information {
+    min-width: 0;
+}
+
+    .hub-information strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 17px;
+        color: #222;
+    }
+
+    .hub-information small {
+        display: block;
+        color: #69635e;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+
+/* HUB MODAL ACTIONS */
+
+.hub-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 17px;
+    padding-top: 16px;
+    border-top: 1px solid #e8d9ce;
+}
+
+.hub-close-button,
+.hub-save-button {
+    height: 47px;
+    border-radius: 11px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.hub-close-button {
+    color: #ad241c;
+    background: transparent;
+    border: 1.5px solid #dc7b53;
+}
+
+    .hub-close-button:hover {
+        background: #fff0e8;
+    }
+
+.hub-save-button {
+    color: white;
+    background: #b51315;
+    border: 1px solid #b51315;
+}
+
+    .hub-save-button:hover {
+        background: #8e1112;
+    }
+
+
+/* =====================================================
+   13. DELETE BRAND CONFIRMATION MODAL
+===================================================== */
+
+.delete-brand-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(35, 25, 20, 0.38);
+    backdrop-filter: blur(3px);
+}
+
+    .delete-brand-overlay.show {
+        display: flex;
+    }
+
+.delete-brand-modal {
+    width: 100%;
+    max-width: 830px;
+    padding: 0 36px 32px;
+    background: #fffaf4;
+    border: 1px solid #ead8c8;
+    border-radius: 26px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    animation: deleteModalAppear 0.2s ease;
+}
+
+@keyframes deleteModalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delete-modal-header {
+    min-height: 102px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 0 -36px 22px;
+    padding: 18px 36px;
+    border-bottom: 1px solid #f0e1d5;
+}
+
+.delete-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.delete-modal-icon {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fbe9e1;
+    border-radius: 15px;
+    color: #b51d16;
+    font-size: 43px;
+    font-weight: bold;
+}
+
+.delete-modal-title h2 {
+    margin: 0;
+    color: #a51f19;
+    font-size: clamp(21px, 2.2vw, 32px);
+    font-weight: bold;
+}
+
+.delete-modal-close {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #b51d16;
+    font-size: 38px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+    .delete-modal-close:hover {
+        color: #7f100c;
+    }
+
+
+/* WARNING */
+
+.delete-warning-box {
+    min-height: 105px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 17px 25px;
+    margin-bottom: 20px;
+    background: #fff0d5;
+    border: 1px solid #ffe0af;
+    border-radius: 15px;
+}
+
+.warning-icon {
+    color: #e58b18;
+    font-size: 47px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.warning-message {
+    min-width: 0;
+}
+
+    .warning-message strong {
+        display: block;
+        color: #a51f19;
+        font-size: 21px;
+        line-height: 1.45;
+    }
+
+    .warning-message p {
+        margin: 3px 0 0;
+        color: #a51f19;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+
+/* DESCRIPTION */
+
+.delete-description {
+    margin: 0 0 27px;
+    color: #292929;
+    font-size: 19px;
+    line-height: 1.6;
+}
+
+
+/* BUTTONS */
+
+.delete-modal-actions {
+    display: grid;
+    grid-template-columns: 0.9fr 1.15fr 1.3fr;
+    gap: 18px;
+}
+
+.delete-cancel-button,
+.delete-restore-button,
+.delete-confirm-button {
+    min-height: 58px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.delete-cancel-button {
+    color: #a51f19;
+    background: transparent;
+    border: 1.5px solid #e5b89f;
+}
+
+    .delete-cancel-button:hover {
+        background: #fff0e8;
+    }
+
+.delete-restore-button {
+    color: #a51f19;
+    background: #fff7ef;
+    border: 1.5px solid #e5b89f;
+}
+
+    .delete-restore-button span {
+        font-size: 27px;
+    }
+
+    .delete-restore-button:hover {
+        background: #fce9dc;
+    }
+
+    .delete-restore-button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+.delete-confirm-button {
+    color: white;
+    background: #b51315;
+    border: 1px solid #b51315;
+}
+
+    .delete-confirm-button:hover {
+        background: #8e1112;
+        transform: translateY(-2px);
+    }
+
+    .delete-confirm-button span {
+        font-size: 23px;
+    }
+
+
+/* =====================================================
+   14. RESPONSIVE
+===================================================== */
+
+@media (max-width: 1200px) {
+
+    .brand-toolbar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .brand-search {
+        grid-column: 1 / -1;
+    }
+
+    .add-brand-button {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .brand-page {
+        padding: 0 15px 25px;
+    }
+
+    .brand-hero {
+        min-height: 160px;
+        background-size: cover, auto 100%;
+    }
+
+    .brand-toolbar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .brand-search {
+        grid-column: auto;
+    }
+
+    .brand-modal {
+        padding: 20px;
+    }
+
+    .create-brand-banner {
+        height: 190px;
+        background-position: center;
+    }
+
+    .create-brand-card {
+        width: 95%;
+        padding: 20px 15px;
+    }
+
+    .create-form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+        .create-form-row > label {
+            padding-left: 2px;
+            padding-top: 0;
+        }
+
+    .upload-box {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .upload-icon {
+        width: 60px;
+        height: 55px;
+    }
+
+    .upload-text strong {
+        font-size: 14px;
+    }
+
+    .upload-text p {
+        font-size: 12px;
+    }
+
+    .create-form-actions {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .hub-modal-overlay {
+        padding: 12vh 12px 12px;
+        justify-content: center;
+    }
+
+    .hub-modal {
+        max-width: 575px;
+        max-height: 78vh;
+        padding: 17px 13px;
+    }
+
+    .hub-option {
+        grid-template-columns: 28px 42px minmax(0, 1fr);
+        gap: 8px;
+        padding: 7px;
+    }
+
+    .hub-location-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .hub-information strong {
+        font-size: 14px;
+    }
+
+    .hub-information small {
+        font-size: 11px;
+    }
+
+    .delete-brand-modal {
+        padding: 0 18px 22px;
+        border-radius: 18px;
+    }
+
+    .delete-modal-header {
+        margin: 0 -18px 18px;
+        padding: 15px 18px;
+        min-height: 80px;
+    }
+
+    .delete-modal-title {
+        gap: 10px;
+    }
+
+    .delete-modal-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 29px;
+    }
+
+    .delete-modal-title h2 {
+        font-size: 19px;
+    }
+
+    .delete-warning-box {
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .warning-icon {
+        font-size: 34px;
+    }
+
+    .warning-message strong {
+        font-size: 15px;
+    }
+
+    .warning-message p {
+        font-size: 14px;
+    }
+
+    .delete-description {
+        font-size: 15px;
+    }
+
+    .delete-modal-actions {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .delete-cancel-button,
+    .delete-restore-button,
+    .delete-confirm-button {
+        min-height: 46px;
+        font-size: 15px;
+    }
+}
+
+
+/* =====================================================
+   EDIT BRAND PAGE
+===================================================== */
+
+.edit-brand-page {
+    width: 100%;
+    min-height: calc(100vh - 75px);
+    padding-bottom: 20px;
+    background: #fff8f1;
+}
+
+
+/* FORM CARD */
+
+.edit-brand-card {
+    position: relative;
+    z-index: 1;
+    width: 94%;
+    max-width: 1600px;
+    margin: -2px auto 0;
+    padding: 28px 30px;
+    background: rgba(255, 250, 244, 0.94);
+    border: 1px solid #e9d7c9;
+    border-radius: 22px;
+    box-shadow: 0 4px 12px rgba(80, 45, 20, 0.08);
+}
+
+
+/* FORM ROW */
+
+.edit-form-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+    .edit-form-row > label {
+        padding: 10px 0 0 15px;
+        color: #252525;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+        .edit-form-row > label span {
+            color: #bd1b16;
+        }
+
+.edit-form-field {
+    min-width: 0;
+}
+
+    .edit-form-field > input,
+    .edit-form-field > textarea {
+        width: 100%;
+        padding: 11px 17px;
+        background: rgba(255, 255, 255, 0.48);
+        border: 1px solid #d9c6b8;
+        border-radius: 12px;
+        color: #252525;
+        font-family: inherit;
+        font-size: 18px;
+        outline: none;
+    }
+
+    .edit-form-field > input {
+        height: 47px;
+    }
+
+    .edit-form-field > textarea {
+        min-height: 80px;
+        resize: vertical;
+        line-height: 1.45;
+    }
+
+        .edit-form-field > input:focus,
+        .edit-form-field > textarea:focus {
+            border-color: #b51d16;
+            box-shadow: 0 0 0 3px rgba(181, 29, 22, 0.08);
+        }
+
+
+/* IMAGE AREA */
+
+.edit-image-area {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.edit-current-image {
+    width: 220px;
+    height: 122px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f6d8ac, #dba66e);
+    box-shadow: 0 3px 7px rgba(60, 35, 15, 0.13);
+}
+
+    .edit-current-image span {
+        font-size: 65px;
+    }
+
+    .edit-current-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.edit-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+}
+
+.edit-upload-button {
+    width: 200px;
+    min-height: 102px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1.5px dashed #dfa998;
+    border-radius: 13px;
+    color: #b51d16;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .edit-upload-button:hover {
+        background: #fff0e8;
+        border-color: #b51d16;
+    }
+
+    .edit-upload-button .camera-icon {
+        font-size: 32px;
+    }
+
+    .edit-upload-button strong {
+        font-size: 16px;
+    }
+
+.edit-upload-area small {
+    color: #777;
+    font-size: 14px;
+}
+
+.edit-file-error {
+    color: #bd1b16;
+    font-size: 12px;
+}
+
+
+/* STATUS */
+
+.edit-status-select {
+    width: 320px;
+    max-width: 100%;
+    height: 46px;
+    padding: 0 15px;
+    color: #267d30;
+    background: #f2f8e9;
+    border: 1px solid #c9dcb1;
+    border-radius: 13px;
+    font-size: 17px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+}
+
+    .edit-status-select:has(option[value="paused"]:checked) {
+        color: #ad271c;
+        background: #fff0e9;
+        border-color: #efc5b7;
+    }
+
+
+/* DIVIDER */
+
+.edit-form-divider {
+    height: 1px;
+    margin: 20px 0;
+    background: #e8d9cc;
+}
+
+
+/* LINKED HUBS */
+
+.edit-hub-row {
+    margin-bottom: 0;
+}
+
+.edit-selected-hubs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 43px;
+    margin-bottom: 10px;
+}
+
+.edit-hub-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px;
+    color: #ad211a;
+    background: #fce4da;
+    border: 1px solid #f8d6ca;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+    .edit-hub-chip button {
+        padding: 0;
+        color: #ad211a;
+        border: none;
+        background: transparent;
+        font-size: 19px;
+        cursor: pointer;
+    }
+
+.edit-manage-hub-button {
+    min-height: 42px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: #ad211a;
+    background: transparent;
+    border: 1.5px solid #bd211b;
+    border-radius: 11px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .edit-manage-hub-button:hover {
+        background: #fff0e8;
+    }
+
+    .edit-manage-hub-button span {
+        font-size: 22px;
+    }
+
+
+/* FORM ACTIONS */
+
+.edit-form-actions {
+    width: 94%;
+    max-width: 1600px;
+    margin: 22px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.edit-cancel-button,
+.edit-restore-button,
+.edit-save-button {
+    min-height: 51px;
+    padding: 0 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 13px;
+    font-size: 17px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-cancel-button {
+    min-width: 150px;
+    color: #ad211a;
+    background: transparent;
+    border: 1px solid #e1c5b2;
+}
+
+.edit-restore-button {
+    min-width: 210px;
+    color: #ad211a;
+    background: #fff8f1;
+    border: 1px solid #e1c5b2;
+}
+
+.edit-save-button {
+    min-width: 270px;
+    color: white;
+    background: #b51216;
+    border: 1px solid #b51216;
+}
+
+.edit-cancel-button:hover,
+.edit-restore-button:hover {
+    background: #fff0e8;
+}
+
+.edit-save-button:hover {
+    background: #8e1112;
+}
+
+.edit-restore-button span,
+.edit-save-button span {
+    font-size: 23px;
+}
+
+
+/* EDIT HUB MODAL */
+
+.edit-hub-modal {
+    max-width: 580px;
+}
+
+    .edit-hub-modal .hub-option {
+        min-height: 65px;
+        border-bottom: 1px solid #eaded3;
+    }
+
+    .edit-hub-modal .hub-information strong {
+        font-size: 17px;
+    }
+
+    .edit-hub-modal .hub-information small {
+        font-size: 14px;
+    }
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .edit-brand-card {
+        width: 95%;
+        padding: 20px 15px;
+    }
+
+    .edit-form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+        .edit-form-row > label {
+            padding: 0;
+        }
+
+    .edit-image-area {
+        flex-wrap: wrap;
+    }
+
+    .edit-current-image {
+        width: 160px;
+        height: 100px;
+    }
+
+    .edit-upload-button {
+        width: 150px;
+        min-height: 90px;
+    }
+
+    .edit-form-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .edit-cancel-button,
+    .edit-restore-button,
+    .edit-save-button {
+        min-width: 0;
+        flex: 1 1 100%;
+    }
+
+    .hub-modal-overlay {
+        padding: 10vh 12px 12px;
+        justify-content: center;
+    }
+}
+/* EDIT BRAND: BACKGROUND WITHOUT HEADING */
+
+.edit-brand-banner {
+    width: 100%;
+    height: 255px;
+    background-image: url("/image/background.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+/* Form nối liền với background */
+
+.edit-brand-card {
+    margin-top: -2px;
+}
+
+
+/* =====================================================
+   VIEW BRAND PAGE
+===================================================== */
+
+.view-brand-page {
+    width: 100%;
+    min-height: calc(100vh - 70px);
+    padding-bottom: 35px;
+    background: #fff8f1;
+}
+
+/* BANNER */
+
+.view-brand-banner {
+    width: 100%;
+    height: 205px;
+    background-image: url("/image/background.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* BRAND SUMMARY */
+
+.view-brand-summary {
+    position: relative;
+    z-index: 1;
+    width: 96%;
+    max-width: 1800px;
+    min-height: 190px;
+    margin: -2px auto 23px;
+    padding: 20px 26px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    background: rgba(255, 250, 244, 0.96);
+    border: 1px solid #ead8c8;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(70, 40, 15, 0.07);
+}
+
+.view-brand-logo {
+    width: 172px;
+    height: 150px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f4d5a6, #d9a56f);
+    border-radius: 17px;
+    font-size: 75px;
+}
+
+.view-brand-summary-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.view-brand-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+    .view-brand-title-row h1 {
+        margin: 0;
+        color: #a51f19;
+        font-family: "Times New Roman", serif;
+        font-size: clamp(30px, 3vw, 46px);
+        font-weight: bold;
+        font-style: italic;
+    }
+
+.view-brand-status,
+.view-brand-food-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    color: #197b29;
+    background: #e4f3d0;
+    border-radius: 25px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.view-brand-description {
+    margin: 10px 0 18px;
+    color: #39332f;
+    font-size: 18px;
+}
+
+.view-brand-statistics {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+.view-brand-stat {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-right: 22px;
+    border-right: 1px solid #cbb9aa;
+    font-size: 15px;
+}
+
+    .view-brand-stat:last-child {
+        border-right: none;
+    }
+
+.view-brand-stat-icon {
+    color: #b51d16;
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+/* MAIN CONTENT */
+
+.view-brand-content {
+    width: 96%;
+    max-width: 1800px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.06fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* PANELS */
+
+.view-brand-panel {
+    min-width: 0;
+    overflow: hidden;
+    background: rgba(255, 250, 244, 0.94);
+    border: 1px solid #ead8c8;
+    border-radius: 19px;
+    box-shadow: 0 4px 12px rgba(70, 40, 15, 0.07);
+}
+
+    .view-brand-panel h2 {
+        margin: 0;
+        padding: 13px 24px;
+        color: #a51f19;
+        background: rgba(255, 244, 233, 0.85);
+        font-family: "Times New Roman", serif;
+        font-size: 27px;
+        font-weight: bold;
+    }
+
+/* BRAND INFORMATION */
+
+.view-brand-info-list {
+    padding: 5px 22px 10px;
+}
+
+.view-brand-info-row {
+    min-height: 65px;
+    display: grid;
+    grid-template-columns: 185px minmax(0, 1fr);
+    align-items: center;
+    gap: 15px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eaded3;
+    font-size: 16px;
+}
+
+    .view-brand-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .view-brand-info-row > strong {
+        color: #292929;
+    }
+
+    .view-brand-info-row > span:not(.view-brand-hubs) {
+        line-height: 1.5;
+    }
+
+.view-brand-hubs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+    .view-brand-hubs span {
+        padding: 8px 13px;
+        color: #a51f19;
+        background: #fce7dc;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+/* MENU TABLE */
+
+.view-brand-menu-table-wrapper {
+    width: 100%;
+    padding: 0 17px 12px;
+    overflow-x: auto;
+}
+
+.view-brand-menu-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .view-brand-menu-table th {
+        padding: 12px 8px;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 1px solid #eaded3;
+    }
+
+    .view-brand-menu-table td {
+        padding: 9px 8px;
+        border-bottom: 1px solid #eaded3;
+        vertical-align: middle;
+    }
+
+.view-brand-food {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.view-brand-food-image {
+    width: 65px;
+    height: 47px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f4d5a6, #d9a56f);
+    border-radius: 10px;
+    font-size: 27px;
+}
+
+.view-brand-category {
+    display: inline-block;
+    padding: 7px 10px;
+    color: #873d21;
+    background: #fff0dc;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.view-brand-price {
+    color: #b51d16;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.view-brand-food-status {
+    padding: 7px 10px;
+    font-size: 13px;
+}
+
+/* ACTIONS */
+
+.view-brand-actions {
+    width: 96%;
+    max-width: 1800px;
+    margin: 23px auto 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.view-brand-back-button {
+    min-width: 210px;
+    min-height: 51px;
+    padding: 0 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #a51f19;
+    background: transparent;
+    border: 1.5px solid #c83d32;
+    border-radius: 13px;
+    font-size: 17px;
+    font-weight: bold;
+    text-decoration: none !important;
+    transition: 0.2s ease;
+}
+
+    .view-brand-back-button:hover {
+        color: #a51f19;
+        background: #fff0e8;
+        transform: translateY(-2px);
+        text-decoration: none !important;
+    }
+
+    .view-brand-back-button span {
+        font-size: 25px;
+    }
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+    .view-brand-content {
+        grid-template-columns: 1fr;
+    }
+
+    .view-brand-statistics {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .view-brand-banner {
+        height: 160px;
+    }
+
+    .view-brand-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px;
+    }
+
+    .view-brand-logo {
+        width: 120px;
+        height: 100px;
+    }
+
+    .view-brand-title-row {
+        gap: 10px;
+    }
+
+    .view-brand-stat {
+        border-right: none;
+        padding-right: 0;
+        flex-wrap: wrap;
+    }
+
+    .view-brand-info-row {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    .view-brand-actions {
+        justify-content: center;
+    }
+
+    .view-brand-back-button {
+        width: 100%;
+    }
+}
+.view-button,
+.view-button:hover,
+.view-button:focus,
+.view-button:active,
+.view-button:visited {
+    text-decoration: none !important;
+}
+
+.view-button {
+    color: #a33b1c;
+}
