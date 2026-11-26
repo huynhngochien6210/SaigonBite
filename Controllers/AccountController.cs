@@ -1003,8 +1003,80 @@ public async Task<IActionResult> ChangePassword()
         return RedirectToAction(nameof(Login));
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> DeactivateAccount()
+    {
+        int? userId = GetCurrentUserId();
 
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
 
+        var profile = await _accountService
+            .GetProfileAsync(userId.Value);
+
+        if (profile == null)
+        {
+            return RedirectToAction(nameof(MyAccount));
+        }
+
+        return View(new DeactivateAccountViewModel());
+    }
+[HttpPost]
+[Authorize(Roles = "Customer")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeactivateAccount(
+    DeactivateAccountViewModel model)
+{
+    int? userId = GetCurrentUserId();
+
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var profile = await _accountService
+        .GetProfileAsync(userId.Value);
+
+    if (profile == null)
+    {
+        return RedirectToAction(nameof(MyAccount));
+    }
+
+    // Validate input
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    // Deactivate customer account
+    var result = await _accountService
+        .DeactivateAccountAsync(userId.Value, model);
+
+    if (!result.Success)
+    {
+        ModelState.AddModelError(
+            string.Empty,
+            result.Message);
+
+        return View(model);
+    }
+
+    // Remove authentication cookie
+    await HttpContext.SignOutAsync(
+        CookieAuthenticationDefaults.AuthenticationScheme);
+
+    // Clear session
+    HttpContext.Session.Clear();
+
+    // Success notification
+    TempData["DeactivateSuccess"] = result.Message;
+
+    // Redirect to login page
+    return RedirectToAction(nameof(Login));
+}
     // ==========================================
     // 18. ORDER HISTORY
     // ==========================================

@@ -1,4 +1,4 @@
-
+using System.Data;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -466,6 +466,73 @@ public async Task<(bool Success, string Message)>
         "Password changed successfully."
     );
 }
+
+    // ==========================================
+    // DEACTIVATE CUSTOMER ACCOUNT
+    // ==========================================
+
+    public async Task<(bool Success, string Message)>
+        DeactivateAccountAsync(
+            int userId,
+            DeactivateAccountViewModel model)
+    {
+        string? validationError = ValidateModel(model);
+        if (validationError != null)
+        {
+            return (false, validationError);
+        }
+
+        await using var transaction =
+            await _context.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable);
+
+        var user = await _context.UserAccounts
+            .FirstOrDefaultAsync(u =>
+                u.UserId == userId &&
+                u.Role == UserRole.Customer &&
+                u.IsActive && u.IsVerified);
+
+        if (user == null)
+        {
+            return (false,
+                "Customer account not found or already deactivated.");
+        }
+
+        var passwordResult = _passwordHasher.VerifyHashedPassword(
+            user, user.PasswordHash, model.CurrentPassword);
+
+        if (passwordResult == PasswordVerificationResult.Failed)
+        {
+            return (false, "Current password is incorrect.");
+        }
+
+        // Soft delete: retain account and related records.
+        user.IsActive = false;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        var verificationCodes = await _context.VerificationCodes
+            .Where(v => v.UserId == userId && !v.IsUsed)
+            .ToListAsync();
+
+        foreach (var code in verificationCodes)
+        {
+            code.IsUsed = true;
+        }
+
+        var passwordResets = await _context.PasswordResets
+            .Where(r => r.UserId == userId && !r.IsUsed)
+            .ToListAsync();
+
+        foreach (var reset in passwordResets)
+        {
+            reset.IsUsed = true;
+        }
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return (true, "Your account has been deactivated successfully.");
+    }
 
     private static string? ValidateModel(object model)
     {

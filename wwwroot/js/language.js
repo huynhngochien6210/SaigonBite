@@ -139,6 +139,21 @@ const translations = {
             "Demo order history. Backend is not connected.",
         otpSimulationNote:
         "Development mode - Check the server terminal for your verification code.",
+        deactivateAccount: "Deactivate Account",
+        deactivateDescription:
+            "Deactivating your account will prevent you from signing in. Your previous order records will be retained.",
+        deactivateWarningTitle:
+            "Account Deactivation Warning",
+        deactivateWarning:
+            "You will no longer be able to sign in or recover your password after deactivating your account.",
+        deactivateKeepData:
+            "Your previous order records will not be deleted.",
+
+        deactivateConfirmation:
+            "I understand and agree to deactivate my account.",
+        confirmDeactivation:
+            "Confirm Deactivation",
+    
     },
 
     vi: {
@@ -279,6 +294,26 @@ const translations = {
             "Lịch sử đơn hàng mô phỏng. Backend chưa được kết nối.",
         otpSimulationNote:
         "Chế độ phát triển - Kiểm tra Terminal để lấy mã xác thực.",
+    
+        deactivateAccount: "Vô hiệu hóa tài khoản",
+
+        deactivateDescription:
+            "Sau khi vô hiệu hóa tài khoản, bạn sẽ không thể đăng nhập. Lịch sử đơn hàng trước đây vẫn được lưu giữ.",
+
+        deactivateWarningTitle:
+            "Cảnh báo vô hiệu hóa tài khoản",
+
+        deactivateWarning:
+            "Bạn sẽ không thể đăng nhập hoặc khôi phục mật khẩu sau khi vô hiệu hóa tài khoản.",
+
+        deactivateKeepData:
+            "Lịch sử đơn hàng trước đây sẽ không bị xóa.",
+
+        deactivateConfirmation:
+            "Tôi hiểu và đồng ý vô hiệu hóa tài khoản của mình.",
+
+        confirmDeactivation:
+            "Xác nhận vô hiệu hóa",
     }
 };
 

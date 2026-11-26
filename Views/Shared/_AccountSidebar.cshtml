@@ -4,8 +4,9 @@
         ViewContext.RouteData.Values["action"]?.ToString() ?? "";
 
     bool isProfile =
-        currentAction == "MyAccount" ||
-        currentAction == "EditAccount";
+    currentAction == "MyAccount" ||
+    currentAction == "EditAccount" ||
+    currentAction == "DeactivateAccount";
 
     string fullName =
         User.Identity?.Name ?? "Customer";

@@ -1,4 +1,3 @@
-
 using SaigonBite.ViewModels;
 
 namespace SaigonBite.Services;
@@ -28,4 +27,10 @@ public interface IAccountService
         ChangePasswordAsync(
             int userId,
             ChangePasswordViewModel model);
+
+    // Deactivate Account
+    Task<(bool Success, string Message)>
+        DeactivateAccountAsync(
+            int userId,
+            DeactivateAccountViewModel model);
 }
