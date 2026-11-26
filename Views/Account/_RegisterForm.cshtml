@@ -25,7 +25,13 @@
         </p>
     }
 
-    <form id="registrationForm" method="post">
+    <form id="registrationForm"
+      method="post"
+      action="@(isLocal
+          ? Url.Action("RegisterLocal", "Account")
+          : Url.Action("RegisterForeign", "Account"))">
+
+    @Html.AntiForgeryToken()
 
         <input type="hidden"
                name="accountType"
@@ -64,6 +70,9 @@
                 <input type="tel"
                        id="phone"
                        name="phone"
+                       minlength="10"
+                       maxlength="10"
+                       pattern="0[35789][0-9]{8}"
                        placeholder="Enter your phone number"
                        data-i18n-placeholder="phonePlaceholder"
                        autocomplete="tel"
@@ -87,6 +96,48 @@
                        data-i18n-placeholder="emailPlaceholder"
                        autocomplete="email"
                        required>
+
+            </div>
+        }
+
+
+        @if (!isLocal)
+        {
+            <!-- Passport Number -->
+            <div class="register-field">
+
+                <label for="passportNumber"
+                    data-i18n="passportNumber">
+                    Passport Number
+                </label>
+
+                <input type="text"
+                    id="passportNumber"
+                    name="passportNumber"
+                    placeholder="Enter your passport number"
+                    data-i18n-placeholder="passportPlaceholder"
+                    minlength="6"
+                    maxlength="9"
+                    pattern="[A-Za-z0-9]{6,9}"
+                    required>
+
+            </div>
+
+            <!-- Nationality -->
+            <div class="register-field">
+
+                <label for="nationality"
+                    data-i18n="nationality">
+                    Nationality
+                </label>
+
+                <input type="text"
+                    id="nationality"
+                    name="nationality"
+                    placeholder="Enter your nationality"
+                    data-i18n-placeholder="nationalityPlaceholder"
+                    maxlength="100"
+                    required>
 
             </div>
         }
@@ -185,9 +236,10 @@
         <label class="register-terms">
 
             <input type="checkbox"
-                   id="acceptTerms"
-                   name="acceptTerms"
-                   required>
+                id="acceptTerms"
+                name="acceptTerms"
+                value="true"
+                required>
 
             <span data-i18n="acceptTerms">
                 I agree to the Terms and Conditions
@@ -197,7 +249,21 @@
 
         <!-- Validation Message -->
 
+        
+        <!-- Backend Validation Message -->
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All"
+                class="text-danger mb-3"
+                role="alert">
+            </div>
+        }
+
+        <!-- Frontend Validation Message -->
+
         <p id="registerMessage" role="status"></p>
+
 
         <!-- Register Button -->
 

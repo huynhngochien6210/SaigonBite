@@ -1,4 +1,4 @@
-
+@model SaigonBite.ViewModels.LoginViewModel
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Sign In";
@@ -19,7 +19,11 @@
 
     </div>
 
-    <form id="loginForm" method="post">
+    <form id="loginForm"
+        method="post"
+        action="@Url.Action("Login", "Account")">
+
+        @Html.AntiForgeryToken()
 
         <!-- Email or Phone -->
 
@@ -94,7 +98,8 @@
             <label class="remember-me">
 
                 <input type="checkbox"
-                       name="rememberMe">
+                    name="rememberMe"
+                    value="true">
 
                 <span data-i18n="rememberMe">
                     Remember me
@@ -119,9 +124,14 @@
 
         </button>
 
+        <div asp-validation-summary="All"
+            class="text-danger"
+            role="alert">
+        </div>
+
         <p id="loginMessage"
-           class="login-message"
-           role="status"></p>
+        class="login-message"
+        role="status"></p>
 
     </form>
 
