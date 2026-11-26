@@ -1,0 +1,113 @@
+@model SaigonBite.ViewModels.DeactivateAccountViewModel
+
+@{
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Deactivate Account";
+}
+
+<div class="account-page">
+
+    @await Html.PartialAsync("_AccountSidebar")
+
+    <section class="account-content">
+
+        <div class="profile-heading">
+
+            <h1 data-i18n="deactivateAccount">
+                Deactivate Account
+            </h1>
+
+        </div>
+
+        <div class="deactivate-warning">
+
+            <h3 data-i18n="deactivateWarningTitle">
+                Account Deactivation Warning
+            </h3>
+
+            <p data-i18n="deactivateWarning">
+                You will no longer be able to sign in
+                or recover your password after
+                deactivating your account.
+            </p>
+
+            <p data-i18n="deactivateKeepData">
+                Your previous order records will
+                not be deleted.
+            </p>
+
+        </div>
+
+        <form method="post"
+              action="@Url.Action("DeactivateAccount", "Account")"
+              id="deactivateAccountForm">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="register-field">
+
+                <label for="currentPassword"
+                       data-i18n="currentPassword">
+
+                    Current Password
+
+                </label>
+
+                <input type="password"
+                       id="currentPassword"
+                       name="CurrentPassword"
+                       maxlength="128"
+                       autocomplete="current-password"
+                       data-i18n-placeholder="passwordPlaceholder"
+                       placeholder="Enter your password"
+                       required />
+
+            </div>
+
+            <div class="deactivate-confirmation">
+
+                <input type="checkbox"
+                       id="confirmDeactivation"
+                       name="ConfirmDeactivation"
+                       value="true"
+                       required />
+
+                <label for="confirmDeactivation"
+                       data-i18n="deactivateConfirmation">
+
+                    I understand and agree to
+                    deactivate my account.
+
+                </label>
+
+            </div>
+
+            <div class="profile-form-actions">
+
+                <a href="@Url.Action("MyAccount", "Account")"
+                   class="profile-cancel-button"
+                   data-i18n="cancel">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="deactivate-submit-button"
+                        data-i18n="confirmDeactivation">
+
+                    Confirm Deactivation
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>

@@ -1,11 +1,14 @@
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 using SaigonBite.Data;
 using SaigonBite.Repositories;
 using SaigonBite.Models;
 using SaigonBite.Services;
+using SaigonBite.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +37,14 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<PricingService>();
 builder.Services.AddScoped<OrderService>();
 
+builder.Services.AddScoped<
+    IOrderHistoryService,
+    OrderHistoryService>();
+
+// UC-D & UC-E Integration
+builder.Services.AddScoped<
+    ICustomerAccountService,
+    CustomerAccountService>();
 // ---------- UC-E: Account ----------
 
 builder.Services.AddScoped<
@@ -45,8 +56,12 @@ builder.Services.AddScoped<
     VerificationService>();
 
 builder.Services.AddScoped<
-    IAuthenticationService,
-    AuthenticationService>();
+    IPasswordResetService,
+    PasswordResetService>();
+
+builder.Services.AddScoped<
+    SaigonBite.Services.IAuthenticationService,
+    SaigonBite.Services.AuthenticationService>();
 
 builder.Services.AddScoped<
     IPasswordHasher<UserAccount>,
@@ -101,6 +116,85 @@ builder.Services
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
 
         options.SlidingExpiration = true;
+
+        // ==========================================
+        // COOKIE VALIDATION - USE CASE E
+        // ==========================================
+
+        options.Events.OnValidatePrincipal =
+            async context =>
+        {
+            var principal = context.Principal;
+
+            if (principal == null)
+            {
+                context.RejectPrincipal();
+
+                await context.HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults
+                        .AuthenticationScheme);
+
+                return;
+            }
+
+            // Only validate Customer accounts.
+            // Do not interfere with other team roles.
+
+            if (!principal.IsInRole("Customer"))
+            {
+                return;
+            }
+
+            // Get UserId from authentication claims.
+
+            string? userIdClaim = principal
+                .FindFirst(ClaimTypes.NameIdentifier)
+                ?.Value;
+
+            if (!int.TryParse(userIdClaim, out int userId)
+                || userId <= 0)
+            {
+                context.RejectPrincipal();
+
+                await context.HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults
+                        .AuthenticationScheme);
+
+                context.HttpContext.Session.Clear();
+
+                return;
+            }
+
+            // Resolve scoped database context.
+
+            var dbContext = context.HttpContext
+                .RequestServices
+                .GetRequiredService<ApplicationDbContext>();
+
+            // Check whether the customer is still valid.
+
+            bool isValidAccount = await dbContext.UserAccounts
+                .AsNoTracking()
+                .AnyAsync(u =>
+                    u.UserId == userId &&
+                    u.Role == UserRole.Customer &&
+                    u.IsActive &&
+                    u.IsVerified,
+                    context.HttpContext.RequestAborted);
+
+            // Reject authentication for invalid accounts.
+
+            if (!isValidAccount)
+            {
+                context.RejectPrincipal();
+
+                await context.HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults
+                        .AuthenticationScheme);
+
+                context.HttpContext.Session.Clear();
+            }
+        };
     });
 
 builder.Services.AddAuthorization();

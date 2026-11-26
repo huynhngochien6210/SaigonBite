@@ -1,42 +1,11 @@
+
+@model SaigonBite.ViewModels.OrderHistoryViewModel
+
 @{
     Layout = "_CustomerLayout";
     ViewData["Title"] = "Order History";
 
-    var orders = new[]
-    {
-        new {
-            Id = "SB001",
-            Date = "25/11/2026",
-            Item = "Pho Bo",
-            Total = 85000,
-            Status = "Delivered",
-            Payment = "MoMo"
-        },
-        new {
-            Id = "SB002",
-            Date = "23/11/2026",
-            Item = "Banh Mi",
-            Total = 45000,
-            Status = "Delivered",
-            Payment = "COD"
-        },
-        new {
-            Id = "SB003",
-            Date = "22/11/2026",
-            Item = "Com Tam",
-            Total = 65000,
-            Status = "Cancelled",
-            Payment = "COD"
-        },
-        new {
-            Id = "SB004",
-            Date = "20/11/2026",
-            Item = "Bun Bo Hue",
-            Total = 75000,
-            Status = "Failed",
-            Payment = "VNPay"
-        }
-    };
+    var orders = Model.Orders;
 }
 
 <div class="account-page">
@@ -56,6 +25,8 @@
             View your previous orders.
         </p>
 
+        <!-- Search and Filter -->
+
         <div class="history-toolbar">
 
             <input type="search"
@@ -70,6 +41,26 @@
                 <option value="all"
                         data-i18n="allStatuses">
                     All Statuses
+                </option>
+
+                <option value="Placed" data-i18n="placed">
+                    Placed
+                </option>
+
+                <option value="Confirmed" data-i18n="confirmed">
+                    Confirmed
+                </option>
+
+                <option value="Preparing" data-i18n="preparing">
+                    Preparing
+                </option>
+
+                <option value="Ready" data-i18n="ready">
+                    Ready
+                </option>
+
+                <option value="OutForDelivery" data-i18n="outfordelivery">
+                    Out for Delivery
                 </option>
 
                 <option value="Delivered"
@@ -91,12 +82,15 @@
 
         </div>
 
+        <!-- Order History Table -->
+
         <div class="table-responsive">
 
             <table class="table history-table">
 
                 <thead>
                     <tr>
+
                         <th data-i18n="orderId">
                             Order ID
                         </th>
@@ -116,6 +110,7 @@
                         <th data-i18n="action">
                             Action
                         </th>
+
                     </tr>
                 </thead>
 
@@ -123,41 +118,70 @@
 
                     @foreach (var order in orders)
                     {
-                        <tr data-order-id="@order.Id"
-                            data-order-status="@order.Status">
+                        var status = order.Status.ToString();
+
+                        var statusText = status == "OutForDelivery"
+                            ? "Out for Delivery"
+                            : status;
+
+                        var statusKey = status == "Failed"
+                            ? "orderFailed"
+                            : status.ToLowerInvariant();
+
+                        var itemSummary = string.Join(
+                            ", ",
+                            order.Items.Select(
+                                i => $"{i.ItemName} x{i.Quantity}"
+                            )
+                        );
+
+                        <tr data-order-id="@order.OrderCode"
+                            data-order-status="@status">
 
                             <td>
-                                <strong>#@order.Id</strong>
+                                <strong>#@order.OrderCode</strong>
                             </td>
 
-                            <td>@order.Date</td>
+                            <td>
+                                @order.OrderDate.ToString("dd/MM/yyyy")
+                            </td>
 
                             <td>
-                                @order.Total.ToString("N0",
+                                @order.Total.ToString(
+                                    "N0",
                                     System.Globalization.CultureInfo
-                                    .GetCultureInfo("vi-VN")) ₫
+                                        .GetCultureInfo("vi-VN")
+                                ) ₫
                             </td>
 
                             <td>
-                                <span class="order-status @order.Status.ToLowerInvariant()"
-                                      data-i18n="@(order.Status == "Failed" ? "orderFailed" : order.Status.ToLowerInvariant())">
-                                    @order.Status
+
+                                <span class="order-status @status.ToLowerInvariant()"
+                                      data-i18n="@statusKey">
+
+                                    @statusText
+
                                 </span>
+
                             </td>
 
                             <td>
+
                                 <button type="button"
                                         class="order-detail-button"
                                         data-order-detail
-                                        data-id="@order.Id"
-                                        data-date="@order.Date"
-                                        data-item="@order.Item"
-                                        data-total="@order.Total"
-                                        data-status="@order.Status"
-                                        data-payment="@order.Payment"
+                                        data-id="@order.OrderCode"
+                                        data-date="@order.OrderDate.ToString("dd/MM/yyyy")"
+                                        data-item="@itemSummary"
+                                        data-total="@order.Total.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                        data-status="@status"
+                                        data-payment="Not available"
                                         data-i18n="viewDetails">
+
                                     View Details
+
                                 </button>
+
                             </td>
 
                         </tr>
@@ -169,15 +193,19 @@
 
         </div>
 
+        <!-- Empty Order History -->
+
         <div id="emptyOrderHistory"
              class="history-empty"
-             hidden>
+             hidden="@(orders.Count > 0)">
 
             <p data-i18n="noOrdersFound">
                 No orders found.
             </p>
 
         </div>
+
+        <!-- Total Orders -->
 
         <div class="history-footer">
 
@@ -186,15 +214,10 @@
             </span>
 
             <strong id="orderRecordCount">
-                @orders.Length
+                @Model.TotalOrders
             </strong>
 
         </div>
-
-        <p class="profile-demo-note"
-           data-i18n="orderHistoryDemoNote">
-            Demo order history. Backend is not connected.
-        </p>
 
     </section>
 
@@ -212,12 +235,16 @@
 
         <div class="modal-content order-modal-content">
 
+            <!-- Modal Header -->
+
             <div class="modal-header">
 
                 <h5 class="modal-title"
                     id="orderDetailTitle"
                     data-i18n="orderDetails">
+
                     Order Details
+
                 </h5>
 
                 <button type="button"
@@ -228,53 +255,75 @@
 
             </div>
 
+            <!-- Modal Body -->
+
             <div class="modal-body">
 
                 <div class="order-detail-row">
+
                     <span data-i18n="orderId">
                         Order ID
                     </span>
+
                     <strong id="detailOrderId"></strong>
+
                 </div>
 
                 <div class="order-detail-row">
+
                     <span data-i18n="orderDate">
                         Order Date
                     </span>
+
                     <strong id="detailOrderDate"></strong>
+
                 </div>
 
                 <div class="order-detail-row">
+
                     <span data-i18n="orderItem">
                         Item
                     </span>
+
                     <strong id="detailOrderItem"></strong>
+
                 </div>
 
                 <div class="order-detail-row">
+
                     <span data-i18n="paymentMethod">
                         Payment Method
                     </span>
+
                     <strong id="detailOrderPayment"></strong>
+
                 </div>
 
                 <div class="order-detail-row">
+
                     <span data-i18n="status">
                         Status
                     </span>
+
                     <strong id="detailOrderStatus"></strong>
+
                 </div>
 
                 <hr>
 
                 <div class="order-detail-row order-detail-total">
+
                     <span data-i18n="orderTotal">
                         Total
                     </span>
+
                     <strong id="detailOrderTotal"></strong>
+
                 </div>
 
             </div>
+
+            <!-- Modal Footer -->
 
             <div class="modal-footer">
 
@@ -282,7 +331,9 @@
                         class="profile-save-button"
                         data-bs-dismiss="modal"
                         data-i18n="close">
+
                     Close
+
                 </button>
 
             </div>

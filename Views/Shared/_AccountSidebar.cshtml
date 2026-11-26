@@ -4,8 +4,8 @@
         ViewContext.RouteData.Values["action"]?.ToString() ?? "";
 
     bool isProfile =
-        currentAction == "MyAccount" ||
-        currentAction == "EditAccount";
+    currentAction == "MyAccount" ||
+    currentAction == "EditAccount";
 
     string fullName =
         User.Identity?.Name ?? "Customer";
@@ -85,10 +85,18 @@
         </a>
 
         <a href="/Account/OrderHistory"
-           class="account-nav-item @(currentAction == "OrderHistory" ? "active" : "")"
-           data-i18n="orderHistory">
+   class="account-nav-item @(currentAction == "OrderHistory" ? "active" : "")"
+   data-i18n="orderHistory">
 
-            Order History
+    Order History
+
+        </a>
+
+        <a href="/Account/DeactivateAccount"
+        class="account-nav-item @(currentAction == "DeactivateAccount" ? "active" : "")"
+        data-i18n="deactivateAccount">
+
+            Deactivate Account
 
         </a>
 

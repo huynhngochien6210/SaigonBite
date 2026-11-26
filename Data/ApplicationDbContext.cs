@@ -31,7 +31,21 @@ namespace SaigonBite.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // ==========================================
+            // UC-D & UC-E CUSTOMER ACCOUNT INTEGRATION
+            // ==========================================
 
+            modelBuilder.Entity<Customer>(entity =>
+            {
+                entity.HasIndex(c => c.UserId)
+                    .IsUnique()
+                    .HasFilter("[UserId] IS NOT NULL");
+
+                entity.HasOne(c => c.UserAccount)
+                    .WithOne()
+                    .HasForeignKey<Customer>(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
             // Order
             modelBuilder.Entity<Order>()
