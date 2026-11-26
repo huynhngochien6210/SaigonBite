@@ -19,6 +19,16 @@
 
     </div>
 
+    @if (TempData["PasswordSuccess"] != null)
+    {
+        <div class="alert alert-success"
+            role="alert">
+
+            @TempData["PasswordSuccess"]
+
+        </div>
+    }
+
     <form id="loginForm"
         method="post"
         action="@Url.Action("Login", "Account")">

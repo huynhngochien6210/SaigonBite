@@ -634,16 +634,92 @@ public class AccountController : Controller
     }
 
 
+    
+// ==========================================
+// 17. CHANGE PASSWORD - GET
+// ==========================================
+
+[HttpGet]
+[Authorize(Roles = "Customer")]
+public async Task<IActionResult> ChangePassword()
+{
+    int? userId = GetCurrentUserId();
+
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var profile = await _accountService
+        .GetProfileAsync(userId.Value);
+
+    if (profile == null)
+    {
+        return RedirectToAction(nameof(MyAccount));
+    }
+
+    return View(new ChangePasswordViewModel());
+}
+
+
     // ==========================================
-    // 17. CHANGE PASSWORD
+    // 17. CHANGE PASSWORD - POST
     // ==========================================
 
-    [HttpGet]
+    [HttpPost]
     [Authorize(Roles = "Customer")]
-    public IActionResult ChangePassword()
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(
+        ChangePasswordViewModel model)
     {
-        return View();
+        int? userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var profile = await _accountService
+            .GetProfileAsync(userId.Value);
+
+        if (profile == null)
+        {
+            return RedirectToAction(nameof(MyAccount));
+        }
+
+        // Validate input
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Execute business logic
+        var result = await _accountService
+            .ChangePasswordAsync(userId.Value, model);
+
+        if (!result.Success)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                result.Message);
+
+            return View(model);
+        }
+
+        // Remove current authentication cookie
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Clear current session
+        HttpContext.Session.Clear();
+
+        // Success message
+        TempData["PasswordSuccess"] =
+            "Password changed successfully. Please sign in again.";
+
+        return RedirectToAction(nameof(Login));
     }
+
 
 
     // ==========================================

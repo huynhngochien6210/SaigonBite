@@ -22,4 +22,10 @@ public interface IAccountService
         UpdateProfileAsync(
             int userId,
             EditAccountViewModel model);
+
+    // Change Password
+    Task<(bool Success, string Message)>
+        ChangePasswordAsync(
+            int userId,
+            ChangePasswordViewModel model);
 }

@@ -384,6 +384,89 @@ public class AccountService : IAccountService
     // 6. VALIDATE DATA ANNOTATIONS
     // ==========================================
 
+// ==========================================
+// CHANGE CUSTOMER PASSWORD
+// ==========================================
+
+public async Task<(bool Success, string Message)>
+    ChangePasswordAsync(
+        int userId,
+        ChangePasswordViewModel model)
+{
+    // 1. Validate input
+    string? validationError = ValidateModel(model);
+
+    if (validationError != null)
+    {
+        return (false, validationError);
+    }
+
+    // 2. Find active and verified customer
+    var user = await _context.UserAccounts
+        .FirstOrDefaultAsync(u =>
+            u.UserId == userId &&
+            u.Role == UserRole.Customer &&
+            u.IsActive &&
+            u.IsVerified);
+
+    if (user == null)
+    {
+        return (
+            false,
+            "Customer account not found."
+        );
+    }
+
+    // 3. Verify current password
+    var currentPasswordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.CurrentPassword);
+
+    if (currentPasswordResult ==
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "Current password is incorrect."
+        );
+    }
+
+    // 4. Prevent reuse of current password
+    var newPasswordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.NewPassword);
+
+    if (newPasswordResult !=
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "New password must be different from current password."
+        );
+    }
+
+    // 5. Hash new password
+    user.PasswordHash =
+        _passwordHasher.HashPassword(
+            user,
+            model.NewPassword);
+
+    // 6. Update modification time
+    user.UpdatedAt = DateTime.UtcNow;
+
+    // 7. Save to database
+    await _context.SaveChangesAsync();
+
+    return (
+        true,
+        "Password changed successfully."
+    );
+}
+
     private static string? ValidateModel(object model)
     {
         var context = new ValidationContext(model);
