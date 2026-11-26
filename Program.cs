@@ -1,12 +1,11 @@
-
 using System.Security.Claims;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 using SaigonBite.Data;
+using SaigonBite.Repositories;
 using SaigonBite.Models;
 using SaigonBite.Services;
 using SaigonBite.Enums;
@@ -23,14 +22,30 @@ builder.Services.AddControllersWithViews();
 // 2. DATABASE
 // ==========================================
 
-builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseSqlServer(
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
         builder.Configuration.GetConnectionString(
             "DefaultConnection")));
 
 // ==========================================
 // 3. DEPENDENCY INJECTION
 // ==========================================
+
+// ---------- UC-D: Order ----------
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<PricingService>();
+builder.Services.AddScoped<OrderService>();
+
+builder.Services.AddScoped<
+    IOrderHistoryService,
+    OrderHistoryService>();
+
+// UC-D & UC-E Integration
+builder.Services.AddScoped<
+    ICustomerAccountService,
+    CustomerAccountService>();
+// ---------- UC-E: Account ----------
 
 builder.Services.AddScoped<
     IAccountService,

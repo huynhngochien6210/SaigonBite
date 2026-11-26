@@ -16,6 +16,7 @@ public class AccountController : Controller
     // ==========================================
     // 1. DEPENDENCY INJECTION
     // ==========================================
+    private readonly IOrderHistoryService _orderHistoryService;
     private readonly IPasswordResetService _passwordResetService;
 
     private const string ResetUserIdKey =
@@ -44,12 +45,14 @@ public class AccountController : Controller
         IAccountService accountService,
         IVerificationService verificationService,
         SaigonBite.Services.IAuthenticationService authenticationService,
-        IPasswordResetService passwordResetService)
+        IPasswordResetService passwordResetService,
+        IOrderHistoryService orderHistoryService)
     {
         _accountService = accountService;
         _verificationService = verificationService;
         _authenticationService = authenticationService;
         _passwordResetService = passwordResetService;
+        _orderHistoryService = orderHistoryService;
     }
 
 
@@ -1083,11 +1086,20 @@ public async Task<IActionResult> DeactivateAccount(
 
     [HttpGet]
     [Authorize(Roles = "Customer")]
-    public IActionResult OrderHistory()
+    public async Task<IActionResult> OrderHistory()
     {
-        return View();
-    }
+        int? userId = GetCurrentUserId();
 
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var model = await _orderHistoryService
+            .GetOrderHistoryAsync(userId.Value);
+
+        return View(model);
+    }
 
     // ==========================================
     // 19. LOGOUT

@@ -1,0 +1,98 @@
+﻿@model SaigonBite.Models.Order
+
+@{
+    ViewData["Title"] = "Chỉnh sửa đơn hàng";
+}
+
+<div class="container py-5">
+
+    <h2 class="mb-4">
+        Chỉnh sửa đơn hàng #@Model.OrderId
+    </h2>
+
+    <div class="mb-4">
+        <strong>Trạng thái:</strong>
+        @Model.Status
+    </div>
+
+    <form asp-controller="Order"
+          asp-action="Edit"
+          method="post">
+
+        <input type="hidden"
+               name="id"
+               value="@Model.OrderId" />
+
+        <div id="items-container">
+
+            @for (int i = 0; i < Model.OrderItems.Count; i++)
+            {
+                var item = Model.OrderItems.ElementAt(i);
+
+                <div class="border rounded p-3 mb-3 item-row">
+
+                    <input type="hidden"
+                           name="items[@i].OrderItemId"
+                           value="@item.OrderItemId" />
+
+                    <input type="hidden"
+                           name="items[@i].ItemName"
+                           value="@item.ItemName" />
+
+                    <input type="hidden"
+                           name="items[@i].UnitPrice"
+                           value="@item.UnitPrice" />
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h5 class="mb-1">
+                                @item.ItemName
+                            </h5>
+
+                            <div>
+                                @item.UnitPrice.ToString("N0") VNĐ
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <label class="mb-0">
+                                Số lượng:
+                            </label>
+
+                            <input type="number"
+                                   name="items[@i].Quantity"
+                                   value="@item.Quantity"
+                                   min="1"
+                                   class="form-control"
+                                   style="width:90px;" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="mt-4">
+
+            <button type="submit"
+                    class="btn btn-danger px-4">
+                Cập nhật đơn hàng
+            </button>
+
+            <a asp-controller="Order"
+               asp-action="Details"
+               asp-route-id="@Model.OrderId"
+               class="btn btn-secondary px-4 ms-2">
+                Hủy
+            </a>
+
+        </div>
+
+    </form>
+
+</div>

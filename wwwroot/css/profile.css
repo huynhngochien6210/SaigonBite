@@ -714,3 +714,90 @@ a.account-nav-item:hover {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+
+/* ==========================================
+   ORDER HISTORY - ORDER LIFECYCLE
+   ========================================== */
+
+.history-table .order-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* 1. Placed */
+
+.history-table .order-status.placed {
+    background-color: #e2e8f0;
+    color: #475569;
+}
+
+/* 2. Confirmed */
+
+.history-table .order-status.confirmed {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* 3. Preparing */
+
+.history-table .order-status.preparing {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* 4. Ready */
+
+.history-table .order-status.ready {
+    background-color: #ede9fe;
+    color: #6d28d9;
+}
+
+/* 5. Out for Delivery */
+
+.history-table .order-status.outfordelivery {
+    background-color: #ffedd5;
+    color: #c2410c;
+}
+
+/* 6. Delivered */
+
+.history-table .order-status.delivered {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* 7. Failed */
+
+.history-table .order-status.failed {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* 8. Cancelled */
+
+.history-table .order-status.cancelled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Search and filter visibility */
+
+#orderHistoryBody tr[hidden],
+#emptyOrderHistory[hidden] {
+    display: none !important;
+}
+
+/* Order details - multiple items */
+
+#detailOrderItem {
+    max-width: 65%;
+    text-align: right;
+    overflow-wrap: anywhere;
+}

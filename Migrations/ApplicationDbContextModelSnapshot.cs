@@ -22,6 +22,41 @@ namespace SaigonBite.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("SaigonBite.Models.Customer", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("Customers");
+                });
+
             modelBuilder.Entity("SaigonBite.Models.ForeignTourist", b =>
                 {
                     b.Property<int>("UserId")
@@ -63,6 +98,38 @@ namespace SaigonBite.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SaigonBite.Models.Hub", b =>
+                {
+                    b.Property<int>("HubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HubId"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentLoad")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("HubId");
+
+                    b.ToTable("Hubs");
+                });
+
             modelBuilder.Entity("SaigonBite.Models.LocalCustomer", b =>
                 {
                     b.Property<int>("UserId")
@@ -89,6 +156,79 @@ namespace SaigonBite.Migrations
                         {
                             t.HasCheckConstraint("CK_LocalCustomers_PhoneNumber", "LEN([PhoneNumber]) = 10\r\n                      AND LEFT([PhoneNumber], 2)\r\n                          IN ('03', '05', '07', '08', '09')\r\n                      AND [PhoneNumber] COLLATE Latin1_General_100_BIN2\r\n                          NOT LIKE '%[^0-9]%'");
                         });
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeliveryAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("FinalTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("HubId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OrderTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("HubId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.OrderItem", b =>
+                {
+                    b.Property<int>("OrderItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("OrderItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("SaigonBite.Models.PasswordReset", b =>
@@ -236,6 +376,55 @@ namespace SaigonBite.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SaigonBite.Models.Voucher", b =>
+                {
+                    b.Property<int>("VoucherId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoucherId"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("MaxDiscount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MinSubtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("VoucherId");
+
+                    b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Customer", b =>
+                {
+                    b.HasOne("SaigonBite.Models.UserAccount", "UserAccount")
+                        .WithOne()
+                        .HasForeignKey("SaigonBite.Models.Customer", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("UserAccount");
+                });
+
             modelBuilder.Entity("SaigonBite.Models.ForeignTourist", b =>
                 {
                     b.HasOne("SaigonBite.Models.UserAccount", "UserAccount")
@@ -256,6 +445,43 @@ namespace SaigonBite.Migrations
                         .IsRequired();
 
                     b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Order", b =>
+                {
+                    b.HasOne("SaigonBite.Models.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SaigonBite.Models.Hub", "Hub")
+                        .WithMany("Orders")
+                        .HasForeignKey("HubId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SaigonBite.Models.Voucher", "Voucher")
+                        .WithMany("Orders")
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Hub");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.OrderItem", b =>
+                {
+                    b.HasOne("SaigonBite.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("SaigonBite.Models.PasswordReset", b =>
@@ -280,6 +506,21 @@ namespace SaigonBite.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("SaigonBite.Models.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Hub", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("SaigonBite.Models.UserAccount", b =>
                 {
                     b.Navigation("ForeignTourist");
@@ -289,6 +530,11 @@ namespace SaigonBite.Migrations
                     b.Navigation("PasswordResets");
 
                     b.Navigation("VerificationCodes");
+                });
+
+            modelBuilder.Entity("SaigonBite.Models.Voucher", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
