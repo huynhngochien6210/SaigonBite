@@ -1,134 +1,582 @@
-﻿@{
+﻿@model SaigonBite.ViewModels.PlaceOrderRequest
+
+@{
     ViewData["Title"] = "Đặt hàng";
+
+    decimal subtotal = Model.Items.Sum(
+        item => item.UnitPrice * item.Quantity);
+
+    decimal voucherDiscount = 0;
+
+    if (Model.VoucherId == 1)
+    {
+        voucherDiscount = Math.Min(
+            subtotal * 20 / 100,
+            50000);
+    }
+
+    decimal deliveryFee = subtotal >= 300000
+        ? 0
+        : 15000;
+
+    decimal rawTotal =
+        subtotal
+        - voucherDiscount
+        + deliveryFee;
+
+    decimal finalTotal =
+        Math.Round(
+            rawTotal / 1000,
+            MidpointRounding.AwayFromZero
+        ) * 1000;
 }
 
-<div class="sb-order-page">
+<form asp-controller="Order"
+      asp-action="IndexOrder"
+      method="post">
 
-    <!-- Progress -->
-    <div class="sb-order-progress">
+    <div class="sb-confirm-page">
 
-        <div class="sb-step active">
-            <div class="sb-step-number">1</div>
-            <span>Đặt hàng</span>
-        </div>
+        <!-- =========================
+             PROGRESS
+        ========================== -->
 
-        <div class="sb-progress-line"></div>
+        <div class="sb-confirm-progress">
 
-        <div class="sb-step">
-            <div class="sb-step-number">2</div>
-            <span>Xác nhận</span>
-        </div>
-
-        <div class="sb-progress-line"></div>
-
-        <div class="sb-step">
-            <div class="sb-step-number">3</div>
-            <span>Hoàn tất</span>
-        </div>
-
-    </div>
-
-    <h1 class="sb-order-title">Đặt hàng</h1>
-
-    <div class="sb-order-layout">
-
-        <!-- LEFT -->
-        <div class="sb-order-left">
-
-            <!-- Thông tin giao hàng -->
-            <div class="sb-order-card">
-
-                <h2>Thông tin giao hàng</h2>
-
-                <div class="sb-address-box">
-                    <span class="sb-location-icon">📍</span>
-                    <span>19 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</span>
-                </div>
-
-                <label>Ghi chú (tùy chọn)</label>
-
-                <textarea class="sb-note-input"
-                          placeholder="Giao giờ trưa, xin cảm ơn!"></textarea>
-
+            <div class="sb-confirm-step active">
+                <div class="sb-confirm-number">1</div>
+                <span>Đặt hàng</span>
             </div>
 
-            <!-- Phương thức thanh toán -->
-            <div class="sb-order-card">
+            <div class="sb-confirm-line"></div>
 
-                <h2>Phương thức thanh toán</h2>
+            <div class="sb-confirm-step">
+                <div class="sb-confirm-number">2</div>
+                <span>Xác nhận</span>
+            </div>
 
-                <div class="sb-payment-option selected">
-                    <input type="radio"
-                           name="payment"
-                           checked />
+            <div class="sb-confirm-line"></div>
 
-                    <img src="~/image/cod.png"
-                         alt="COD"
-                         class="sb-payment-logo">
-
-                    <span>Thanh toán khi nhận hàng (COD)</span>
-                </div>
-
-                <div class="sb-payment-option">
-                    <input type="radio"
-                           name="payment" />
-
-                    <img src="~/image/momo.png"
-                         alt="MoMo"
-                         class="sb-payment-logo">
-
-                    <span>MoMo</span>
-                </div>
-
-                <div class="sb-payment-option">
-                    <input type="radio"
-                           name="payment" />
-
-                    <img src="~/image/vnpay.png"
-                         alt="VNPay"
-                         class="sb-payment-logo">
-
-                    <span>VNPay</span>
-                </div>
-
+            <div class="sb-confirm-step">
+                <div class="sb-confirm-number">3</div>
+                <span>Hoàn tất</span>
             </div>
 
         </div>
 
-        <!-- RIGHT -->
-        <div class="sb-order-summary">
 
-            <h2>Tóm tắt đơn hàng</h2>
+        <!-- TITLE -->
 
-            <div class="sb-summary-row">
-                <span>Tạm tính</span>
-                <strong>127.000 ₫</strong>
+        <h1 class="sb-confirm-title">
+            Đặt hàng
+        </h1>
+
+
+        <!-- MAIN -->
+
+        <div class="sb-confirm-layout">
+
+            <!-- =========================
+                 LEFT
+            ========================== -->
+
+            <div class="sb-confirm-left">
+
+
+                <!-- DELIVERY -->
+
+                <div class="sb-confirm-card">
+
+                    <h2>
+                        Thông tin giao hàng
+                    </h2>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Địa chỉ giao hàng
+                        </label>
+
+                        <div class="sb-order-input-wrapper">
+
+                            <span>📍</span>
+
+                            <input type="text"
+                                   asp-for="DeliveryAddress"
+                                   class="form-control"
+                                   placeholder="Nhập địa chỉ giao hàng..." />
+
+                        </div>
+
+                        <span asp-validation-for="DeliveryAddress"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- DISTANCE -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Khoảng cách giao hàng
+                        </label>
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <input type="number"
+                                   asp-for="DistanceKm"
+                                   class="form-control"
+                                   min="0.1"
+                                   max="8"
+                                   step="0.1"
+                                   placeholder="Ví dụ: 3" />
+
+                            <span>km</span>
+
+                        </div>
+
+                        <small class="text-muted">
+                            Khoảng cách tối đa là 8 km.
+                        </small>
+
+                        <br />
+
+                        <span asp-validation-for="DistanceKm"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- NOTE -->
+
+                    <div>
+
+                        <label class="form-label">
+                            Ghi chú
+                            <span style="font-weight: normal;">
+                                (tùy chọn)
+                            </span>
+                        </label>
+
+                        <textarea class="form-control"
+                                  rows="3"
+                                  placeholder="Ví dụ: Giao giờ trưa, xin cảm ơn!"></textarea>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PAYMENT -->
+
+                <div class="sb-confirm-card">
+
+                    <h2>
+                        Phương thức thanh toán
+                    </h2>
+
+
+                    <!-- COD -->
+
+                    <label class="sb-payment-option">
+
+                        <input type="radio"
+                               name="PaymentMethod"
+                               value="COD"
+                               checked />
+
+                        <img src="~/image/cod.png"
+                             alt="COD"
+                             class="sb-confirm-payment-logo" />
+
+                        <span>
+                            Thanh toán khi nhận hàng (COD)
+                        </span>
+
+                    </label>
+
+
+                    <!-- MOMO -->
+
+                    <label class="sb-payment-option">
+
+                        <input type="radio"
+                               name="PaymentMethod"
+                               value="MoMo" />
+
+                        <img src="~/image/momo.png"
+                             alt="MoMo"
+                             class="sb-confirm-payment-logo" />
+
+                        <span>
+                            MoMo
+                        </span>
+
+                    </label>
+
+
+                    <!-- VNPAY -->
+
+                    <label class="sb-payment-option">
+
+                        <input type="radio"
+                               name="PaymentMethod"
+                               value="VNPay" />
+
+                        <img src="~/image/vnpay.png"
+                             alt="VNPay"
+                             class="sb-confirm-payment-logo" />
+
+                        <span>
+                            VNPay
+                        </span>
+
+                    </label>
+
+
+                    <!-- APPLE PAY -->
+
+                    <label class="sb-payment-option">
+
+                        <input type="radio"
+                               name="PaymentMethod"
+                               value="ApplePay" />
+
+                        <img src="~/image/ApplePay.png"
+                             alt="ApplePay"
+                             class="sb-confirm-payment-logo" />
+
+                        <span>
+                            Apple Pay
+                        </span>
+
+                    </label>
+
+
+                    <!-- PAYPAL -->
+
+                    <label class="sb-payment-option">
+
+                        <input type="radio"
+                               name="PaymentMethod"
+                               value="PayPal" />
+
+                        <img src="~/image/paypal.png"
+                             alt="PayPal"
+                             class="sb-confirm-payment-logo" />
+
+                        <span>
+                            PayPal
+                        </span>
+
+                    </label>
+
+                </div>
+
             </div>
 
-            <div class="sb-summary-row">
-                <span>Voucher</span>
-                <strong>−20.000 ₫ →</strong>
+
+
+            <!-- =========================
+                 RIGHT
+            ========================== -->
+
+            <div class="sb-confirm-summary">
+
+                <h2>
+                    Tóm tắt đơn hàng
+                </h2>
+
+
+                <!-- SUBTOTAL -->
+
+                <div class="sb-price-list">
+
+                    <div>
+
+                        <span>
+                            Tạm tính
+                        </span>
+
+                        <strong id="subtotal">
+                            @subtotal.ToString("N0") ₫
+                        </strong>
+
+                    </div>
+
+
+                    <!-- VOUCHER -->
+
+                    <div>
+
+                        <span>
+                            Voucher
+                        </span>
+
+                        <select asp-for="VoucherId"
+                                id="voucherSelect"
+                                class="form-select"
+                                onchange="updateTotal()">
+
+                            <option value="0"
+                                    data-discount="0">
+                                Không sử dụng voucher
+                            </option>
+
+                            <option value="1"
+                                    data-discount="@voucherDiscount">
+                                WELCOME20 - Giảm 20%
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Tiền giảm
+                        </span>
+
+                        <strong id="voucherDiscount"
+                                style="color:#c51f1f;">
+                            −@voucherDiscount.ToString("N0") ₫
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DELIVERY -->
+
+                    <div>
+
+                        <span>
+                            Phí giao hàng
+                        </span>
+
+                        <strong id="deliveryFee">
+
+                            @if (deliveryFee == 0)
+                            {
+                                <text>Miễn phí</text>
+                            }
+                            else
+                            {
+                                @deliveryFee.ToString("N0") <text>₫</text>
+                            }
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="sb-total">
+
+                        <span>
+                            Tổng thanh toán
+                        </span>
+
+                        <strong id="finalTotal">
+                            @finalTotal.ToString("N0") ₫
+                        </strong>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="sb-summary-row">
-                <span>Phí giao hàng</span>
-                <strong>15.000 ₫</strong>
-            </div>
+        </div>
 
-            <div class="sb-summary-total">
-                <span>Tổng thanh toán</span>
-                <strong>122.000 ₫</strong>
-            </div>
 
-            <a asp-controller="Order"
-               asp-action="Confirm"
-               class="sb-continue-btn">
-                Tiếp tục
-                <span>→</span>
+
+        <!-- =========================
+             HIDDEN DATA
+        ========================== -->
+
+        <input type="hidden"
+               asp-for="CustomerId"
+               value="1" />
+
+        <input type="hidden"
+               asp-for="HubId"
+               value="1" />
+
+        <input type="hidden"
+               asp-for="QuietKitchenDiscount"
+               value="0" />
+
+        <input type="hidden"
+               asp-for="DeliveryFee"
+               value="15000" />
+
+        <input type="hidden"
+               asp-for="RushHourSurcharge"
+               value="0" />
+
+        <input type="hidden"
+               asp-for="HeavyRainSurcharge"
+               value="0" />
+
+
+        <!-- CART ITEMS -->
+        @for (int i = 0; i < Model.Items.Count; i++)
+        {
+            <input type="hidden"
+                   name="Items[@i].ItemName"
+                   value="@Model.Items[i].ItemName" />
+
+            <input type="hidden"
+                   name="Items[@i].Quantity"
+                   value="@Model.Items[i].Quantity" />
+
+            <input type="hidden"
+                   name="Items[@i].UnitPrice"
+                   value="@Model.Items[i].UnitPrice" />
+        }
+
+
+        <!-- VALIDATION -->
+
+        <div asp-validation-summary="All"
+             style="color:red; margin-top:20px;">
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="sb-confirm-buttons">
+
+            <a asp-controller="Cart"
+               asp-action="Index"
+               class="sb-back-btn">
+
+                ←
+                <span>Quay lại giỏ hàng</span>
+
             </a>
 
+
+            <button type="submit"
+                    class="sb-confirm-btn">
+
+                Tiếp tục
+
+                <span>→</span>
+
+            </button>
+
         </div>
 
     </div>
 
-</div>
+</form>
+
+
+<script>
+
+    function updateTotal() {
+
+        const subtotal = @subtotal;
+
+        const voucherSelect =
+            document.getElementById("voucherSelect");
+
+        const voucherDiscountElement =
+            document.getElementById("voucherDiscount");
+
+        const deliveryFeeElement =
+            document.getElementById("deliveryFee");
+
+        const finalTotalElement =
+            document.getElementById("finalTotal");
+
+
+        // Kiểm tra các element có tồn tại không
+        if (
+            !(voucherSelect instanceof HTMLSelectElement) ||
+            !(voucherDiscountElement instanceof HTMLElement) ||
+            !(deliveryFeeElement instanceof HTMLElement) ||
+            !(finalTotalElement instanceof HTMLElement)
+        ) {
+            return;
+        }
+
+
+        const selectedOption =
+            voucherSelect.options[
+            voucherSelect.selectedIndex
+            ];
+
+
+        let discount =
+            parseFloat(
+                selectedOption.dataset.discount
+            ) || 0;
+
+
+        let deliveryFee =
+            subtotal >= 300000
+                ? 0
+                : 15000;
+
+
+        let rawTotal =
+            subtotal
+            - discount
+            + deliveryFee;
+
+
+        let finalTotal =
+            Math.round(
+                rawTotal / 1000
+            ) * 1000;
+
+
+        // Voucher
+        voucherDiscountElement.innerText =
+            "−" +
+            discount.toLocaleString("vi-VN") +
+            " ₫";
+
+
+        // Phí giao hàng
+        if (deliveryFee === 0) {
+
+            deliveryFeeElement.innerText =
+                "Miễn phí";
+
+        }
+        else {
+
+            deliveryFeeElement.innerText =
+                deliveryFee.toLocaleString("vi-VN") +
+                " ₫";
+
+        }
+
+
+        // Tổng tiền
+        finalTotalElement.innerText =
+            finalTotal.toLocaleString("vi-VN") +
+            " ₫";
+    }
+
+</script>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

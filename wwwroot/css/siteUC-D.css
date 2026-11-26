@@ -3048,3 +3048,96 @@ body {
         height: 180px;
     }
 }
+
+.sb-confirm-order-items {
+    margin-bottom: 20px;
+}
+
+.sb-confirm-order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #eadfd5;
+}
+
+.sb-confirm-order-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .sb-confirm-order-item-info strong {
+        font-family: "Times New Roman", serif;
+        font-size: 18px;
+    }
+
+    .sb-confirm-order-item-info span {
+        font-size: 15px;
+        color: #666;
+    }
+
+.sb-confirm-order-item-total {
+    color: #c51f1f;
+    font-size: 17px;
+}
+.sb-payment-text-logo {
+    width: 65px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.sb-account-dropdown {
+    position: relative;
+}
+
+.sb-account-toggle {
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.sb-account-name {
+    font-family: "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.sb-account-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    width: 180px;
+    background: white;
+    border: 1px solid #eadfd5;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+}
+
+    .sb-account-menu.show {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sb-account-menu a {
+        padding: 14px 18px;
+        text-decoration: none;
+        color: #222;
+        font-family: "Times New Roman", serif;
+        font-size: 18px;
+    }
+
+        .sb-account-menu a:hover {
+            background: #f8f1eb;
+            color: #c51f1f;
+        }

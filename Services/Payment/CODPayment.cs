@@ -6,7 +6,6 @@
         {
             await Task.CompletedTask;
 
-            // COD chỉ được phép nếu <= 1,000,000
             return amount <= 1000000;
         }
     }
