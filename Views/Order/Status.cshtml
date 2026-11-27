@@ -26,6 +26,10 @@
                     @foreach (var item in order.OrderItems.Take(2))
                     {
                         <span>@item.ItemName</span>
+                        @if (item != order.OrderItems.Take(2).Last())
+                        {
+                            <span>, </span>
+                        }
                     }
                 </div>
 
