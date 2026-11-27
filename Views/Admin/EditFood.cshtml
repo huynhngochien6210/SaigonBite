@@ -1,0 +1,124 @@
+ 
+@{
+    ViewData["Title"] = "Sửa món ăn";
+    var foodId = ViewBag.FoodId ?? 1;
+}
+
+<div class="edit-food-page">
+
+    <section class="edit-food-card">
+
+        <div class="edit-food-heading">
+            <div>
+                <h1>Chỉnh sửa món ăn</h1>
+                <p>Cập nhật thông tin và trạng thái kinh doanh của món ăn.</p>
+            </div>
+            <span class="edit-food-id">Mã món: FD-@foodId</span>
+        </div>
+
+        <form id="editFoodForm">
+
+            <div class="edit-food-row">
+                <label for="editFoodName">Tên món ăn <span>*</span></label>
+                <div class="edit-food-field">
+                    <input type="text" id="editFoodName"
+                           value="Cơm tấm sườn nướng" required />
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label for="editFoodBrand">Thương hiệu <span>*</span></label>
+                <div class="edit-food-field">
+                    <select id="editFoodBrand" required>
+                        <option value="Cơm tấm Sài Gòn" selected>Cơm tấm Sài Gòn</option>
+                        <option value="Bún bò Huế">Bún bò Huế</option>
+                        <option value="Bánh mì Sài Gòn">Bánh mì Sài Gòn</option>
+                        <option value="Chè Sài Gòn">Chè Sài Gòn</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label for="editFoodCategory">Danh mục <span>*</span></label>
+                <div class="edit-food-field">
+                    <select id="editFoodCategory" required>
+                        <option value="Món chính" selected>Món chính</option>
+                        <option value="Món nước">Món nước</option>
+                        <option value="Ăn vặt">Ăn vặt</option>
+                        <option value="Đồ uống">Đồ uống</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label for="editFoodPrice">Giá bán (VNĐ) <span>*</span></label>
+                <div class="edit-food-field">
+                    <input type="number" id="editFoodPrice"
+                           value="45000" min="0" required />
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label for="editFoodDescription">Mô tả món ăn</label>
+                <div class="edit-food-field">
+                    <textarea id="editFoodDescription" rows="3">Cơm tấm sườn nướng thơm ngon, ăn kèm bì, chả và nước mắm đặc trưng.</textarea>
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label>Hình ảnh món ăn</label>
+                <div class="edit-food-field">
+                    <div class="edit-food-image-area">
+
+                        <div class="edit-food-current-image" id="editFoodImageBox">
+                            <span id="editFoodImageEmoji">🍛</span>
+                            <img id="editFoodImagePreview" alt="Ảnh món ăn hiện tại" />
+                        </div>
+
+                        <label for="editFoodImage" class="edit-food-upload-button">
+                            <span>📷</span>
+                            <strong>Thay đổi hình ảnh</strong>
+                            <small>JPG hoặc PNG, tối đa 5MB</small>
+                        </label>
+
+                        <input type="file" id="editFoodImage"
+                               accept="image/png,image/jpeg" hidden />
+                    </div>
+                    <small class="edit-food-note" id="editFoodImageError"></small>
+                </div>
+            </div>
+
+            <div class="edit-food-row">
+                <label for="editFoodStatus">Trạng thái kinh doanh</label>
+                <div class="edit-food-field">
+                    <select id="editFoodStatus" class="edit-food-status-select">
+                        <option value="available" selected>Đang kinh doanh</option>
+                        <option value="unavailable">Tạm ngừng kinh doanh</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="edit-food-divider"></div>
+
+            <div class="edit-food-actions">
+                <a asp-controller="Admin" asp-action="Foods"
+                   class="edit-food-cancel-button">
+                    Hủy
+                </a>
+
+                <button type="submit" class="edit-food-save-button">
+                    <span>✓</span> Lưu thay đổi
+                </button>
+            </div>
+
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-foods.js" asp-append-version="true"></script>
+    
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-foods.css" asp-append-version="true" />
+}

@@ -57,7 +57,7 @@ body {
 
 .brand-name {
     color: var(--admin-red);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, serif;
     font-size: 31px;
     font-weight: bold;
     font-style: italic;

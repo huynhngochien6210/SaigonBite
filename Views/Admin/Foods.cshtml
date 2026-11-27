@@ -92,7 +92,9 @@
                     <tr data-id="1"
                         data-brand="Sài Gòn"
                         data-category="Món chính"
-                        data-status="available">
+                        data-status="available"
+                        data-order-count="25"
+                        data-is-deleted="false">
 
                         <td>
                             <div class="food-image food-image-rice">🍛</div>
@@ -121,6 +123,7 @@
 
                         <td>
                             <div class="food-actions">
+
                                 <a asp-controller="Admin"
                                    asp-action="ViewFood"
                                    asp-route-id="1"
@@ -140,6 +143,7 @@
                                         onclick="deleteFood(this)">
                                     <span>▤</span> Xóa
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -148,7 +152,9 @@
                     <tr data-id="2"
                         data-brand="Sài Gòn"
                         data-category="Món nước"
-                        data-status="available">
+                        data-status="available"
+                        data-order-count="18"
+                        data-is-deleted="false">
 
                         <td>
                             <div class="food-image food-image-noodle">🍜</div>
@@ -177,6 +183,7 @@
 
                         <td>
                             <div class="food-actions">
+
                                 <a asp-controller="Admin"
                                    asp-action="ViewFood"
                                    asp-route-id="2"
@@ -196,6 +203,7 @@
                                         onclick="deleteFood(this)">
                                     <span>▤</span> Xóa
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -204,7 +212,9 @@
                     <tr data-id="3"
                         data-brand="Sài Gòn"
                         data-category="Ăn vặt"
-                        data-status="unavailable">
+                        data-status="unavailable"
+                        data-order-count="12"
+                        data-is-deleted="false">
 
                         <td>
                             <div class="food-image food-image-banhmi">🥖</div>
@@ -233,6 +243,7 @@
 
                         <td>
                             <div class="food-actions">
+
                                 <a asp-controller="Admin"
                                    asp-action="ViewFood"
                                    asp-route-id="3"
@@ -252,6 +263,7 @@
                                         onclick="deleteFood(this)">
                                     <span>▤</span> Xóa
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -260,7 +272,9 @@
                     <tr data-id="4"
                         data-brand="Sài Gòn"
                         data-category="Đồ uống"
-                        data-status="available">
+                        data-status="available"
+                        data-order-count="8"
+                        data-is-deleted="false">
 
                         <td>
                             <div class="food-image food-image-dessert">🥤</div>
@@ -289,6 +303,7 @@
 
                         <td>
                             <div class="food-actions">
+
                                 <a asp-controller="Admin"
                                    asp-action="ViewFood"
                                    asp-route-id="4"
@@ -308,6 +323,7 @@
                                         onclick="deleteFood(this)">
                                     <span>▤</span> Xóa
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -334,6 +350,84 @@
     </div>
 
 </div>
+
+
+<!-- =================================================
+     DELETE FOOD CONFIRMATION POPUP
+================================================== -->
+
+<div class="food-delete-overlay" id="deleteFoodModal">
+
+    <div class="food-delete-modal">
+
+        <!-- POPUP HEADER -->
+        <div class="food-delete-header">
+
+            <div class="food-delete-title">
+                <div class="food-delete-icon">▤</div>
+                <h2>Xác nhận xóa món ăn</h2>
+            </div>
+
+            <button type="button"
+                    class="food-delete-close"
+                    onclick="closeDeleteFoodModal()"
+                    aria-label="Đóng popup">
+                ×
+            </button>
+
+        </div>
+
+        <!-- WARNING -->
+        <div class="food-delete-warning">
+
+            <span class="food-delete-warning-icon">⚠</span>
+
+            <div>
+                <strong id="foodDeleteWarningTitle">
+                    Món ăn có dữ liệu liên quan.
+                </strong>
+
+                <p id="foodDeleteWarningDetails">
+                    (0 đơn hàng).
+                </p>
+            </div>
+
+        </div>
+
+        <!-- DESCRIPTION -->
+        <p class="food-delete-description" id="foodDeleteDescription">
+            Hệ thống sẽ ngừng kinh doanh món ăn này thay vì xóa vĩnh viễn,
+            nhằm giữ lại dữ liệu đơn hàng và lịch sử giao dịch có liên quan.
+        </p>
+
+        <!-- ACTION BUTTONS -->
+        <div class="food-delete-actions">
+
+            <button type="button"
+                    class="food-delete-cancel"
+                    onclick="closeDeleteFoodModal()">
+                Hủy
+            </button>
+
+            <button type="button"
+                    class="food-delete-restore"
+                    id="restoreFoodButton"
+                    onclick="restoreFood()">
+                <span>↶</span> Khôi phục
+            </button>
+
+            <button type="button"
+                    class="food-delete-confirm"
+                    id="confirmFoodDeleteButton"
+                    onclick="confirmDeleteFood()">
+                Xác nhận xóa <span>→</span>
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
 
 @section Scripts {
     <script src="~/js/admin-foods.js"

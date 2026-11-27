@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,11 +7,17 @@
 
     <title>@ViewData["Title"] - SaigonBite Admin</title>
 
-    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/css/admin-dashboard.css"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body>
     <header class="admin-navbar">
+
+        <!-- LOGO -->
         <a asp-controller="Admin"
            asp-action="Dashboard"
            class="navbar-brand">
@@ -22,27 +29,50 @@
             <span class="brand-name">SaigonBite</span>
         </a>
 
+        @{
+            var currentAction =
+                ViewContext.RouteData.Values["action"]?.ToString();
+
+            var isBrandPage =
+                currentAction == "Brands" ||
+                currentAction == "CreateBrand";
+        }
+
+        <!-- MAIN NAVIGATION -->
         <nav class="navbar-menu">
+
             <a asp-controller="Admin"
                asp-action="Dashboard"
-               class="nav-link active">
+               class="nav-link @(currentAction == "Dashboard" ? "active" : "")">
                 Dashboard
             </a>
 
-            <a href="/Admin/Brands" class="nav-link">
+            <a asp-controller="Admin"
+               asp-action="Brands"
+               class="nav-link @(isBrandPage ? "active" : "")">
                 Quản lý thương hiệu
             </a>
 
-            <a href="/Admin/MenuItems" class="nav-link">
+            <a asp-controller="Admin"
+               asp-action="Foods"
+               class="nav-link @(currentAction == "Foods" ? "active" : "")">
                 Quản lý món ăn
             </a>
+
         </nav>
 
+        <!-- ADMIN ACCOUNT -->
         <details class="admin-account">
+
             <summary>
+
                 <span class="admin-avatar">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4" fill="currentColor" />
+                        <circle cx="12"
+                                cy="8"
+                                r="4"
+                                fill="currentColor" />
+
                         <path d="M4 21c0-4.2 3.2-7 8-7s8 2.8 8 7"
                               fill="currentColor" />
                     </svg>
@@ -51,14 +81,18 @@
                 <span>Admin</span>
 
                 <span class="dropdown-arrow">⌄</span>
+
             </summary>
 
             <div class="account-dropdown">
-                <a asp-controller="Admin" asp-action="Login">
+                <a asp-controller="Admin"
+                   asp-action="Login">
                     Đăng xuất
                 </a>
             </div>
+
         </details>
+
     </header>
 
     <main>
@@ -66,5 +100,6 @@
     </main>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
