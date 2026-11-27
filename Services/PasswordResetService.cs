@@ -22,7 +22,7 @@ public class PasswordResetService : IPasswordResetService
     private readonly IPasswordHasher<UserAccount>
         _passwordHasher;
 
-    private readonly IWebHostEnvironment _environment;
+    private readonly IOtpDeliveryService _otpDelivery;
 
     private readonly byte[] _secretKey;
 
@@ -41,11 +41,11 @@ public class PasswordResetService : IPasswordResetService
         ApplicationDbContext context,
         IPasswordHasher<UserAccount> passwordHasher,
         IConfiguration configuration,
-        IWebHostEnvironment environment)
+        IOtpDeliveryService otpDelivery)
     {
         _context = context;
         _passwordHasher = passwordHasher;
-        _environment = environment;
+        _otpDelivery = otpDelivery;
 
         string secretKey =
             configuration["Otp:SecretKey"]
@@ -130,7 +130,7 @@ public class PasswordResetService : IPasswordResetService
     public async Task<(bool Success, string Message)>
         SendCodeAsync(int userId)
     {
-        if (!_environment.IsDevelopment())
+        if (!_otpDelivery.IsAvailable)
         {
             return (
                 false,
@@ -224,14 +224,16 @@ public class PasswordResetService : IPasswordResetService
         await transaction.CommitAsync();
 
         // Development simulation only
-        Console.WriteLine();
-        Console.WriteLine("==============================");
-        Console.WriteLine("SAIGONBITE PASSWORD RESET OTP");
-        Console.WriteLine($"User ID: {userId}");
-        Console.WriteLine($"OTP Code: {otp}");
-        Console.WriteLine("Expires in: 5 minutes");
-        Console.WriteLine("==============================");
-        Console.WriteLine();
+        string destination =
+            user.AccountType == AccountType.LocalCustomer
+                ? user.LocalCustomer?.PhoneNumber ?? ""
+                : user.ForeignTourist?.Email ?? "";
+
+        await _otpDelivery.SendAsync(
+            userId,
+            destination,
+            "PasswordReset",
+            otp);
 
         return (
             true,
@@ -414,7 +416,15 @@ public class PasswordResetService : IPasswordResetService
             r.UserId == userId &&
             r.TokenHash == tokenHash &&
             !r.IsUsed);
+    Console.WriteLine("[RESET DEBUG] Reset found: " + (reset != null));
 
+    Console.WriteLine("[RESET DEBUG] VerifiedAt: " + reset?.VerifiedAt);
+
+    Console.WriteLine("[RESET DEBUG] TokenExpiresAt: " + reset?.TokenExpiresAt);
+
+    Console.WriteLine("[RESET DEBUG] Current UTC: " + DateTime.UtcNow);
+
+    Console.WriteLine("[RESET DEBUG] IsUsed: " + reset?.IsUsed);
     if (reset == null ||
         !reset.VerifiedAt.HasValue ||
         !reset.TokenExpiresAt.HasValue)
@@ -440,6 +450,9 @@ public class PasswordResetService : IPasswordResetService
             user.PasswordHash,
             model.NewPassword);
 
+    Console.WriteLine(
+    "[RESET DEBUG] Password comparison: " + passwordResult);
+
     if (passwordResult !=
         PasswordVerificationResult.Failed)
     {
@@ -462,25 +475,25 @@ public class PasswordResetService : IPasswordResetService
     user.UpdatedAt = DateTime.UtcNow;
 
     // Invalidate all remaining reset requests
-    var activeResets = await _context.PasswordResets
-        .Where(r =>
-            r.UserId == userId &&
-            !r.IsUsed)
-        .ToListAsync();
+var activeResets = await _context.PasswordResets
+    .Where(r =>
+        r.UserId == userId &&
+        !r.IsUsed)
+    .ToListAsync();
 
-    foreach (var activeReset in activeResets)
-    {
-        activeReset.IsUsed = true;
-    }
+foreach (var activeReset in activeResets)
+{
+    activeReset.IsUsed = true;
+}
 
-    await _context.SaveChangesAsync();
+await _context.SaveChangesAsync();
 
-    await transaction.CommitAsync();
+await transaction.CommitAsync();
 
-    return (
-        true,
-        "Password reset successfully."
-    );
+return (
+    true,
+    "Password reset successfully."
+);
 }
 
 
@@ -492,13 +505,14 @@ public class PasswordResetService : IPasswordResetService
         int userId)
     {
         return _context.UserAccounts
+            .Include(u => u.LocalCustomer)
+            .Include(u => u.ForeignTourist)
             .FirstOrDefaultAsync(u =>
                 u.UserId == userId &&
                 u.Role == UserRole.Customer &&
                 u.IsActive &&
                 u.IsVerified);
     }
-
 
     // ==========================================
     // 7. HASH OTP

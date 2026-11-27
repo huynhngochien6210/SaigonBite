@@ -187,7 +187,7 @@ public class AccountController : Controller
 
         HttpContext.Session.Remove(PendingAccountTypeKey);
 
-        return RedirectToAction(nameof(MyAccount));
+        return LocalRedirect("~/Home/Index");
     }
 
 
