@@ -67,7 +67,10 @@
     </p>
 
     <form id="verificationForm"
-        data-purpose="@(isPasswordReset ? "reset" : "registration")">
+      method="post"
+      data-purpose="@(isPasswordReset ? "reset" : "registration")">
+
+    @Html.AntiForgeryToken()
         <div class="otp-inputs">
 
             @for (int i = 0; i < 6; i++)
@@ -132,9 +135,18 @@
         ← Back to Sign In
     </a>
 
-    <p class="verification-demo-note"
-       data-i18n="verificationDemoNote">
-        UI Preview - Backend is not connected.
-    </p>
+    
+    <environment include="Development">
+
+        <p class="verification-demo-note"
+        data-i18n="otpSimulationNote">
+
+            Development mode - Check the server terminal
+            for your verification code.
+
+        </p>
+
+    </environment>
+
 
 </div>

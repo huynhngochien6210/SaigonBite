@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<SaigonBite.Models.Order>
+
+@{
     ViewData["Title"] = "Trạng thái đơn hàng";
 }
 
@@ -7,98 +9,82 @@
     <h1 class="sb-status-title">Trạng thái đơn hàng</h1>
 
     <div class="sb-order-list">
+        @foreach (var order in Model)
+        {
+            <div class="sb-order-row">
 
-        <!-- ORDER 1 -->
-        <div class="sb-order-row">
+                <div class="sb-order-info">
+                    <h2>#@order.OrderId</h2>
 
-            <div class="sb-order-info">
-                <h2>#SB10245</h2>
-                <p>20/10/2026 · 12:30</p>
+                    <p>
+                        @order.OrderTime.ToString("dd/MM/yyyy") ·
+                        @order.OrderTime.ToString("HH:mm")
+                    </p>
+                </div>
+
+                <div class="sb-order-foods">
+                    @foreach (var item in order.OrderItems.Take(2))
+                    {
+                        <span>@item.ItemName</span>
+                    }
+                </div>
+
+                <div class="sb-order-status">
+                    @switch (order.Status)
+                    {
+                        case SaigonBite.Models.OrderStatus.Placed:
+                            <text>Đã đặt</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Confirmed:
+                            <text>Đã xác nhận</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Preparing:
+                            <text>Đang chuẩn bị</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Ready:
+                            <text>Sẵn sàng</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.OutForDelivery:
+                            <text>Đang giao</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Delivered:
+                            <text>Hoàn thành</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Failed:
+                            <text>Giao thất bại</text>
+                            break;
+
+                        case SaigonBite.Models.OrderStatus.Cancelled:
+                            <text>Đã hủy</text>
+                            break;
+                    }
+                </div>
+
+                <div class="sb-order-right">
+                    <strong>
+                        @order.FinalTotal.ToString("N0") ₫
+                    </strong>
+
+                    <a asp-controller="Order"
+                       asp-action="Details"
+                       asp-route-id="@order.OrderId"
+                       class="sb-detail-btn">
+                        Xem chi tiết
+                        <span>→</span>
+                    </a>
+                </div>
+
             </div>
+        }
+        
 
-            <div class="sb-order-foods">
-                <img src="~/image/com-tam.png" alt="Cơm tấm">
-                <img src="~/image/banh-mi.png" alt="Bánh mì">
-            </div>
-
-            <div class="sb-order-status delivering">
-                Đang giao
-            </div>
-
-            <div class="sb-order-right">
-                <strong>122.000 ₫</strong>
-
-                <a asp-controller="Order"
-                   asp-action="Details"
-                   class="sb-detail-btn">
-                    Xem chi tiết
-                    <span>→</span>
-                </a>
-            </div>
-
-        </div>
-
-
-        <!-- ORDER 2 -->
-        <div class="sb-order-row">
-
-            <div class="sb-order-info">
-                <h2>#SB10231</h2>
-                <p>19/10/2026 · 18:20</p>
-            </div>
-
-            <div class="sb-order-foods">
-                <img src="~/image/com-tam.png" alt="Cơm tấm">
-                <img src="~/image/banh-mi.png" alt="Bánh mì">
-            </div>
-
-            <div class="sb-order-status completed">
-                Hoàn thành
-            </div>
-
-            <div class="sb-order-right">
-                <strong>158.000 ₫</strong>
-
-                <a asp-controller="Order"
-                   asp-action="Details"
-                   class="sb-detail-btn">
-                    Xem chi tiết
-                    <span>→</span>
-                </a>
-            </div>
-
-        </div>
-
-
-        <!-- ORDER 3 -->
-        <div class="sb-order-row">
-
-            <div class="sb-order-info">
-                <h2>#SB10207</h2>
-                <p>18/10/2026 · 12:05</p>
-            </div>
-
-            <div class="sb-order-foods">
-                <img src="~/image/COD.png" alt="Bánh mì">
-                <img src="~/image/COD.png" alt="Cơm tấm">
-            </div>
-
-            <div class="sb-order-status cancelled">
-                Đã hủy
-            </div>
-
-            <div class="sb-order-right">
-                <strong>95.000 ₫</strong>
-
-                <a asp-controller="Order"
-                   asp-action="Details"
-                   class="sb-detail-btn">
-                    Xem chi tiết
-                    <span>→</span>
-                </a>
-            </div>
-
-        </div>
+        
 
     </div>
 

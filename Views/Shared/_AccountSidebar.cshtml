@@ -1,10 +1,20 @@
+
 @{
     string currentAction =
         ViewContext.RouteData.Values["action"]?.ToString() ?? "";
 
     bool isProfile =
-        currentAction == "MyAccount" ||
-        currentAction == "EditAccount";
+    currentAction == "MyAccount" ||
+    currentAction == "EditAccount";
+
+    string fullName =
+        User.Identity?.Name ?? "Customer";
+
+    string accountType =
+        User.FindFirst("AccountType")?.Value ?? "";
+
+    bool isForeign =
+        accountType == "ForeignTourist";
 }
 
 <aside class="account-sidebar">
@@ -20,51 +30,93 @@
                  stroke-width="1.5">
 
                 <circle cx="12" cy="8" r="4"/>
+
                 <path d="M4 22v-3a8 8 0 0 1 16 0v3"/>
 
             </svg>
 
         </div>
 
+        <!-- Actual Customer Name -->
         <h3 id="sidebarFullName">
-            Nguyen Van An
+
+            @fullName
+
         </h3>
 
-        <p id="sidebarAccountType"
-           data-i18n="localCustomer">
-            Local Customer
-        </p>
+        <!-- Actual Account Type -->
+        @if (isForeign)
+        {
+            <p id="sidebarAccountType"
+               data-i18n="foreignTourist">
+
+                Foreign Tourist
+
+            </p>
+        }
+        else
+        {
+            <p id="sidebarAccountType"
+               data-i18n="localCustomer">
+
+                Local Customer
+
+            </p>
+        }
 
     </div>
 
     <nav class="account-navigation">
 
         <a href="/Account/MyAccount"
-        class="account-nav-item @(isProfile ? "active" : "")"
-        data-i18n="myAccount">
+           class="account-nav-item @(isProfile ? "active" : "")"
+           data-i18n="myAccount">
+
             My Account
+
         </a>
 
         <a href="/Account/ChangePassword"
-        class="account-nav-item @(currentAction == "ChangePassword" ? "active" : "")"
-        data-i18n="changePassword">
+           class="account-nav-item @(currentAction == "ChangePassword" ? "active" : "")"
+           data-i18n="changePassword">
+
             Change Password
+
         </a>
 
         <a href="/Account/OrderHistory"
-        class="account-nav-item @(currentAction == "OrderHistory" ? "active" : "")"
-        data-i18n="orderHistory">
-            Order History
+   class="account-nav-item @(currentAction == "OrderHistory" ? "active" : "")"
+   data-i18n="orderHistory">
+
+    Order History
+
+        </a>
+
+        <a href="/Account/DeactivateAccount"
+        class="account-nav-item @(currentAction == "DeactivateAccount" ? "active" : "")"
+        data-i18n="deactivateAccount">
+
+            Deactivate Account
+
         </a>
 
         <hr>
 
-        <a href="/Account/Login"
-        id="demoSignOut"
-        class="account-nav-item logout-link"
-        data-i18n="signOut">
-            Sign Out
-        </a>
+        <!-- Actual Logout -->
+        <form method="post"
+              action="@Url.Action("Logout", "Account")">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit"
+                    class="account-nav-item logout-link w-100 text-start border-0 bg-transparent"
+                    data-i18n="signOut">
+
+                Sign Out
+
+            </button>
+
+        </form>
 
     </nav>
 

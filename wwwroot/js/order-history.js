@@ -1,4 +1,9 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+
+    // ==========================================
+    // 1. GET DOM ELEMENTS
+    // ==========================================
 
     const search = document.getElementById("orderSearch");
 
@@ -24,7 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "[data-order-id]"
     );
 
-    // Search and Filter
+    // ==========================================
+    // 2. SEARCH AND FILTER
+    // ==========================================
 
     function filterOrders() {
 
@@ -39,10 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
         rows.forEach(function (row) {
 
             const orderId =
-                row.dataset.orderId.toLowerCase();
+                (row.dataset.orderId || "").toLowerCase();
 
             const status =
-                row.dataset.orderStatus;
+                row.dataset.orderStatus || "";
 
             const matchesSearch =
                 orderId.includes(keyword);
@@ -62,9 +69,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
-        recordCount.textContent = visibleCount;
+        // Update record count
 
-        emptyState.hidden = visibleCount !== 0;
+        if (recordCount) {
+            recordCount.textContent = visibleCount;
+        }
+
+        // Display empty state
+
+        if (emptyState) {
+            emptyState.hidden = visibleCount !== 0;
+        }
 
     }
 
@@ -74,10 +89,143 @@ document.addEventListener("DOMContentLoaded", function () {
 
     filterOrders();
 
-    // Order Details
+    // ==========================================
+    // 3. LANGUAGE DETECTION
+    // ==========================================
 
-    const modalElement =
-        document.getElementById("orderDetailModal");
+    function isVietnamese() {
+
+        return document.documentElement.lang
+            .toLowerCase()
+            .startsWith("vi");
+
+    }
+
+    // ==========================================
+    // 4. TRANSLATE ORDER STATUS
+    // ==========================================
+
+    function translateStatus(status) {
+
+        const vietnameseStatuses = {
+
+            Placed: "Đã đặt hàng",
+
+            Confirmed: "Đã xác nhận",
+
+            Preparing: "Đang chuẩn bị",
+
+            Ready: "Đã chuẩn bị xong",
+
+            OutForDelivery: "Đang giao hàng",
+
+            Delivered: "Đã giao hàng",
+
+            Failed: "Giao hàng thất bại",
+
+            Cancelled: "Đã hủy"
+
+        };
+
+        const englishStatuses = {
+
+            Placed: "Placed",
+
+            Confirmed: "Confirmed",
+
+            Preparing: "Preparing",
+
+            Ready: "Ready",
+
+            OutForDelivery: "Out for Delivery",
+
+            Delivered: "Delivered",
+
+            Failed: "Failed",
+
+            Cancelled: "Cancelled"
+
+        };
+
+        return isVietnamese()
+            ? vietnameseStatuses[status] || status
+            : englishStatuses[status] || status;
+
+    }
+
+    // ==========================================
+    // 5. FORMAT PAYMENT METHOD
+    // ==========================================
+
+    function translatePayment(payment) {
+
+        if (!payment || payment === "Not available") {
+
+            return isVietnamese()
+                ? "Chưa có dữ liệu"
+                : "Not available";
+
+        }
+
+        return payment;
+
+    }
+
+    // ==========================================
+    // 6. FORMAT CURRENCY
+    // ==========================================
+
+    function formatCurrency(value) {
+
+        const amount = Number(value);
+
+        if (
+            value == null ||
+            String(value).trim() === "" ||
+            !Number.isFinite(amount)
+        ) {
+
+            return isVietnamese()
+                ? "Chưa có dữ liệu"
+                : "Not available";
+
+        }
+
+        return new Intl.NumberFormat("vi-VN", {
+
+            style: "currency",
+
+            currency: "VND",
+
+            maximumFractionDigits: 0
+
+        }).format(amount);
+
+    }
+
+    // ==========================================
+    // 7. SET ELEMENT TEXT
+    // ==========================================
+
+    function setText(id, value) {
+
+        const element = document.getElementById(id);
+
+        if (element) {
+
+            element.textContent = value ?? "";
+
+        }
+
+    }
+
+    // ==========================================
+    // 8. INITIALIZE ORDER DETAIL MODAL
+    // ==========================================
+
+    const modalElement = document.getElementById(
+        "orderDetailModal"
+    );
 
     if (!modalElement || !window.bootstrap) return;
 
@@ -85,42 +233,9 @@ document.addEventListener("DOMContentLoaded", function () {
         modalElement
     );
 
-    function setText(id, value) {
-
-        const element = document.getElementById(id);
-
-        if (element) {
-            element.textContent = value;
-        }
-
-    }
-
-    function formatCurrency(value) {
-
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND"
-        }).format(Number(value));
-
-    }
-
-    function translateStatus(status) {
-
-        const isVietnamese =
-            document.documentElement.lang
-                .toLowerCase().startsWith("vi");
-
-        const statuses = {
-            Delivered: "Đã giao",
-            Cancelled: "Đã hủy",
-            Failed: "Thất bại"
-        };
-
-        return isVietnamese
-            ? statuses[status] || status
-            : status;
-
-    }
+    // ==========================================
+    // 9. DISPLAY ORDER DETAILS
+    // ==========================================
 
     document.querySelectorAll("[data-order-detail]")
         .forEach(function (button) {
@@ -129,23 +244,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const data = button.dataset;
 
-                setText("detailOrderId", "#" + data.id);
+                // Order ID
 
-                setText("detailOrderDate", data.date);
+                setText(
+                    "detailOrderId",
+                    "#" + data.id
+                );
 
-                setText("detailOrderItem", data.item);
+                // Order Date
 
-                setText("detailOrderPayment", data.payment);
+                setText(
+                    "detailOrderDate",
+                    data.date
+                );
+
+                // Order Items
+
+                setText(
+                    "detailOrderItem",
+                    data.item || (
+                        isVietnamese()
+                            ? "Không có món ăn"
+                            : "No items"
+                    )
+                );
+
+                // Payment Method
+
+                setText(
+                    "detailOrderPayment",
+                    translatePayment(data.payment)
+                );
+
+                // Order Status
 
                 setText(
                     "detailOrderStatus",
                     translateStatus(data.status)
                 );
 
+                // Final Total
+
                 setText(
                     "detailOrderTotal",
                     formatCurrency(data.total)
                 );
+
+                // Show modal
 
                 modal.show();
 
