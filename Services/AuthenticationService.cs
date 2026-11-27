@@ -23,7 +23,10 @@ public class AuthenticationService : IAuthenticationService
         _passwordHasher = passwordHasher;
     }
 
-    // Customer Login
+    // ==========================================
+    // 1. CUSTOMER LOGIN
+    // ==========================================
+
     public async Task<(bool Success,
                        string Message,
                        UserAccount? User)>
@@ -31,7 +34,8 @@ public class AuthenticationService : IAuthenticationService
     {
         if (!IsValidModel(model))
         {
-            return (false, "Invalid login information.", null);
+            return (false,
+                "Invalid login information.", null);
         }
 
         string identifier = model.Identifier.Trim();
@@ -67,7 +71,10 @@ public class AuthenticationService : IAuthenticationService
             requireVerification: true);
     }
 
-    // Admin Login
+    // ==========================================
+    // 2. ADMIN LOGIN
+    // ==========================================
+
     public async Task<(bool Success,
                        string Message,
                        UserAccount? User)>
@@ -75,7 +82,8 @@ public class AuthenticationService : IAuthenticationService
     {
         if (!IsValidModel(model))
         {
-            return (false, "Invalid login information.", null);
+            return (false,
+                "Invalid login information.", null);
         }
 
         string username = model.Username.Trim();
@@ -91,7 +99,10 @@ public class AuthenticationService : IAuthenticationService
             requireVerification: false);
     }
 
-    // Shared account validation
+    // ==========================================
+    // 3. SHARED ACCOUNT VALIDATION
+    // ==========================================
+
     private async Task<(bool Success,
                         string Message,
                         UserAccount? User)>
@@ -121,18 +132,47 @@ public class AuthenticationService : IAuthenticationService
                 "Invalid credentials.", null);
         }
 
-        // Check account status
+        // ======================================
+        // CHECK ACCOUNT ACTIVATION STATUS
+        // ======================================
+
         if (!user.IsActive)
         {
-            return (false,
-                "This account has been deactivated.", null);
+            // Customer voluntarily deactivated
+            // their own account
+            if (user.Role == UserRole.Customer &&
+                user.IsVerified &&
+                user.DeactivationReason ==
+                    DeactivationReason.SelfDeactivated &&
+                user.DeactivatedAt.HasValue &&
+                (
+                    user.AccountType ==
+                        AccountType.LocalCustomer ||
+                    user.AccountType ==
+                        AccountType.ForeignTourist
+                ))
+            {
+                return (
+                    false,
+                    "Account reactivation is required.",
+                    user
+                );
+            }
+
+            // Admin suspended or unknown reason
+            return (
+                false,
+                "This account is unavailable. Please contact support.",
+                null
+            );
         }
 
         // Check customer verification status
         if (requireVerification && !user.IsVerified)
         {
             return (false,
-                "Account verification is required.", user);
+                "Account verification is required.",
+                user);
         }
 
         // Upgrade password hash if necessary
@@ -140,18 +180,26 @@ public class AuthenticationService : IAuthenticationService
             PasswordVerificationResult.SuccessRehashNeeded)
         {
             user.PasswordHash =
-                _passwordHasher.HashPassword(user, password);
+                _passwordHasher.HashPassword(
+                    user,
+                    password);
 
             user.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }
 
-        return (true,
-            "Login successful.", user);
+        return (
+            true,
+            "Login successful.",
+            user
+        );
     }
 
-    // Server-side model validation
+    // ==========================================
+    // 4. SERVER-SIDE MODEL VALIDATION
+    // ==========================================
+
     private static bool IsValidModel(object model)
     {
         var context = new ValidationContext(model);

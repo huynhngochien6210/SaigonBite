@@ -27,6 +27,15 @@ namespace SaigonBite.Models
         public bool IsVerified { get; set; } = false;
 
         public bool IsActive { get; set; } = true;
+	[Required]
+[MaxLength(64)]
+public string SecurityStamp { get; set; }
+    = Guid.NewGuid().ToString("N");
+
+        // Account deactivation information
+        public DateTime? DeactivatedAt { get; set; }
+
+        public DeactivationReason? DeactivationReason { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

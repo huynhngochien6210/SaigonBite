@@ -605,3 +605,199 @@ a.account-nav-item:hover {
         width: 100%;
     }
 }
+
+/* ==========================================
+   DEACTIVATE ACCOUNT
+   ========================================== */
+
+.deactivate-section {
+    margin-top: 30px;
+    padding: 22px;
+    background: #fff5f3;
+    border: 1px solid #e8b7b7;
+    border-radius: 12px;
+}
+
+.deactivate-section h2 {
+    color: #b90000;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.deactivate-section p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.deactivate-button {
+    display: inline-block;
+    padding: 11px 20px;
+    border: 1px solid #b90000;
+    border-radius: 9px;
+    color: #b90000;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.deactivate-button:hover {
+    background: #b90000;
+    color: #fff;
+    text-decoration: none;
+}
+.deactivate-warning {
+    padding: 22px;
+    margin-bottom: 30px;
+    background: #fff0ed;
+    border: 1px solid #e8b7b7;
+    border-radius: 12px;
+}
+
+.deactivate-warning h3 {
+    margin-bottom: 15px;
+    color: #b90000;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.deactivate-warning p {
+    color: #555555;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.deactivate-warning p:last-child {
+    margin-bottom: 0;
+}
+
+.deactivate-confirmation {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.deactivate-confirmation input {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    accent-color: #b90000;
+    flex-shrink: 0;
+}
+
+.deactivate-confirmation label {
+    font-size: 14px;
+    color: #454545;
+    cursor: pointer;
+}
+
+.deactivate-submit-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 9px;
+    background: #b90000;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.deactivate-submit-button:hover {
+    background: #900000;
+}
+
+.deactivate-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   ORDER HISTORY - ORDER LIFECYCLE
+   ========================================== */
+
+.history-table .order-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* 1. Placed */
+
+.history-table .order-status.placed {
+    background-color: #e2e8f0;
+    color: #475569;
+}
+
+/* 2. Confirmed */
+
+.history-table .order-status.confirmed {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* 3. Preparing */
+
+.history-table .order-status.preparing {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* 4. Ready */
+
+.history-table .order-status.ready {
+    background-color: #ede9fe;
+    color: #6d28d9;
+}
+
+/* 5. Out for Delivery */
+
+.history-table .order-status.outfordelivery {
+    background-color: #ffedd5;
+    color: #c2410c;
+}
+
+/* 6. Delivered */
+
+.history-table .order-status.delivered {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* 7. Failed */
+
+.history-table .order-status.failed {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* 8. Cancelled */
+
+.history-table .order-status.cancelled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Search and filter visibility */
+
+#orderHistoryBody tr[hidden],
+#emptyOrderHistory[hidden] {
+    display: none !important;
+}
+
+/* Order details - multiple items */
+
+#detailOrderItem {
+    max-width: 65%;
+    text-align: right;
+    overflow-wrap: anywhere;
+}

@@ -76,41 +76,43 @@
                             </a>
 
 
-                            <!-- USER -->
-                            <<div class="sb-account-dropdown">
-
+                            <!-- USER - UC-E Integration -->
+                            <div class="sb-account-dropdown">
                                 <button type="button"
                                         class="sb-account-toggle"
-                                        onclick="toggleAccountMenu()">
-
-                                    <div class="sb-account-avatar">
-                                        👤
-                                    </div>
-
-                                    <span class="sb-account-name">Hiền</span>
-
+                                        onclick="toggleAccountMenu()"
+                                        aria-controls="accountMenu"
+                                        aria-expanded="false">
+                                    <div class="sb-account-avatar">👤</div>
+                                    <span class="sb-account-name">
+                                        @(User.Identity?.IsAuthenticated == true
+                                            ? (User.Identity.Name ?? "Tài khoản")
+                                            : "Đăng nhập")
+                                    </span>
                                 </button>
 
-
                                 <div class="sb-account-menu" id="accountMenu">
-
-                                    <a asp-controller="Account"
-                                       asp-action="Index">
-                                        Tài khoản
-                                    </a>
-
-                                    <a asp-controller="Order"
-                                       asp-action="Status">
-                                        Lịch sử các đơn hàng
-                                    </a>
-
-                                    <a asp-controller="Account"
-                                       asp-action="Logout">
-                                        Đăng xuất
-                                    </a>
-
+                                    @if (User.Identity?.IsAuthenticated == true)
+                                    {
+                                        if (User.IsInRole("Customer"))
+                                        {
+                                            <a asp-controller="Account" asp-action="MyAccount">Tài khoản</a>
+                                            <a asp-controller="Account" asp-action="OrderHistory">Lịch sử các đơn hàng</a>
+                                        }
+                                        <form asp-controller="Account"
+                                              asp-action="Logout"
+                                              method="post"
+                                              asp-antiforgery="true"
+                                              class="sb-account-logout-form">
+                                            <button type="submit" class="sb-account-logout">Đăng xuất</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                        <a asp-controller="Account" asp-action="Register">Đăng ký</a>
+                                    }
                                 </div>
-
                             </div>
 
                         </div>
@@ -147,9 +149,10 @@
 
     <script>
         function toggleAccountMenu() {
-            document
-                .getElementById("accountMenu")
-                .classList.toggle("show");
+            const menu = document.getElementById("accountMenu");
+            const isOpen = menu.classList.toggle("show");
+            document.querySelector(".sb-account-toggle")
+                .setAttribute("aria-expanded", String(isOpen));
         }
     </script>
 

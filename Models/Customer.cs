@@ -4,6 +4,9 @@ namespace SaigonBite.Models
 {
     public class Customer
     {
+        public int? UserId { get; set; }
+
+        public UserAccount? UserAccount { get; set; }
         public int CustomerId { get; set; }
 
         [Required]

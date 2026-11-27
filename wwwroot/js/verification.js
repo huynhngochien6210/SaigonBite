@@ -1,67 +1,97 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const inputs = Array.from(
-        document.querySelectorAll(".otp-input")
-    );
+    "use strict";
 
     const form =
         document.getElementById("verificationForm");
 
-    if (!form || inputs.length === 0) return;
+    if (!form) return;
 
-    const countdown =
-        document.getElementById("countdown");
-
-    const countdownContainer =
-        document.getElementById("resendCountdown");
-
-    const resendButton =
-        document.getElementById("resendButton");
+    const inputs = Array.from(
+        form.querySelectorAll(".otp-input")
+    );
 
     const message =
         document.getElementById("otpMessage");
 
+    const resendButton =
+        document.getElementById("resendButton");
+
+    const countdown =
+        document.getElementById("countdown");
+
+    const countdownWrapper =
+        document.getElementById("resendCountdown");
+
     const submitButton =
         form.querySelector('button[type="submit"]');
 
-    const isPasswordReset =
+    const antiForgeryToken = form.querySelector(
+        'input[name="__RequestVerificationToken"]'
+    )?.value;
+
+    const isReset =
         form.dataset.purpose === "reset";
 
-    const token = form.querySelector(
-        'input[name="__RequestVerificationToken"]'
-    ).value;
 
-    let timer;
+    // ==========================================
+    // 1. SELECT API ENDPOINT
+    // ==========================================
+
+    const sendEndpoint = isReset
+        ? "/Account/SendResetCode"
+        : "/Account/SendVerificationCode";
+
+    const verifyEndpoint = isReset
+        ? "/Account/VerifyResetCode"
+        : "/Account/VerifyRegistrationCode";
+
+    const expiredRedirect = isReset
+        ? "/Account/ForgotPassword"
+        : "/Account/Login";
+
+    let timer = null;
+
     let busy = false;
 
-    // 1. Bilingual message
 
-    function showMessage(en, vi, success = false) {
+    // ==========================================
+    // 2. DISPLAY MESSAGE
+    // ==========================================
 
-        const isVietnamese =
-            document.documentElement.lang
-                .toLowerCase().startsWith("vi");
+    function showMessage(text, success = false) {
 
-        message.textContent =
-            isVietnamese ? vi : en;
+        if (!message) return;
 
-        message.style.color =
-            success ? "#198754" : "#b90000";
+        message.textContent = text;
+
+        message.classList.toggle(
+            "text-success",
+            success
+        );
+
+        message.classList.toggle(
+            "text-danger",
+            !success
+        );
     }
 
-    // 2. OTP input handling
 
-    inputs.forEach(function (input, index) {
+    // ==========================================
+    // 3. OTP INPUT
+    // ==========================================
+
+    inputs.forEach((input, index) => {
 
         input.addEventListener("input", function () {
 
-            input.value =
-                input.value.replace(/\D/g, "").slice(0, 1);
-
-            message.textContent = "";
+            input.value = input.value
+                .replace(/[^0-9]/g, "")
+                .slice(0, 1);
 
             if (input.value && index < inputs.length - 1) {
+
                 inputs[index + 1].focus();
             }
         });
@@ -70,92 +100,115 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (
                 event.key === "Backspace" &&
-                input.value === "" &&
+                !input.value &&
                 index > 0
             ) {
-                event.preventDefault();
 
-                inputs[index - 1].value = "";
                 inputs[index - 1].focus();
             }
-        });
 
-        input.addEventListener("focus", function () {
-            input.select();
+            if (
+                event.key === "ArrowLeft" &&
+                index > 0
+            ) {
+
+                inputs[index - 1].focus();
+            }
+
+            if (
+                event.key === "ArrowRight" &&
+                index < inputs.length - 1
+            ) {
+
+                inputs[index + 1].focus();
+            }
         });
 
         input.addEventListener("paste", function (event) {
 
             event.preventDefault();
 
-            const pastedCode = event.clipboardData
+            const pasted = event.clipboardData
                 .getData("text")
-                .replace(/\D/g, "")
+                .replace(/[^0-9]/g, "")
                 .slice(0, 6);
 
-            if (!pastedCode) return;
+            if (!pasted) return;
 
-            inputs.forEach(function (item, i) {
-                item.value = pastedCode[i] || "";
+            inputs.forEach((field, i) => {
+
+                field.value = pasted[i] || "";
             });
 
-            const nextIndex = Math.min(
-                pastedCode.length,
-                inputs.length - 1
-            );
-
-            inputs[nextIndex].focus();
+            inputs[
+                Math.min(pasted.length, inputs.length - 1)
+            ].focus();
         });
     });
 
-    // 3. Countdown
+
+    // ==========================================
+    // 4. COUNTDOWN
+    // ==========================================
 
     function startCountdown(seconds = 60) {
 
-        clearInterval(timer);
+        if (timer) {
+            clearInterval(timer);
+        }
 
-        const endTime =
-            Date.now() + seconds * 1000;
-
-        countdown.textContent = seconds;
-
-        countdownContainer.hidden = false;
+        let remaining = seconds;
 
         resendButton.disabled = true;
 
+        countdownWrapper.hidden = false;
+
+        countdown.textContent = remaining;
+
         timer = setInterval(function () {
 
-            const remaining = Math.max(
-                0,
-                Math.ceil((endTime - Date.now()) / 1000)
-            );
+            remaining--;
 
-            countdown.textContent = remaining;
+            countdown.textContent =
+                Math.max(remaining, 0);
 
-            if (remaining === 0) {
+            if (remaining <= 0) {
 
                 clearInterval(timer);
 
+                timer = null;
+
                 resendButton.disabled = false;
 
-                countdownContainer.hidden = true;
+                countdownWrapper.hidden = true;
             }
 
         }, 1000);
     }
 
-    // 4. HTTP POST helper
+
+    // ==========================================
+    // 5. HTTP POST REQUEST
+    // ==========================================
 
     async function postRequest(url, data = {}) {
+
+        if (!antiForgeryToken) {
+
+            throw new Error(
+                "Security token is missing. Refresh the page."
+            );
+        }
 
         const body = new URLSearchParams();
 
         body.append(
             "__RequestVerificationToken",
-            token
+            antiForgeryToken
         );
 
         Object.entries(data).forEach(([key, value]) => {
+
             body.append(key, value);
         });
 
@@ -163,36 +216,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
             method: "POST",
 
-            credentials: "same-origin",
-
             headers: {
                 "Content-Type":
                     "application/x-www-form-urlencoded"
             },
+
+            credentials: "same-origin",
 
             body: body.toString()
         });
 
         if (response.status === 401) {
 
-            window.location.href = "/Account/Login";
+            window.location.href = expiredRedirect;
 
-            throw new Error(
-                "Verification session has expired."
-            );
+            return null;
         }
 
         if (!response.ok) {
 
             throw new Error(
-                "Server request failed."
+                "Request failed. Please try again."
             );
         }
 
         return await response.json();
     }
 
-    // 5. Send OTP
+
+    // ==========================================
+    // 6. SEND OTP
+    // ==========================================
 
     async function sendCode() {
 
@@ -201,50 +255,39 @@ document.addEventListener("DOMContentLoaded", function () {
         busy = true;
 
         resendButton.disabled = true;
+
         submitButton.disabled = true;
 
         try {
 
-            const result = await postRequest(
-                "/Account/SendVerificationCode"
+            const result = await postRequest(sendEndpoint);
+
+            if (!result) return;
+
+            showMessage(
+                result.message,
+                result.success
             );
 
             if (result.success) {
 
                 inputs.forEach(input => {
+
                     input.value = "";
                 });
 
-                showMessage(
-                    "Verification code generated. Check the server terminal.",
-                    "Mã xác thực đã được tạo. Kiểm tra Terminal.",
-                    true
-                );
-
                 inputs[0].focus();
-
-                startCountdown();
-
-            } else {
-
-                showMessage(
-                    result.message,
-                    result.message
-                );
-
-                startCountdown();
             }
 
-        } catch (error) {
+            startCountdown(60);
+        }
+        catch (error) {
 
-            showMessage(
-                "Unable to request verification code.",
-                "Không thể yêu cầu mã xác thực."
-            );
+            showMessage(error.message);
 
-            resendButton.disabled = false;
-
-        } finally {
+            startCountdown(60);
+        }
+        finally {
 
             busy = false;
 
@@ -252,32 +295,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // 6. Resend OTP
 
-    resendButton.addEventListener("click", function () {
-
-        if (isPasswordReset) {
-
-            inputs.forEach(input => {
-                input.value = "";
-            });
-
-            showMessage(
-                "Resend simulation.",
-                "Mô phỏng gửi lại mã."
-            );
-
-            inputs[0].focus();
-
-            startCountdown();
-
-            return;
-        }
-
-        sendCode();
-    });
-
-    // 7. Verify OTP
+    // ==========================================
+    // 7. VERIFY OTP
+    // ==========================================
 
     form.addEventListener("submit", async function (event) {
 
@@ -285,91 +306,92 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (busy) return;
 
-        const otp = inputs
+        const code = inputs
             .map(input => input.value)
             .join("");
 
-        if (!/^[0-9]{6}$/.test(otp)) {
+        if (!/^[0-9]{6}$/.test(code)) {
 
             showMessage(
-                "Please enter a valid 6-digit code.",
-                "Vui lòng nhập mã xác thực gồm 6 chữ số."
+                "Please enter a valid 6-digit code."
             );
-
-            return;
-        }
-
-        // Keep password recovery UI simulation
-
-        if (isPasswordReset) {
-
-            window.location.href =
-                "/Account/ResetPassword";
 
             return;
         }
 
         busy = true;
+
         submitButton.disabled = true;
+
+        let redirecting = false;
 
         try {
 
             const result = await postRequest(
-                "/Account/VerifyRegistrationCode",
-                { code: otp }
+                verifyEndpoint,
+                { code: code }
+            );
+
+            if (!result) return;
+
+            showMessage(
+                result.message,
+                result.success
             );
 
             if (result.success) {
 
-                clearInterval(timer);
+                if (timer) {
+                    clearInterval(timer);
+                }
+
+                redirecting = true;
 
                 resendButton.disabled = true;
 
-                showMessage(
-                    "Account verified successfully.",
-                    "Xác thực tài khoản thành công.",
-                    true
-                );
-
                 window.location.href =
-                    result.redirectUrl || "/Account/Login";
+                    result.redirectUrl ||
+                    (isReset
+                        ? "/Account/ResetPassword"
+                        : "/Account/Login");
 
-            } else {
-
-                showMessage(
-                    result.message,
-                    result.message
-                );
-
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-
-                inputs[0].focus();
+                return;
             }
 
-        } catch (error) {
+            inputs.forEach(input => {
 
-            showMessage(
-                "Unable to verify the code.",
-                "Không thể xác thực mã OTP."
-            );
+                input.value = "";
+            });
 
-        } finally {
+            inputs[0].focus();
+        }
+        catch (error) {
 
-            busy = false;
-            submitButton.disabled = false;
+            showMessage(error.message);
+        }
+        finally {
+
+            if (!redirecting) {
+
+                busy = false;
+
+                submitButton.disabled = false;
+            }
         }
     });
 
-    // 8. Initialize verification page
 
-    if (isPasswordReset) {
+    // ==========================================
+    // 8. RESEND OTP
+    // ==========================================
 
-        startCountdown();
+    resendButton.addEventListener("click", sendCode);
 
-    } else {
 
-        sendCode();
-    }
+    // ==========================================
+    // 9. INITIAL OTP REQUEST
+    // ==========================================
+
+    sendCode();
+
 });

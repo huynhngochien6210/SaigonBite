@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -13,10 +14,26 @@
     <link rel="stylesheet"
           href="/lib/bootstrap/dist/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="/css/theme.css">
-    <link rel="stylesheet" href="/css/register.css">
-    <link rel="stylesheet" href="/css/customer.css">
-    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/register.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/customer.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/profile.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/typography.css"
+          asp-append-version="true" />
+
 </head>
 
 <body class="customer-body">
@@ -30,22 +47,31 @@
 
         <nav class="customer-navigation">
 
-            <span data-i18n="home">Home</span>
+            <a asp-controller="Home"
+            asp-action="Index"
+            data-i18n="home">
+                Home
+            </a>
 
-            <span data-i18n="menu">Menu</span>
+            <a href="/Home/Index#food-menu"
+            data-i18n="menu">
+                Menu
+            </a>
 
-            <span data-i18n="orderStatus">
+            <a asp-controller="Order"
+            asp-action="Status"
+            data-i18n="orderStatus">
                 Order Status
-            </span>
+            </a>
 
         </nav>
 
         <div class="customer-actions">
 
-            <button type="button"
-                    class="customer-icon-button"
-                    aria-label="Shopping cart"
-                    disabled>
+            <a asp-controller="Cart"
+                asp-action="Index"
+                class="customer-icon-button"
+                aria-label="Shopping cart">
 
                 <svg width="25" height="25"
                      viewBox="0 0 24 24"
@@ -59,7 +85,7 @@
 
                 </svg>
 
-            </button>
+            </a>
 
             <a href="/Account/MyAccount"
                class="customer-icon-button"

@@ -1,4 +1,5 @@
-
+using System.Globalization;
+using SaigonBite.Security;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
@@ -16,7 +17,21 @@ public class AccountController : Controller
     // ==========================================
     // 1. DEPENDENCY INJECTION
     // ==========================================
+    private readonly IAccountReactivationService _reactivationService;
+    private const string ReactivationUserKey = "ReactivationUserId";
+    private const string ReactivationDateKey = "ReactivationDate";
+    private const string ReactivationExpiryKey = "ReactivationExpiry";
+    private readonly IOrderHistoryService _orderHistoryService;
+    private readonly IPasswordResetService _passwordResetService;
 
+    private const string ResetUserIdKey =
+        "PasswordResetUserId";
+
+    private const string ResetAccountTypeKey =
+        "PasswordResetAccountType";
+
+    private const string ResetTokenKey =
+        "PasswordResetToken";
     private readonly IAccountService _accountService;
 
     private readonly IVerificationService
@@ -34,11 +49,17 @@ public class AccountController : Controller
     public AccountController(
         IAccountService accountService,
         IVerificationService verificationService,
-        SaigonBite.Services.IAuthenticationService authenticationService)
+        SaigonBite.Services.IAuthenticationService authenticationService,
+        IPasswordResetService passwordResetService,
+        IOrderHistoryService orderHistoryService,
+        IAccountReactivationService reactivationService)
     {
         _accountService = accountService;
         _verificationService = verificationService;
         _authenticationService = authenticationService;
+        _passwordResetService = passwordResetService;
+        _orderHistoryService = orderHistoryService;
+        _reactivationService = reactivationService;
     }
 
 
@@ -57,6 +78,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Login(
         LoginViewModel model)
     {
+        ClearReactivationSession();
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -67,6 +89,25 @@ public class AccountController : Controller
 
         if (!result.Success)
         {
+            // Correct password for a voluntarily deactivated customer.
+            var inactive = result.User;
+            if (inactive != null && !inactive.IsActive && inactive.IsVerified &&
+                inactive.Role == UserRole.Customer &&
+                inactive.DeactivationReason == DeactivationReason.SelfDeactivated &&
+                inactive.DeactivatedAt.HasValue &&
+                (inactive.AccountType == AccountType.LocalCustomer ||
+                 inactive.AccountType == AccountType.ForeignTourist))
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                HttpContext.Session.Clear();
+                HttpContext.Session.SetInt32(ReactivationUserKey, inactive.UserId);
+                HttpContext.Session.SetString(ReactivationDateKey,
+                    inactive.DeactivatedAt.Value.Ticks.ToString(CultureInfo.InvariantCulture));
+                HttpContext.Session.SetString(ReactivationExpiryKey,
+                    DateTime.UtcNow.AddMinutes(15).Ticks.ToString(CultureInfo.InvariantCulture));
+                return RedirectToAction(nameof(ReactivateAccount));
+            }
+
             // Correct password but unverified account
             if (result.User != null &&
                 result.User.IsActive &&
@@ -119,7 +160,8 @@ public class AccountController : Controller
 
             new Claim(
                 "AccountType",
-                user.AccountType?.ToString() ?? "")
+                user.AccountType?.ToString() ?? ""),
+            new Claim(AuthClaimTypes.SecurityStamp, user.SecurityStamp)
         };
 
         var identity = new ClaimsIdentity(
@@ -149,6 +191,89 @@ public class AccountController : Controller
     }
 
 
+    // ACCOUNT REACTIVATION
+    private void ClearReactivationSession()
+    {
+        HttpContext.Session.Remove(ReactivationUserKey);
+        HttpContext.Session.Remove(ReactivationDateKey);
+        HttpContext.Session.Remove(ReactivationExpiryKey);
+    }
+
+    private bool TryGetReactivation(out int userId, out DateTime deactivatedAt)
+    {
+        userId = HttpContext.Session.GetInt32(ReactivationUserKey) ?? 0;
+        deactivatedAt = default;
+        if (User.Identity?.IsAuthenticated == true || userId <= 0 ||
+            !long.TryParse(HttpContext.Session.GetString(ReactivationDateKey), out long ticks) ||
+            ticks <= 0 || ticks > DateTime.MaxValue.Ticks ||
+            !long.TryParse(HttpContext.Session.GetString(ReactivationExpiryKey), out long expiry) ||
+            expiry <= DateTime.UtcNow.Ticks)
+        {
+            ClearReactivationSession();
+            return false;
+        }
+        deactivatedAt = new DateTime(ticks, DateTimeKind.Utc);
+        return true;
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ReactivateAccount()
+    {
+        if (!TryGetReactivation(out _, out _)) return RedirectToAction(nameof(Login));
+        return View();
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendReactivationCode()
+    {
+        if (!TryGetReactivation(out int userId, out DateTime date))
+            return RedirectToAction(nameof(Login));
+        var result = await _reactivationService.SendCodeAsync(userId, date);
+        TempData["ReactivationMessage"] = result.Message;
+        TempData["ReactivationSent"] = result.Success;
+        return RedirectToAction(nameof(VerifyReactivation));
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult VerifyReactivation()
+    {
+        if (!TryGetReactivation(out _, out _)) return RedirectToAction(nameof(Login));
+        return View(new VerifyReactivationViewModel());
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> VerifyReactivation(VerifyReactivationViewModel model)
+    {
+        if (!TryGetReactivation(out int userId, out DateTime date))
+            return RedirectToAction(nameof(Login));
+        if (!ModelState.IsValid) return View(model);
+        var result = await _reactivationService.VerifyCodeAsync(userId, date, model.Code);
+        if (!result.Success)
+        {
+            ModelState.AddModelError(string.Empty, result.Message);
+            return View(model);
+        }
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        HttpContext.Session.Clear();
+        TempData["ReactivationSuccess"] = "Account reactivated successfully. Please sign in again.";
+        return RedirectToAction(nameof(Login));
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public IActionResult CancelReactivation()
+    {
+        ClearReactivationSession();
+        return RedirectToAction(nameof(Login));
+    }
+
     // ==========================================
     // 3. SELECT ACCOUNT TYPE
     // ==========================================
@@ -175,6 +300,7 @@ public class AccountController : Controller
     public async Task<IActionResult> RegisterLocal(
         RegisterLocalViewModel model)
     {
+        ClearReactivationSession();
         ViewData["AccountType"] = "local";
 
         if (!ModelState.IsValid)
@@ -223,6 +349,7 @@ public class AccountController : Controller
     public async Task<IActionResult> RegisterForeign(
         RegisterForeignViewModel model)
     {
+        ClearReactivationSession();
         ViewData["AccountType"] = "foreign";
 
         if (!ModelState.IsValid)
@@ -412,33 +539,95 @@ public class AccountController : Controller
     }
 
 
+    
     // ==========================================
-    // 11. FORGOT PASSWORD
+    // 11. FORGOT PASSWORD - GET
     // ==========================================
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult ForgotPassword()
     {
-        return View();
+        ClearPasswordResetSession();
+
+        return View(new ForgotPasswordViewModel());
     }
 
 
     // ==========================================
-    // 12. VERIFY PASSWORD RESET CODE
+    // 11. FORGOT PASSWORD - POST
+    // ==========================================
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(
+        ForgotPasswordViewModel model)
+    {
+        ClearReactivationSession();
+        ClearPasswordResetSession();
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await _passwordResetService
+            .RequestResetAsync(model);
+
+        if (!result.Success)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                result.Message);
+
+            return View(model);
+        }
+
+        // Store recovery method in session
+        HttpContext.Session.SetString(
+            ResetAccountTypeKey,
+            model.RecoveryMethod);
+
+        // Store account ID only when eligible
+        if (result.UserId.HasValue)
+        {
+            HttpContext.Session.SetInt32(
+                ResetUserIdKey,
+                result.UserId.Value);
+        }
+
+        return RedirectToAction(
+            nameof(VerifyResetCode));
+    }
+
+
+    // ==========================================
+    // 12. VERIFY RESET CODE - GET
     // ==========================================
 
     [HttpGet]
-    public IActionResult VerifyResetCode(
-        string type = "local")
+    [AllowAnonymous]
+    public IActionResult VerifyResetCode()
     {
-        if (type != "local" &&
-            type != "foreign")
+        string? accountType = HttpContext.Session
+            .GetString(ResetAccountTypeKey);
+
+        if (accountType != "local" &&
+            accountType != "foreign")
         {
             return RedirectToAction(
                 nameof(ForgotPassword));
         }
 
-        ViewData["AccountType"] = type;
+        if (!string.IsNullOrEmpty(
+            HttpContext.Session.GetString(ResetTokenKey)))
+        {
+            return RedirectToAction(
+                nameof(ResetPassword));
+        }
+
+        ViewData["AccountType"] = accountType;
 
         ViewData["IsPasswordReset"] = true;
 
@@ -447,20 +636,231 @@ public class AccountController : Controller
 
 
     // ==========================================
-    // 13. RESET PASSWORD
+    // 12. SEND PASSWORD RESET OTP
+    // ==========================================
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendResetCode()
+    {
+        string? accountType = HttpContext.Session
+            .GetString(ResetAccountTypeKey);
+
+        if (accountType != "local" &&
+            accountType != "foreign")
+        {
+            return Unauthorized(new
+            {
+                success = false,
+                message = "Password reset session has expired."
+            });
+        }
+
+        if (!string.IsNullOrEmpty(
+            HttpContext.Session.GetString(ResetTokenKey)))
+        {
+            return Json(new
+            {
+                success = false,
+                message = "Verification has already been completed."
+            });
+        }
+
+        int? userId = HttpContext.Session
+            .GetInt32(ResetUserIdKey);
+
+        if (userId.HasValue)
+        {
+            await _passwordResetService
+                .SendCodeAsync(userId.Value);
+        }
+
+        // Generic response to reduce account enumeration
+        return Json(new
+        {
+            success = true,
+            message = "If the account is eligible, a verification code will be generated."
+        });
+    }
+
+
+    // ==========================================
+    // 12. VERIFY PASSWORD RESET OTP - POST
+    // ==========================================
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> VerifyResetCode(
+        string code)
+    {
+        string? accountType = HttpContext.Session
+            .GetString(ResetAccountTypeKey);
+
+        if (accountType != "local" &&
+            accountType != "foreign")
+        {
+            return Unauthorized(new
+            {
+                success = false,
+                message = "Password reset session has expired."
+            });
+        }
+
+        int? userId = HttpContext.Session
+            .GetInt32(ResetUserIdKey);
+
+        if (!userId.HasValue)
+        {
+            return Json(new
+            {
+                success = false,
+                message = "Invalid or expired verification code."
+            });
+        }
+
+        var result = await _passwordResetService
+            .VerifyCodeAsync(userId.Value, code);
+
+        if (!result.Success ||
+            string.IsNullOrEmpty(result.Token))
+        {
+            return Json(new
+            {
+                success = false,
+                message = "Invalid or expired verification code."
+            });
+        }
+
+        // Store reset token on the server
+        HttpContext.Session.SetString(
+            ResetTokenKey,
+            result.Token);
+
+        return Json(new
+        {
+            success = true,
+            message = "Verification successful.",
+            redirectUrl = Url.Action(
+                nameof(ResetPassword),
+                "Account")
+        });
+    }
+
+
+    // ==========================================
+    // 13. RESET PASSWORD - GET
     // ==========================================
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult ResetPassword()
     {
+        int? userId = HttpContext.Session
+            .GetInt32(ResetUserIdKey);
+
+        string? token = HttpContext.Session
+            .GetString(ResetTokenKey);
+
+        if (!userId.HasValue ||
+            string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(
+                nameof(ForgotPassword));
+        }
+
+        return View(new ResetPasswordViewModel());
+    }
+
+
+    // ==========================================
+    // 13. RESET PASSWORD - POST
+    // ==========================================
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordViewModel model)
+    {
+        int? userId = HttpContext.Session
+            .GetInt32(ResetUserIdKey);
+
+        string? token = HttpContext.Session
+            .GetString(ResetTokenKey);
+
+        if (!userId.HasValue ||
+            string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(
+                nameof(ForgotPassword));
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await _passwordResetService
+            .ResetPasswordAsync(
+                userId.Value,
+                token,
+                model);
+
+        if (!result.Success)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                result.Message);
+
+            return View(model);
+        }
+
+        // Remove current authentication cookie
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Clear all current session data
+        HttpContext.Session.Clear();
+
+        TempData["PasswordResetSuccess"] = true;
+
+        return RedirectToAction(
+            nameof(ResetPasswordSuccess));
+    }
+
+
+    // ==========================================
+    // 13. RESET PASSWORD SUCCESS
+    // ==========================================
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ResetPasswordSuccess()
+    {
+        if (TempData["PasswordResetSuccess"] is not true)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
         return View();
     }
 
-    [HttpGet]
-    public IActionResult ResetPasswordSuccess()
+
+    // ==========================================
+    // CLEAR PASSWORD RESET SESSION
+    // ==========================================
+
+    private void ClearPasswordResetSession()
     {
-        return View();
+        HttpContext.Session.Remove(ResetUserIdKey);
+
+        HttpContext.Session.Remove(ResetAccountTypeKey);
+
+        HttpContext.Session.Remove(ResetTokenKey);
     }
+
 
 
     // ==========================================
@@ -634,29 +1034,186 @@ public class AccountController : Controller
     }
 
 
+    
+// ==========================================
+// 17. CHANGE PASSWORD - GET
+// ==========================================
+
+[HttpGet]
+[Authorize(Roles = "Customer")]
+public async Task<IActionResult> ChangePassword()
+{
+    int? userId = GetCurrentUserId();
+
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var profile = await _accountService
+        .GetProfileAsync(userId.Value);
+
+    if (profile == null)
+    {
+        return RedirectToAction(nameof(MyAccount));
+    }
+
+    return View(new ChangePasswordViewModel());
+}
+
+
     // ==========================================
-    // 17. CHANGE PASSWORD
+    // 17. CHANGE PASSWORD - POST
     // ==========================================
+
+    [HttpPost]
+    [Authorize(Roles = "Customer")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(
+        ChangePasswordViewModel model)
+    {
+        int? userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var profile = await _accountService
+            .GetProfileAsync(userId.Value);
+
+        if (profile == null)
+        {
+            return RedirectToAction(nameof(MyAccount));
+        }
+
+        // Validate input
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Execute business logic
+        var result = await _accountService
+            .ChangePasswordAsync(userId.Value, model);
+
+        if (!result.Success)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                result.Message);
+
+            return View(model);
+        }
+
+        // Remove current authentication cookie
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Clear current session
+        HttpContext.Session.Clear();
+
+        // Success message
+        TempData["PasswordSuccess"] =
+            "Password changed successfully. Please sign in again.";
+
+        return RedirectToAction(nameof(Login));
+    }
 
     [HttpGet]
     [Authorize(Roles = "Customer")]
-    public IActionResult ChangePassword()
+    public async Task<IActionResult> DeactivateAccount()
     {
-        return View();
+        int? userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var profile = await _accountService
+            .GetProfileAsync(userId.Value);
+
+        if (profile == null)
+        {
+            return RedirectToAction(nameof(MyAccount));
+        }
+
+        return View(new DeactivateAccountViewModel());
+    }
+[HttpPost]
+[Authorize(Roles = "Customer")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeactivateAccount(
+    DeactivateAccountViewModel model)
+{
+    int? userId = GetCurrentUserId();
+
+    if (userId == null)
+    {
+        return Unauthorized();
     }
 
+    var profile = await _accountService
+        .GetProfileAsync(userId.Value);
 
+    if (profile == null)
+    {
+        return RedirectToAction(nameof(MyAccount));
+    }
+
+    // Validate input
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    // Deactivate customer account
+    var result = await _accountService
+        .DeactivateAccountAsync(userId.Value, model);
+
+    if (!result.Success)
+    {
+        ModelState.AddModelError(
+            string.Empty,
+            result.Message);
+
+        return View(model);
+    }
+
+    // Remove authentication cookie
+    await HttpContext.SignOutAsync(
+        CookieAuthenticationDefaults.AuthenticationScheme);
+
+    // Clear session
+    HttpContext.Session.Clear();
+
+    // Success notification
+    TempData["DeactivateSuccess"] = result.Message;
+
+    // Redirect to login page
+    return RedirectToAction(nameof(Login));
+}
     // ==========================================
     // 18. ORDER HISTORY
     // ==========================================
 
     [HttpGet]
     [Authorize(Roles = "Customer")]
-    public IActionResult OrderHistory()
+    public async Task<IActionResult> OrderHistory()
     {
-        return View();
-    }
+        int? userId = GetCurrentUserId();
 
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var model = await _orderHistoryService
+            .GetOrderHistoryAsync(userId.Value);
+
+        return View(model);
+    }
 
     // ==========================================
     // 19. LOGOUT

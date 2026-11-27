@@ -1,4 +1,4 @@
-
+using System.Data;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -384,26 +384,224 @@ public class AccountService : IAccountService
     // 6. VALIDATE DATA ANNOTATIONS
     // ==========================================
 
-    private static string? ValidateModel(object model)
+// ==========================================
+// CHANGE CUSTOMER PASSWORD
+// ==========================================
+
+public async Task<(bool Success, string Message)>
+    ChangePasswordAsync(
+        int userId,
+        ChangePasswordViewModel model)
+{
+    // 1. Validate input
+    string? validationError = ValidateModel(model);
+
+    if (validationError != null)
     {
-        var context = new ValidationContext(model);
-
-        var results = new List<ValidationResult>();
-
-        bool isValid = Validator.TryValidateObject(
-            model,
-            context,
-            results,
-            validateAllProperties: true);
-
-        if (isValid)
-        {
-            return null;
-        }
-
-        return results.FirstOrDefault()?.ErrorMessage
-            ?? "Invalid account information.";
+        return (false, validationError);
     }
+
+    await using var transaction =
+        await _context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable);
+
+    // 2. Find active and verified customer
+    var user = await _context.UserAccounts
+        .FirstOrDefaultAsync(u =>
+            u.UserId == userId &&
+            u.Role == UserRole.Customer &&
+            u.IsActive &&
+            u.IsVerified);
+
+    if (user == null)
+    {
+        return (
+            false,
+            "Customer account not found."
+        );
+    }
+
+    // 3. Verify current password
+    var currentPasswordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.CurrentPassword);
+
+    if (currentPasswordResult ==
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "Current password is incorrect."
+        );
+    }
+
+    // 4. Prevent reuse of current password
+    var newPasswordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.NewPassword);
+
+    if (newPasswordResult !=
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "New password must be different from current password."
+        );
+    }
+
+    // 5. Hash new password
+    user.PasswordHash =
+        _passwordHasher.HashPassword(
+            user,
+            model.NewPassword);
+
+    // 6. Revoke existing authentication cookies
+    user.SecurityStamp =
+        Guid.NewGuid().ToString("N");
+
+    user.UpdatedAt = DateTime.UtcNow;
+
+    // 7. Invalidate existing password reset requests
+    var activeResets = await _context.PasswordResets
+        .Where(r =>
+            r.UserId == userId &&
+            !r.IsUsed)
+        .ToListAsync();
+
+    foreach (var reset in activeResets)
+    {
+        reset.IsUsed = true;
+    }
+
+    // 8. Save changes
+    await _context.SaveChangesAsync();
+
+    await transaction.CommitAsync();
+
+    return (
+        true,
+        "Password changed successfully."
+    );
+}
+
+    // ==========================================
+    // DEACTIVATE CUSTOMER ACCOUNT
+    // ==========================================
+
+    public async Task<(bool Success, string Message)>
+    DeactivateAccountAsync(
+        int userId,
+        DeactivateAccountViewModel model)
+{
+    // 1. Validate input
+    string? validationError = ValidateModel(model);
+
+    if (validationError != null)
+    {
+        return (false, validationError);
+    }
+
+    await using var transaction =
+        await _context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable);
+
+    // 2. Find active and verified customer
+    var user = await _context.UserAccounts
+        .FirstOrDefaultAsync(u =>
+            u.UserId == userId &&
+            u.Role == UserRole.Customer &&
+            u.IsActive &&
+            u.IsVerified);
+
+    if (user == null)
+    {
+        return (
+            false,
+            "Customer account not found."
+        );
+    }
+
+    // 3. Verify current password
+    var passwordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.CurrentPassword);
+
+    if (passwordResult ==
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "Current password is incorrect."
+        );
+    }
+
+    // 4. Confirm account deactivation
+    if (!model.ConfirmDeactivation)
+    {
+        return (
+            false,
+            "Please confirm account deactivation."
+        );
+    }
+
+    // 5. Soft delete
+    DateTime now = DateTime.UtcNow;
+
+    user.IsActive = false;
+
+    user.DeactivationReason =
+        DeactivationReason.SelfDeactivated;
+
+    user.DeactivatedAt = now;
+
+    // Revoke all authentication cookies
+    user.SecurityStamp =
+        Guid.NewGuid().ToString("N");
+
+    user.UpdatedAt = now;
+
+    // 6. Invalidate existing verification codes
+    var verificationCodes =
+        await _context.VerificationCodes
+            .Where(v =>
+                v.UserId == userId &&
+                !v.IsUsed)
+            .ToListAsync();
+
+    foreach (var code in verificationCodes)
+    {
+        code.IsUsed = true;
+    }
+
+    // 7. Invalidate existing password reset requests
+    var passwordResets =
+        await _context.PasswordResets
+            .Where(r =>
+                r.UserId == userId &&
+                !r.IsUsed)
+            .ToListAsync();
+
+    foreach (var reset in passwordResets)
+    {
+        reset.IsUsed = true;
+    }
+
+    // 8. Save changes
+    await _context.SaveChangesAsync();
+
+    await transaction.CommitAsync();
+
+    return (
+        true,
+        "Your account has been deactivated successfully."
+    );
+}
 
 
     // ==========================================
@@ -444,4 +642,23 @@ public class AccountService : IAccountService
             );
         }
     }
+// ==========================================
+// VALIDATE VIEW MODEL
+// ==========================================
+
+private static string? ValidateModel(object model)
+{
+    var results = new List<ValidationResult>();
+
+    bool valid = Validator.TryValidateObject(
+        model,
+        new ValidationContext(model),
+        results,
+        validateAllProperties: true);
+
+    return valid
+        ? null
+        : results.FirstOrDefault()?.ErrorMessage
+            ?? "Invalid input.";
+}
 }
