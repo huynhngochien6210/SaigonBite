@@ -1,213 +1,397 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const inputs = Array.from(
-        document.querySelectorAll(".otp-input")
-    );
+    "use strict";
 
     const form =
         document.getElementById("verificationForm");
 
-    const countdown =
-        document.getElementById("countdown");
+    if (!form) return;
 
-    const countdownContainer =
-        document.getElementById("resendCountdown");
-
-    const resendButton =
-        document.getElementById("resendButton");
+    const inputs = Array.from(
+        form.querySelectorAll(".otp-input")
+    );
 
     const message =
         document.getElementById("otpMessage");
 
-    if (!form || inputs.length === 0) return;
+    const resendButton =
+        document.getElementById("resendButton");
 
-    let timer;
+    const countdown =
+        document.getElementById("countdown");
 
-    // Bilingual message
+    const countdownWrapper =
+        document.getElementById("resendCountdown");
 
-    function showMessage(en, vi) {
+    const submitButton =
+        form.querySelector('button[type="submit"]');
 
-        const isVietnamese =
-            document.documentElement.lang
-                .toLowerCase().startsWith("vi");
+    const antiForgeryToken = form.querySelector(
+        'input[name="__RequestVerificationToken"]'
+    )?.value;
 
-        message.textContent =
-            isVietnamese ? vi : en;
+    const isReset =
+        form.dataset.purpose === "reset";
+
+
+    // ==========================================
+    // 1. SELECT API ENDPOINT
+    // ==========================================
+
+    const sendEndpoint = isReset
+        ? "/Account/SendResetCode"
+        : "/Account/SendVerificationCode";
+
+    const verifyEndpoint = isReset
+        ? "/Account/VerifyResetCode"
+        : "/Account/VerifyRegistrationCode";
+
+    const expiredRedirect = isReset
+        ? "/Account/ForgotPassword"
+        : "/Account/Login";
+
+    let timer = null;
+
+    let busy = false;
+
+
+    // ==========================================
+    // 2. DISPLAY MESSAGE
+    // ==========================================
+
+    function showMessage(text, success = false) {
+
+        if (!message) return;
+
+        message.textContent = text;
+
+        message.classList.toggle(
+            "text-success",
+            success
+        );
+
+        message.classList.toggle(
+            "text-danger",
+            !success
+        );
     }
 
-    // OTP input handling
 
-    inputs.forEach(function (input, index) {
+    // ==========================================
+    // 3. OTP INPUT
+    // ==========================================
+
+    inputs.forEach((input, index) => {
 
         input.addEventListener("input", function () {
 
-            input.value =
-                input.value.replace(/\D/g, "").slice(0, 1);
-
-            message.textContent = "";
+            input.value = input.value
+                .replace(/[^0-9]/g, "")
+                .slice(0, 1);
 
             if (input.value && index < inputs.length - 1) {
 
                 inputs[index + 1].focus();
-
             }
-
         });
-
-        // Backspace
 
         input.addEventListener("keydown", function (event) {
 
             if (
                 event.key === "Backspace" &&
-                input.value === "" &&
+                !input.value &&
                 index > 0
             ) {
 
-                event.preventDefault();
-
-                inputs[index - 1].value = "";
                 inputs[index - 1].focus();
-
             }
 
+            if (
+                event.key === "ArrowLeft" &&
+                index > 0
+            ) {
+
+                inputs[index - 1].focus();
+            }
+
+            if (
+                event.key === "ArrowRight" &&
+                index < inputs.length - 1
+            ) {
+
+                inputs[index + 1].focus();
+            }
         });
-
-        // Select existing digit
-
-        input.addEventListener("focus", function () {
-
-            input.select();
-
-        });
-
-        // Paste OTP
 
         input.addEventListener("paste", function (event) {
 
             event.preventDefault();
 
-            const pastedCode = event.clipboardData
+            const pasted = event.clipboardData
                 .getData("text")
-                .replace(/\D/g, "")
+                .replace(/[^0-9]/g, "")
                 .slice(0, 6);
 
-            if (!pastedCode) return;
+            if (!pasted) return;
 
-            inputs.forEach(function (item, i) {
+            inputs.forEach((field, i) => {
 
-                item.value = pastedCode[i] || "";
-
+                field.value = pasted[i] || "";
             });
 
-            const nextIndex = Math.min(
-                pastedCode.length,
-                inputs.length - 1
-            );
-
-            inputs[nextIndex].focus();
-
+            inputs[
+                Math.min(pasted.length, inputs.length - 1)
+            ].focus();
         });
-
     });
 
-    // Countdown
 
-    function startCountdown() {
+    // ==========================================
+    // 4. COUNTDOWN
+    // ==========================================
 
-        clearInterval(timer);
+    function startCountdown(seconds = 60) {
 
-        const endTime = Date.now() + 60000;
+        if (timer) {
+            clearInterval(timer);
+        }
 
-        countdown.textContent = "60";
-
-        countdownContainer.hidden = false;
+        let remaining = seconds;
 
         resendButton.disabled = true;
 
+        countdownWrapper.hidden = false;
+
+        countdown.textContent = remaining;
+
         timer = setInterval(function () {
 
-            const remaining = Math.max(
-                0,
-                Math.ceil((endTime - Date.now()) / 1000)
-            );
+            remaining--;
 
-            countdown.textContent = remaining;
+            countdown.textContent =
+                Math.max(remaining, 0);
 
-            if (remaining === 0) {
+            if (remaining <= 0) {
 
                 clearInterval(timer);
 
+                timer = null;
+
                 resendButton.disabled = false;
 
-                countdownContainer.hidden = true;
-
+                countdownWrapper.hidden = true;
             }
 
         }, 1000);
-
     }
 
-    // Resend OTP - UI simulation
 
-    resendButton.addEventListener("click", function () {
+    // ==========================================
+    // 5. HTTP POST REQUEST
+    // ==========================================
 
-        inputs.forEach(function (input) {
+    async function postRequest(url, data = {}) {
 
-            input.value = "";
+        if (!antiForgeryToken) {
 
-        });
+            throw new Error(
+                "Security token is missing. Refresh the page."
+            );
+        }
 
-        showMessage(
-            "Resend simulation. No real OTP has been sent.",
-            "Mô phỏng gửi lại. Chưa có mã OTP thật được gửi."
+        const body = new URLSearchParams();
+
+        body.append(
+            "__RequestVerificationToken",
+            antiForgeryToken
         );
 
-        inputs[0].focus();
+        Object.entries(data).forEach(([key, value]) => {
 
-        startCountdown();
+            body.append(key, value);
+        });
 
-    });
+        const response = await fetch(url, {
 
-    // Verify OTP
+            method: "POST",
 
-    form.addEventListener("submit", function (event) {
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+
+            credentials: "same-origin",
+
+            body: body.toString()
+        });
+
+        if (response.status === 401) {
+
+            window.location.href = expiredRedirect;
+
+            return null;
+        }
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Request failed. Please try again."
+            );
+        }
+
+        return await response.json();
+    }
+
+
+    // ==========================================
+    // 6. SEND OTP
+    // ==========================================
+
+    async function sendCode() {
+
+        if (busy) return;
+
+        busy = true;
+
+        resendButton.disabled = true;
+
+        submitButton.disabled = true;
+
+        try {
+
+            const result = await postRequest(sendEndpoint);
+
+            if (!result) return;
+
+            showMessage(
+                result.message,
+                result.success
+            );
+
+            if (result.success) {
+
+                inputs.forEach(input => {
+
+                    input.value = "";
+                });
+
+                inputs[0].focus();
+            }
+
+            startCountdown(60);
+        }
+        catch (error) {
+
+            showMessage(error.message);
+
+            startCountdown(60);
+        }
+        finally {
+
+            busy = false;
+
+            submitButton.disabled = false;
+        }
+    }
+
+
+    // ==========================================
+    // 7. VERIFY OTP
+    // ==========================================
+
+    form.addEventListener("submit", async function (event) {
 
         event.preventDefault();
 
-        const otp = inputs
+        if (busy) return;
+
+        const code = inputs
             .map(input => input.value)
             .join("");
 
-        if (!/^[0-9]{6}$/.test(otp)) {
+        if (!/^[0-9]{6}$/.test(code)) {
 
             showMessage(
-                "Please enter a valid 6-digit code.",
-                "Vui lòng nhập mã xác thực gồm 6 chữ số."
+                "Please enter a valid 6-digit code."
             );
 
             return;
         }
 
-        // Temporary UI preview for password recovery
+        busy = true;
 
-        if (form.dataset.purpose === "reset") {
+        submitButton.disabled = true;
 
-            window.location.href = "/Account/ResetPassword";
+        let redirecting = false;
 
-            return;
+        try {
+
+            const result = await postRequest(
+                verifyEndpoint,
+                { code: code }
+            );
+
+            if (!result) return;
+
+            showMessage(
+                result.message,
+                result.success
+            );
+
+            if (result.success) {
+
+                if (timer) {
+                    clearInterval(timer);
+                }
+
+                redirecting = true;
+
+                resendButton.disabled = true;
+
+                window.location.href =
+                    result.redirectUrl ||
+                    (isReset
+                        ? "/Account/ResetPassword"
+                        : "/Account/Login");
+
+                return;
+            }
+
+            inputs.forEach(input => {
+
+                input.value = "";
+            });
+
+            inputs[0].focus();
         }
+        catch (error) {
 
-        // Registration verification
+            showMessage(error.message);
+        }
+        finally {
 
-        showMessage(
-            "Valid OTP format. Backend verification is not connected.",
-            "Định dạng OTP hợp lệ. Chưa kết nối xác thực Backend."
-        );
+            if (!redirecting) {
 
+                busy = false;
+
+                submitButton.disabled = false;
+            }
+        }
     });
 
-    startCountdown();
+
+    // ==========================================
+    // 8. RESEND OTP
+    // ==========================================
+
+    resendButton.addEventListener("click", sendCode);
+
+
+    // ==========================================
+    // 9. INITIAL OTP REQUEST
+    // ==========================================
+
+    sendCode();
 
 });

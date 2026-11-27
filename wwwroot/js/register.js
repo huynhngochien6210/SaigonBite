@@ -1,66 +1,54 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+
+    // 1. Select Account Type
 
     const continueButton =
         document.getElementById("continueRegister");
 
-    if (!continueButton) return;
+    if (continueButton) {
 
-    continueButton.addEventListener("click", function () {
+        continueButton.addEventListener("click", function () {
 
-        const selected = document.querySelector(
-            'input[name="accountType"]:checked'
-        );
+            const selected = document.querySelector(
+                'input[name="accountType"]:checked'
+            );
 
-        if (!selected) return;
+            if (!selected) return;
 
-        if (selected.value === "local") {
+            if (selected.value === "local") {
+                window.location.href = "/Account/RegisterLocal";
+            } else if (selected.value === "foreign") {
+                window.location.href = "/Account/RegisterForeign";
+            }
+        });
+    }
 
-            window.location.href = "/Account/RegisterLocal";
-
-        } else if (selected.value === "foreign") {
-
-            window.location.href = "/Account/RegisterForeign";
-
-        }
-
-    });
-
-});
-
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Show / Hide Password
+    // 2. Show / Hide Password
 
     document.querySelectorAll("[data-toggle-password]")
         .forEach(function (button) {
 
             button.addEventListener("click", function () {
 
-                const inputId =
-                    button.dataset.togglePassword;
-
-                const input =
-                    document.getElementById(inputId);
+                const input = document.getElementById(
+                    button.dataset.togglePassword
+                );
 
                 if (!input) return;
 
-                const isHidden =
-                    input.type === "password";
+                const isHidden = input.type === "password";
 
-                input.type =
-                    isHidden ? "text" : "password";
+                input.type = isHidden ? "text" : "password";
 
                 button.setAttribute(
                     "aria-label",
                     isHidden ? "Hide password" : "Show password"
                 );
-
             });
-
         });
 
-    // Registration Validation
+    // 3. Registration Validation
 
     const form =
         document.getElementById("registrationForm");
@@ -76,14 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
             document.documentElement.lang
                 .toLowerCase().startsWith("vi");
 
-        message.textContent =
-            isVietnamese ? vi : en;
-
+        message.textContent = isVietnamese ? vi : en;
+        message.style.color = "#b90000";
     }
 
     form.addEventListener("submit", function (event) {
-
-        event.preventDefault();
 
         message.textContent = "";
 
@@ -102,25 +87,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const email =
             document.getElementById("email");
 
+        const passport =
+            document.getElementById("passportNumber");
+
+        const nationality =
+            document.getElementById("nationality");
+
         // Full Name
 
-        if (fullName.length === 0) {
+        if (fullName.length === 0 || fullName.length > 100) {
+
+            event.preventDefault();
 
             showMessage(
-                "Please enter your full name.",
-                "Vui lòng nhập họ và tên."
+                "Please enter a valid full name.",
+                "Vui lòng nhập họ và tên hợp lệ."
             );
 
             return;
         }
 
-        // Phone Number
+        // Phone Number - BR18
 
-        if (phone && !/^0[0-9]{9}$/.test(phone.value.trim())) {
+        if (phone && !/^0[35789][0-9]{8}$/.test(phone.value)) {
+
+            event.preventDefault();
 
             showMessage(
-                "Please enter a valid 10-digit phone number.",
-                "Vui lòng nhập số điện thoại hợp lệ gồm 10 chữ số."
+                "Phone number must contain 10 digits and start with 03, 05, 07, 08 or 09.",
+                "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09."
             );
 
             return;
@@ -130,6 +125,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (email && !email.validity.valid) {
 
+            event.preventDefault();
+
             showMessage(
                 "Please enter a valid email address.",
                 "Vui lòng nhập địa chỉ email hợp lệ."
@@ -138,16 +135,48 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Passport Number - BR18
+
+        if (passport &&
+            !/^[A-Za-z0-9]{6,9}$/.test(passport.value)) {
+
+            event.preventDefault();
+
+            showMessage(
+                "Passport must contain 6 to 9 letters or digits.",
+                "Số hộ chiếu phải gồm 6 đến 9 chữ cái hoặc chữ số."
+            );
+
+            return;
+        }
+
+        // Nationality
+
+        if (nationality &&
+            nationality.value.trim().length === 0) {
+
+            event.preventDefault();
+
+            showMessage(
+                "Please enter your nationality.",
+                "Vui lòng nhập quốc tịch."
+            );
+
+            return;
+        }
+
         // Password
 
         const passwordPattern =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{8,}$/;
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{8,128}$/;
 
         if (!passwordPattern.test(password)) {
 
+            event.preventDefault();
+
             showMessage(
-                "Password must contain at least 8 characters, including uppercase, lowercase, number and special character.",
-                "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, chữ số và ký tự đặc biệt."
+                "Password must contain 8 to 128 characters, including uppercase, lowercase, number and special character.",
+                "Mật khẩu phải có từ 8 đến 128 ký tự, gồm chữ hoa, chữ thường, chữ số và ký tự đặc biệt."
             );
 
             return;
@@ -157,6 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (password !== confirmPassword) {
 
+            event.preventDefault();
+
             showMessage(
                 "Passwords do not match.",
                 "Mật khẩu xác nhận không trùng khớp."
@@ -165,9 +196,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Terms
+        // Terms and Conditions
 
         if (!document.getElementById("acceptTerms").checked) {
+
+            event.preventDefault();
 
             showMessage(
                 "Please accept the Terms and Conditions.",
@@ -177,18 +210,21 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Frontend Validation Completed
+        // All validations passed.
+        // Allow the form to submit to AccountController.
 
-        // Temporary frontend navigation
+        const submitButton =
+            form.querySelector('button[type="submit"]');
 
-        const accountType = form.querySelector(
-            'input[name="accountType"]'
-        ).value;
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
 
-        window.location.href =
-            "/Account/RegistrationSuccess?type=" +
-            encodeURIComponent(accountType);
+        showMessage(
+            "Creating your account...",
+            "Đang tạo tài khoản..."
+        );
 
+        message.style.color = "#198754";
     });
-
 });

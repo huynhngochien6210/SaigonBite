@@ -1,6 +1,10 @@
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("changePasswordForm");
+    "use strict";
+
+    const form =
+        document.getElementById("changePasswordForm");
 
     if (!form) return;
 
@@ -16,9 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const message =
         document.getElementById("changePasswordMessage");
 
-    // Show / Hide Password
+    const submitButton =
+        form.querySelector('button[type="submit"]');
 
-    document.querySelectorAll("[data-password-target]")
+
+    // ==========================================
+    // 1. SHOW / HIDE PASSWORD
+    // ==========================================
+
+    form.querySelectorAll("[data-password-target]")
         .forEach(function (button) {
 
             button.addEventListener("click", function () {
@@ -27,82 +37,123 @@ document.addEventListener("DOMContentLoaded", function () {
                     button.dataset.passwordTarget
                 );
 
-                const hidden = target.type === "password";
+                if (!target) return;
 
-                target.type = hidden ? "text" : "password";
+                const hidden =
+                    target.type === "password";
+
+                target.type =
+                    hidden ? "text" : "password";
 
                 button.setAttribute(
                     "aria-label",
-                    hidden ? "Hide password" : "Show password"
+                    hidden
+                        ? "Hide password"
+                        : "Show password"
                 );
-
             });
-
         });
 
-    // Password Requirements
+
+    // ==========================================
+    // 2. PASSWORD REQUIREMENTS
+    // ==========================================
 
     const rules = {
 
-        ruleLength: value => value.length >= 8,
+        ruleLength: value =>
+            value.length >= 8 &&
+            value.length <= 128,
 
-        ruleUppercase: value => /[A-Z]/.test(value),
+        ruleUppercase: value =>
+            /[A-Z]/.test(value),
 
-        ruleLowercase: value => /[a-z]/.test(value),
+        ruleLowercase: value =>
+            /[a-z]/.test(value),
 
-        ruleNumber: value => /[0-9]/.test(value),
+        ruleNumber: value =>
+            /[0-9]/.test(value),
 
         ruleSpecial: value =>
             /[^A-Za-z0-9\s]/.test(value)
-
     };
+
 
     function validatePassword() {
 
         let isValid = true;
 
-        Object.entries(rules).forEach(function ([id, rule]) {
+        Object.entries(rules)
+            .forEach(function ([id, rule]) {
 
-            const passed = rule(newPassword.value);
+                const passed =
+                    rule(newPassword.value);
 
-            document.getElementById(id)
-                .classList.toggle("valid", passed);
+                const element =
+                    document.getElementById(id);
 
-            if (!passed) {
-                isValid = false;
-            }
+                if (element) {
+                    element.classList.toggle(
+                        "valid",
+                        passed
+                    );
+                }
 
-        });
+                if (!passed) {
+                    isValid = false;
+                }
+            });
 
         return isValid;
-
     }
 
-    newPassword.addEventListener("input", validatePassword);
 
-    // Bilingual Message
+    newPassword.addEventListener(
+        "input",
+        validatePassword
+    );
 
-    function showMessage(en, vi, validated = false) {
+
+    // ==========================================
+    // 3. BILINGUAL MESSAGE
+    // ==========================================
+
+    function showMessage(
+        en,
+        vi,
+        validated = false
+    ) {
 
         const isVietnamese =
             document.documentElement.lang
-                .toLowerCase().startsWith("vi");
+                .toLowerCase()
+                .startsWith("vi");
 
-        message.textContent = isVietnamese ? vi : en;
+        message.textContent =
+            isVietnamese ? vi : en;
 
-        message.classList.toggle("validated", validated);
-
+        message.classList.toggle(
+            "validated",
+            validated
+        );
     }
 
-    // Submit Form
+
+    // ==========================================
+    // 4. SUBMIT FORM
+    // ==========================================
 
     form.addEventListener("submit", function (event) {
 
-        event.preventDefault();
-
         message.textContent = "";
 
+        message.classList.remove("validated");
+
+
+        // Check current password
         if (!currentPassword.value) {
+
+            event.preventDefault();
 
             showMessage(
                 "Please enter your current password.",
@@ -112,7 +163,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
+        // Check password requirements
         if (!validatePassword()) {
+
+            event.preventDefault();
 
             showMessage(
                 "New password does not meet the requirements.",
@@ -122,7 +177,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (currentPassword.value === newPassword.value) {
+
+        // Prevent password reuse
+        if (
+            currentPassword.value ===
+            newPassword.value
+        ) {
+
+            event.preventDefault();
 
             showMessage(
                 "New password must differ from current password.",
@@ -132,7 +194,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (newPassword.value !== confirmPassword.value) {
+
+        // Check password confirmation
+        if (
+            newPassword.value !==
+            confirmPassword.value
+        ) {
+
+            event.preventDefault();
 
             showMessage(
                 "Passwords do not match.",
@@ -142,29 +211,31 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        form.reset();
 
-        form.querySelectorAll("[data-password-target]")
-            .forEach(function (button) {
+        // Prevent duplicate submissions
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
 
-                document.getElementById(
-                    button.dataset.passwordTarget
-                ).type = "password";
 
-                button.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-
-            });
-
-        validatePassword();
-
+        // Allow form submission to backend
         showMessage(
-            "Validation successful. Backend is not connected yet.",
-            "Dữ liệu hợp lệ. Backend chưa được kết nối.",
+            "Changing password...",
+            "Đang thay đổi mật khẩu...",
             true
         );
+
+    });
+
+
+    // Restore button when returning via browser history
+    window.addEventListener("pageshow", function () {
+
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+
+        validatePassword();
 
     });
 

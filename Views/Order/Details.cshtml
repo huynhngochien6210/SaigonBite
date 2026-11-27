@@ -1,17 +1,21 @@
-﻿@{
+﻿@model SaigonBite.Models.Order
+
+@{
     ViewData["Title"] = "Chi tiết đơn hàng";
 }
 
 <div class="sb-details-page">
 
     <div class="sb-details-heading">
+
         <a asp-controller="Order"
            asp-action="Status"
            class="sb-back-arrow">
             ←
         </a>
 
-        <h1>Chi tiết đơn hàng #SB10245</h1>
+        <h1>Chi tiết đơn hàng #@Model.OrderId</h1>
+
     </div>
 
 
@@ -20,46 +24,56 @@
         <!-- LEFT -->
         <div class="sb-details-card">
 
-            <div class="sb-detail-food">
+            @foreach (var item in Model.OrderItems)
+            {
+                <div class="sb-detail-food">
 
-                <img src="~/image/com-tam.png"
-                     alt="Cơm tấm Sài Gòn">
+                    <div>
+                        <h2>@item.ItemName</h2>
 
-                <div>
-                    <h2>Cơm tấm Sài Gòn</h2>
-                    <strong>65.000 ₫</strong>
+                        <strong>
+                            @item.UnitPrice.ToString("N0") ₫
+                        </strong>
+                    </div>
+
+                    <span>x@item.Quantity</span>
+
                 </div>
-
-                <span>x1</span>
-
-            </div>
-
-
-            <div class="sb-detail-food">
-
-                <img src="~/image/hu-tieu.png"
-                     alt="Hủ tiếu Nam Vang">
-
-                <div>
-                    <h2>Hủ tiếu Nam Vang</h2>
-                    <strong>62.000 ₫</strong>
-                </div>
-
-                <span>x1</span>
-
-            </div>
+            }
 
 
             <div class="sb-price-list">
 
                 <div>
                     <span>Tạm tính</span>
-                    <strong>127.000 ₫</strong>
+
+                    <strong>
+                        @Model.OrderItems.Sum(
+                            x => x.UnitPrice * x.Quantity
+                        ).ToString("N0") ₫
+                    </strong>
                 </div>
 
                 <div>
                     <span>Voucher</span>
-                    <strong>−20.000 ₫</strong>
+
+                    <strong>
+                        @if (Model.Voucher != null)
+                        {
+                            var subtotal = Model.OrderItems.Sum(
+                                x => x.UnitPrice * x.Quantity
+                            );
+
+                            var discount =
+                                Model.Voucher.CalculateDiscount(subtotal);
+
+                            @("-" + discount.ToString("N0") + " ₫")
+                        }
+                        else
+                        {
+                            @("0 ₫")
+                        }
+                    </strong>
                 </div>
 
                 <div>
@@ -69,10 +83,52 @@
 
                 <div class="sb-total">
                     <span>Tổng thanh toán</span>
-                    <strong>122.000 ₫</strong>
+
+                    <strong>
+                        @Model.FinalTotal.ToString("N0") ₫
+                    </strong>
                 </div>
 
             </div>
+
+
+            <!-- EDIT BUTTON -->
+            @if (Model.Status == SaigonBite.Models.OrderStatus.Placed)
+            {
+                <div style="margin-top: 25px;">
+
+                    <a asp-controller="Order"
+                       asp-action="Edit"
+                       asp-route-id="@Model.OrderId"
+                       class="btn btn-danger">
+                        Chỉnh sửa đơn hàng
+                    </a>
+
+                </div>
+            }
+
+            @if (Model.Status == SaigonBite.Models.OrderStatus.Placed ||
+                 Model.Status == SaigonBite.Models.OrderStatus.Confirmed)
+            {
+                <div style="margin-top: 15px;">
+
+                    <form asp-controller="Order"
+                          asp-action="Cancel"
+                          method="post">
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.OrderId" />
+
+                        <button type="submit"
+                                class="btn btn-outline-danger">
+                            Hủy đơn hàng
+                        </button>
+
+                    </form>
+
+                </div>
+            }
 
         </div>
 
@@ -82,50 +138,267 @@
 
             <h2>Trạng thái đơn hàng</h2>
 
-            <div class="sb-tracking">
+            <div class="sb-details-card sb-tracking-card">
 
-                <div class="sb-track-line"></div>
+                <h2>Trạng thái đơn hàng</h2>
 
-                <div class="sb-track-step done">
-                    <div class="sb-track-circle">✓</div>
-                    <strong>Đã xác nhận</strong>
-                    <span>12:30</span>
-                </div>
+                @{
+                    int currentStep = Model.Status switch
+                    {
+                        OrderStatus.Placed => 1,
+                        OrderStatus.Confirmed => 2,
+                        OrderStatus.Preparing => 3,
+                        OrderStatus.Ready => 4,
+                        OrderStatus.OutForDelivery => 5,
+                        OrderStatus.Delivered => 6,
+                        _ => 0
+                    };
+                }
 
-                <div class="sb-track-step done">
-                    <div class="sb-track-circle">✓</div>
-                    <strong>Đang chuẩn bị</strong>
-                    <span>12:32</span>
-                </div>
+                @if (Model.Status == OrderStatus.Cancelled)
+                {
+                    <div class="sb-status-special cancelled">
+                        <div class="sb-status-special-icon">✕</div>
 
-                <div class="sb-track-step active">
-                    <div class="sb-track-circle">🚚</div>
-                    <strong>Đang giao</strong>
-                    <span>12:50</span>
-                </div>
+                        <div>
+                            <h3>Đơn hàng đã bị hủy</h3>
+                            <p>Đơn hàng này không thể tiếp tục xử lý.</p>
+                        </div>
+                    </div>
+                }
+                else if (Model.Status == OrderStatus.Failed)
+                {
+                    <div class="sb-status-special failed">
+                        <div class="sb-status-special-icon">!</div>
 
-                <div class="sb-track-step">
-                    <div class="sb-track-circle">♢</div>
-                    <strong>Hoàn thành</strong>
-                </div>
+                        <div>
+                            <h3>Giao hàng thất bại</h3>
+                            <p>Đơn hàng không thể giao đến bạn.</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="sb-tracking">
 
-            </div>
+                        <div class="sb-track-line"></div>
+
+                        <!-- 1. Placed -->
+                        <div class="sb-track-step
+                            @(currentStep > 1 ? "done" : currentStep == 1 ? "active" : "")">
+
+                            <div class="sb-track-circle">
+                                @(currentStep > 1 ? "✓" : "1")
+                            </div>
+
+                            <strong>Đã đặt</strong>
+                        </div>
 
 
-            <div class="sb-delivery-message">
+                        <!-- 2. Confirmed -->
+                        <div class="sb-track-step
+                            @(currentStep > 2 ? "done" : currentStep == 2 ? "active" : "")">
 
-                <div class="sb-delivery-icon">
-                    🛵
-                </div>
+                            <div class="sb-track-circle">
+                                @(currentStep > 2 ? "✓" : "2")
+                            </div>
 
-                <div>
-                    <h3>Đơn hàng đang được giao đến bạn!</h3>
-                    <p>Dự kiến giao trong 10 – 15 phút.</p>
-                </div>
+                            <strong>Đã xác nhận</strong>
+                        </div>
+
+
+                        <!-- 3. Preparing -->
+                        <div class="sb-track-step
+                            @(currentStep > 3 ? "done" : currentStep == 3 ? "active" : "")">
+
+                            <div class="sb-track-circle">
+                                @(currentStep > 3 ? "✓" : "3")
+                            </div>
+
+                            <strong>Đang chuẩn bị</strong>
+                        </div>
+
+
+                        <!-- 4. Ready -->
+                        <div class="sb-track-step
+                            @(currentStep > 4 ? "done" : currentStep == 4 ? "active" : "")">
+
+                            <div class="sb-track-circle">
+                                @(currentStep > 4 ? "✓" : "4")
+                            </div>
+
+                            <strong>Đã sẵn sàng</strong>
+                        </div>
+
+
+                        <!-- 5. OutForDelivery -->
+                        <div class="sb-track-step
+                            @(currentStep > 5 ? "done" : currentStep == 5 ? "active" : "")">
+
+                            <div class="sb-track-circle">
+                                @(currentStep > 5 ? "✓" : "5")
+                            </div>
+
+                            <strong>Đang giao</strong>
+                        </div>
+
+
+                        <!-- 6. Delivered -->
+                        <div class="sb-track-step
+                            @(currentStep == 6 ? "active" : "")">
+
+                            <div class="sb-track-circle">
+                                @(currentStep == 6 ? "✓" : "6")
+                            </div>
+
+                            <strong>Hoàn thành</strong>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Message -->
+                    <div class="sb-delivery-message">
+
+                        @if (Model.Status == OrderStatus.Placed)
+                        {
+                            <div class="sb-delivery-icon">📝</div>
+
+                            <div>
+                                <h3>Đơn hàng đã được đặt!</h3>
+                                <p>Đơn hàng đang chờ xác nhận.</p>
+                            </div>
+                        }
+                        else if (Model.Status == OrderStatus.Confirmed)
+                        {
+                            <div class="sb-delivery-icon">✓</div>
+
+                            <div>
+                                <h3>Đơn hàng đã được xác nhận!</h3>
+                                <p>Nhà hàng đang chuẩn bị xử lý đơn hàng.</p>
+                            </div>
+                        }
+                        else if (Model.Status == OrderStatus.Preparing)
+                        {
+                            <div class="sb-delivery-icon">🍳</div>
+
+                            <div>
+                                <h3>Đơn hàng đang được chuẩn bị!</h3>
+                                <p>Nhà hàng đang chuẩn bị món ăn cho bạn.</p>
+                            </div>
+                        }
+                        else if (Model.Status == OrderStatus.Ready)
+                        {
+                            <div class="sb-delivery-icon">📦</div>
+
+                            <div>
+                                <h3>Đơn hàng đã sẵn sàng!</h3>
+                                <p>Đơn hàng đang chờ đơn vị giao nhận.</p>
+                            </div>
+                        }
+                        else if (Model.Status == OrderStatus.OutForDelivery)
+                        {
+                            <div class="sb-delivery-icon">🛵</div>
+
+                            <div>
+                                <h3>Đơn hàng đang được giao đến bạn!</h3>
+                                <p>Đơn hàng đang trên đường giao.</p>
+                            </div>
+                        }
+                        else if (Model.Status == OrderStatus.Delivered)
+                        {
+                            <div class="sb-delivery-icon">✓</div>
+
+                            <div>
+                                <h3>Đơn hàng đã hoàn thành!</h3>
+                                <p>Cảm ơn bạn đã sử dụng SaigonBite.</p>
+                            </div>
+                        }
+
+                    </div>
+                }
 
             </div>
 
         </div>
+
+        @if (Model.Status != SaigonBite.Models.OrderStatus.Delivered
+    && Model.Status != SaigonBite.Models.OrderStatus.Cancelled
+    && Model.Status != SaigonBite.Models.OrderStatus.Failed)
+        {
+            <div style="margin-top: 30px;">
+
+                <h3>Cập nhật trạng thái</h3>
+
+                <form asp-controller="Order"
+                      asp-action="UpdateStatus"
+                      method="post">
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.OrderId" />
+
+                    <select name="status"
+                            class="form-select mb-3">
+
+                        @if (Model.Status == SaigonBite.Models.OrderStatus.Placed)
+                        {
+                            <option value="Confirmed">
+                                Xác nhận đơn
+                            </option>
+
+                            <option value="Cancelled">
+                                Hủy đơn
+                            </option>
+                        }
+
+                        @if (Model.Status == SaigonBite.Models.OrderStatus.Confirmed)
+                        {
+                            <option value="Preparing">
+                                Đang chuẩn bị
+                            </option>
+
+                            <option value="Cancelled">
+                                Hủy đơn
+                            </option>
+                        }
+
+                        @if (Model.Status == SaigonBite.Models.OrderStatus.Preparing)
+                        {
+                            <option value="Ready">
+                                Sẵn sàng
+                            </option>
+                        }
+
+                        @if (Model.Status == SaigonBite.Models.OrderStatus.Ready)
+                        {
+                            <option value="OutForDelivery">
+                                Đang giao
+                            </option>
+                        }
+
+                        @if (Model.Status == SaigonBite.Models.OrderStatus.OutForDelivery)
+                        {
+                            <option value="Delivered">
+                                Đã giao
+                            </option>
+
+                            <option value="Failed">
+                                Giao thất bại
+                            </option>
+                        }
+
+                    </select>
+
+                    <button type="submit"
+                            class="btn btn-danger">
+                        Cập nhật trạng thái
+                    </button>
+
+                </form>
+
+            </div>
+        }
 
     </div>
 

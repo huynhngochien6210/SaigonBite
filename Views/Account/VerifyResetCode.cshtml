@@ -1,3 +1,4 @@
+
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Verify Reset Code";
@@ -7,5 +8,6 @@
 @await Html.PartialAsync("_VerificationForm")
 
 @section Scripts {
-    <script src="/js/verification.js"></script>
+    <script src="~/js/verification.js"
+            asp-append-version="true"></script>
 }

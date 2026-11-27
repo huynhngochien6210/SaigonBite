@@ -1,0 +1,99 @@
+/* ==========================================
+   SAIGONBITE - UC-E GLOBAL TYPOGRAPHY
+   Font: Times New Roman
+   ========================================== */
+
+:root {
+    --bs-font-sans-serif: "Times New Roman", Times, serif;
+    --bs-body-font-family: "Times New Roman", Times, serif;
+}
+
+/* Global typography */
+html,
+body {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Text content */
+div,
+p,
+span,
+a,
+label,
+strong,
+b,
+small,
+em,
+ul,
+ol,
+li {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Form elements */
+button,
+input,
+select,
+textarea,
+option,
+.form-control,
+.form-select,
+.form-label,
+.form-check-label {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Placeholder */
+input::placeholder,
+textarea::placeholder {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Tables */
+table,
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Bootstrap components */
+.btn,
+.nav-link,
+.navbar,
+.dropdown-menu,
+.dropdown-item,
+.card,
+.card-title,
+.card-text,
+.modal,
+.modal-title,
+.modal-body,
+.modal-footer,
+.alert,
+.badge,
+.tooltip,
+.popover {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Validation messages */
+.field-validation-error,
+.validation-summary-errors,
+.text-danger,
+.invalid-feedback {
+    font-family: "Times New Roman", Times, serif !important;
+}

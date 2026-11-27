@@ -1,150 +1,423 @@
-﻿@{
+﻿
+@model SaigonBite.ViewModels.PlaceOrderRequest
+
+@{
     ViewData["Title"] = "Xác nhận đơn hàng";
+
+    decimal subtotal = Model.Items.Sum(
+        item => item.UnitPrice * item.Quantity);
+
+    decimal voucherDiscount = Model.VoucherDiscount;
+
+    decimal deliveryFee = subtotal >= 300000
+        ? 0
+        : Model.DeliveryFee;
+
+    decimal rawTotal =
+        subtotal
+        - voucherDiscount
+        - Model.QuietKitchenDiscount
+        + deliveryFee
+        + Model.RushHourSurcharge
+        + Model.HeavyRainSurcharge;
+
+    decimal finalTotal =
+        Math.Round(
+            rawTotal / 1000,
+            MidpointRounding.AwayFromZero
+        ) * 1000;
 }
 
-<div class="sb-confirm-page">
+<form asp-controller="Order"
+      asp-action="Confirm"
+      method="post">
 
-    <!-- Progress -->
-    <div class="sb-confirm-progress">
+    <div class="sb-confirm-page">
 
-        <div class="sb-confirm-step completed">
-            <div class="sb-confirm-number">✓</div>
-            <span>Đặt hàng</span>
-        </div>
+        <!-- =========================
+             PROGRESS
+        ========================== -->
 
-        <div class="sb-confirm-line"></div>
+        <div class="sb-confirm-progress">
 
-        <div class="sb-confirm-step active">
-            <div class="sb-confirm-number">2</div>
-            <span>Xác nhận</span>
-        </div>
-
-        <div class="sb-confirm-line"></div>
-
-        <div class="sb-confirm-step">
-            <div class="sb-confirm-number">3</div>
-            <span>Hoàn tất</span>
-        </div>
-
-    </div>
-
-    <h1 class="sb-confirm-title">Xác nhận đặt hàng</h1>
-
-    <div class="sb-confirm-layout">
-
-        <!-- LEFT -->
-        <div class="sb-confirm-left">
-
-            <!-- Delivery -->
-            <div class="sb-confirm-card">
-
-                <h2>Thông tin giao hàng</h2>
-
-                <div class="sb-confirm-address">
-                    <span>📍</span>
-                    <span>19 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</span>
-                </div>
-
-                <p class="sb-confirm-note">
-                    <strong>Ghi chú:</strong>
-                    Giao giờ trưa, xin cảm ơn!
-                </p>
-
+            <div class="sb-confirm-step completed">
+                <div class="sb-confirm-number">✓</div>
+                <span>Đặt hàng</span>
             </div>
 
-            <!-- Payment -->
-            <div class="sb-confirm-card">
+            <div class="sb-confirm-line"></div>
 
-                <h2>Phương thức thanh toán</h2>
+            <div class="sb-confirm-step active">
+                <div class="sb-confirm-number">2</div>
+                <span>Xác nhận</span>
+            </div>
 
-                <div class="sb-confirm-payment">
+            <div class="sb-confirm-line"></div>
 
-                    <img src="~/image/cod.png"
-                         alt="COD"
-                         class="sb-confirm-payment-logo">
-
-                    <span>Thanh toán khi nhận hàng (COD)</span>
-
-                </div>
-
+            <div class="sb-confirm-step">
+                <div class="sb-confirm-number">3</div>
+                <span>Hoàn tất</span>
             </div>
 
         </div>
 
-        <!-- RIGHT -->
-        <div class="sb-confirm-summary">
 
-            <h2>Chi tiết đơn hàng</h2>
+        <!-- =========================
+             TITLE
+        ========================== -->
 
-            <div class="sb-confirm-product">
-
-                <img src="~/image/com-tam.png"
-                     alt="Cơm tấm Sài Gòn">
-
-                <div>
-                    <h3>Cơm tấm Sài Gòn</h3>
-                    <strong>65.000 ₫</strong>
-                </div>
-
-                <span>x1</span>
-
-            </div>
-
-            <div class="sb-confirm-product">
-
-                <img src="~/image/hu-tieu.png"
-                     alt="Hủ tiếu Nam Vang">
-
-                <div>
-                    <h3>Hủ tiếu Nam Vang</h3>
-                    <strong>62.000 ₫</strong>
-                </div>
-
-                <span>x1</span>
-
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Tạm tính</span>
-                <strong>127.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Voucher</span>
-                <strong>−20.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-price">
-                <span>Phí giao hàng</span>
-                <strong>15.000 ₫</strong>
-            </div>
-
-            <div class="sb-confirm-total">
-                <span>Tổng thanh toán</span>
-                <strong>122.000 ₫</strong>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Buttons -->
-    <div class="sb-confirm-buttons">
-
-        <a asp-controller="Order"
-           asp-action="IndexOrder"
-           class="sb-back-btn">
-            ←
-            <span>Quay lại</span>
-        </a>
-
-        <a asp-controller="Order"
-           asp-action="Complete"
-           class="sb-confirm-btn">
+        <h1 class="sb-confirm-title">
             Xác nhận đặt hàng
-            <span>→</span>
-        </a>
+        </h1>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <div class="sb-confirm-layout">
+
+
+            <!-- =====================
+                 LEFT
+            ====================== -->
+
+            <div class="sb-confirm-left">
+
+
+                <!-- DELIVERY -->
+
+                <div class="sb-confirm-card">
+
+                    <h2>Thông tin giao hàng</h2>
+
+                    <div class="sb-confirm-address">
+
+                        <span>📍</span>
+
+                        <span>
+                            @Model.DeliveryAddress
+                        </span>
+
+                    </div>
+                </div>
+
+
+                <!-- PAYMENT -->
+
+                <div class="sb-confirm-card">
+
+                    <h2>Phương thức thanh toán</h2>
+
+                    <div class="sb-confirm-payment">
+
+                        @if (Model.PaymentMethod == "COD")
+                        {
+                            <img src="~/image/cod.png"
+                                 alt="COD"
+                                 class="sb-confirm-payment-logo" />
+
+                            <span>
+                                Thanh toán khi nhận hàng (COD)
+                            </span>
+                        }
+                        else if (Model.PaymentMethod == "MoMo")
+                        {
+                            <img src="~/image/momo.png"
+                                 alt="MoMo"
+                                 class="sb-confirm-payment-logo" />
+
+                            <span>
+                                MoMo
+                            </span>
+                        }
+                        else if (Model.PaymentMethod == "VNPay")
+                        {
+                            <img src="~/image/vnpay.png"
+                                 alt="VNPay"
+                                 class="sb-confirm-payment-logo" />
+
+                            <span>
+                                VNPay
+                            </span>
+                        }
+                        else if (Model.PaymentMethod == "ApplePay")
+                        {
+                            <img src="~/image/ApplePay.png"
+                                 alt="ApplePay"
+                                 class="sb-confirm-payment-logo" />
+
+                            <span>
+                                Apple Pay
+                            </span>
+                        }
+                        else if (Model.PaymentMethod == "PayPal")
+                        {
+                            <img src="~/image/paypal.png"
+                                 alt="PayPal"
+                                 class="sb-confirm-payment-logo" />
+
+                            <span>
+                                PayPal
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================
+                 RIGHT
+            ====================== -->
+
+            <div class="sb-confirm-summary">
+
+                <h2>Chi tiết đơn hàng</h2>
+
+                <!-- MÓN ĐÃ CHỌN -->
+
+                <div class="sb-confirm-order-items">
+
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="sb-confirm-order-item">
+
+                            <div class="sb-confirm-order-item-info">
+
+                                <strong>
+                                    @item.ItemName
+                                </strong>
+
+                                <span>
+                                    @item.UnitPrice.ToString("N0") ₫
+                                    × @item.Quantity
+                                </span>
+
+                            </div>
+
+                            <strong class="sb-confirm-order-item-total">
+                                @((item.UnitPrice * item.Quantity).ToString("N0")) ₫
+                            </strong>
+
+                        </div>
+                    }
+
+                </div>
+
+                <!-- SUBTOTAL -->
+
+                <div class="sb-price-list">
+
+                    <div>
+                        <span>Tạm tính</span>
+
+                        <strong>
+                            @subtotal.ToString("N0") ₫
+                        </strong>
+                    </div>
+
+
+                    <!-- VOUCHER -->
+
+                    <div>
+                        <span>Voucher</span>
+
+                        @if (voucherDiscount > 0)
+                        {
+                            <strong>
+                                −@voucherDiscount.ToString("N0") ₫
+                            </strong>
+                        }
+                        else
+                        {
+                            <strong>0 ₫</strong>
+                        }
+
+                    </div>
+
+
+                    <!-- DELIVERY -->
+
+                    <div>
+                        <span>Phí giao hàng</span>
+
+                        @if (deliveryFee == 0)
+                        {
+                            <strong>Miễn phí</strong>
+                        }
+                        else
+                        {
+                            <strong>
+                                @deliveryFee.ToString("N0") ₫
+                            </strong>
+                        }
+
+                    </div>
+
+
+                    <!-- QUIET KITCHEN -->
+                    @if (Model.QuietKitchenDiscount > 0)
+                    {
+                        <div>
+                            <span>Ưu đãi giờ thấp điểm</span>
+
+                            <strong>
+                                −@Model.QuietKitchenDiscount.ToString("N0") ₫
+                            </strong>
+                        </div>
+                    }
+
+
+                    <!-- RUSH HOUR -->
+                    @if (Model.RushHourSurcharge > 0)
+                    {
+                        <div>
+                            <span>Phụ phí giờ cao điểm</span>
+
+                            <strong>
+                                +@Model.RushHourSurcharge.ToString("N0") ₫
+                            </strong>
+                        </div>
+                    }
+
+
+                    <!-- HEAVY RAIN -->
+                    @if (Model.HeavyRainSurcharge > 0)
+                    {
+                        <div>
+                            <span>Phụ phí mưa lớn</span>
+
+                            <strong>
+                                +@Model.HeavyRainSurcharge.ToString("N0") ₫
+                            </strong>
+                        </div>
+                    }
+
+
+                    <!-- TOTAL -->
+
+                    <div class="sb-total">
+
+                        <span>
+                            Tổng thanh toán
+                        </span>
+
+                        <strong>
+                            @finalTotal.ToString("N0") ₫
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             VALIDATION
+        ========================== -->
+
+        <div asp-validation-summary="All"
+             style="color:red; margin-bottom:20px;">
+        </div>
+
+
+        <!-- =========================
+             HIDDEN DATA
+        ========================== -->
+
+        <input type="hidden"
+               name="CustomerId"
+               value="@Model.CustomerId" />
+
+        <input type="hidden"
+               name="HubId"
+               value="@Model.HubId" />
+
+        <input type="hidden"
+               name="DistanceKm"
+               value="@Model.DistanceKm" />
+
+        <input type="hidden"
+               name="DeliveryAddress"
+               value="@Model.DeliveryAddress" />
+
+        <input type="hidden"
+               name="VoucherId"
+               value="@Model.VoucherId" />
+
+        <input type="hidden"
+               name="PaymentMethod"
+               value="@Model.PaymentMethod" />
+
+        <input type="hidden"
+               name="QuietKitchenDiscount"
+               value="@Model.QuietKitchenDiscount" />
+
+        <input type="hidden"
+               name="DeliveryFee"
+               value="@Model.DeliveryFee" />
+
+        <input type="hidden"
+               name="RushHourSurcharge"
+               value="@Model.RushHourSurcharge" />
+
+        <input type="hidden"
+               name="HeavyRainSurcharge"
+               value="@Model.HeavyRainSurcharge" />
+
+
+        <!-- =========================
+             CART ITEMS → POST
+        ========================== -->
+        @for (int i = 0; i < Model.Items.Count; i++)
+        {
+            <input type="hidden"
+                   name="Items[@i].ItemName"
+                   value="@Model.Items[i].ItemName" />
+
+            <input type="hidden"
+                   name="Items[@i].Quantity"
+                   value="@Model.Items[i].Quantity" />
+
+            <input type="hidden"
+                   name="Items[@i].UnitPrice"
+                   value="@Model.Items[i].UnitPrice" />
+        }
+
+
+        <!-- =========================
+             BUTTONS
+        ========================== -->
+
+        <div class="sb-confirm-buttons">
+
+            <a asp-controller="Order"
+               asp-action="IndexOrder"
+               class="sb-back-btn">
+
+                ←
+                <span>Quay lại</span>
+
+            </a>
+
+
+            <button type="submit"
+                    class="sb-confirm-btn">
+
+                Xác nhận đặt hàng
+
+                <span>→</span>
+
+            </button>
+
+        </div>
 
     </div>
 
-</div>
+</form>

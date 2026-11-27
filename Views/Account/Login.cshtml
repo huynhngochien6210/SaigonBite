@@ -1,3 +1,4 @@
+@model SaigonBite.ViewModels.LoginViewModel
 
 @{
     Layout = "_AuthLayout";
@@ -19,7 +20,38 @@
 
     </div>
 
-    <form id="loginForm" method="post">
+    @if (TempData["PasswordSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+
+            @TempData["PasswordSuccess"]
+
+        </div>
+    }
+
+    @if (TempData["DeactivateSuccess"] != null)
+    {
+        <div class="alert alert-success" role="status">
+
+            @TempData["DeactivateSuccess"]
+
+        </div>
+    }
+
+    @if (TempData["ReactivationSuccess"] != null)
+    {
+        <div class="alert alert-success" role="status">
+
+            @TempData["ReactivationSuccess"]
+
+        </div>
+    }
+
+    <form id="loginForm"
+          method="post"
+          action="@Url.Action("Login", "Account")">
+
+        @Html.AntiForgeryToken()
 
         <!-- Email or Phone -->
 
@@ -27,7 +59,9 @@
 
             <label for="identifier"
                    data-i18n="identifier">
+
                 Email or Phone Number
+
             </label>
 
             <input type="text"
@@ -47,7 +81,9 @@
 
             <label for="password"
                    data-i18n="password">
+
                 Password
+
             </label>
 
             <div class="password-wrapper">
@@ -67,7 +103,8 @@
                         data-i18n-aria="showPassword"
                         aria-label="Show password">
 
-                    <svg width="22" height="22"
+                    <svg width="22"
+                         height="22"
                          viewBox="0 0 24 24"
                          fill="none"
                          stroke="currentColor"
@@ -77,7 +114,9 @@
                                  10 7 10 7-3.6 7-10 7
                                  -10-7-10-7Z"/>
 
-                        <circle cx="12" cy="12" r="3"/>
+                        <circle cx="12"
+                                cy="12"
+                                r="3"/>
 
                     </svg>
 
@@ -94,17 +133,22 @@
             <label class="remember-me">
 
                 <input type="checkbox"
-                       name="rememberMe">
+                       name="rememberMe"
+                       value="true">
 
                 <span data-i18n="rememberMe">
+
                     Remember me
+
                 </span>
 
             </label>
 
             <a href="/Account/ForgotPassword"
-                data-i18n="forgotPassword">
+               data-i18n="forgotPassword">
+
                 Forgot Password?
+
             </a>
 
         </div>
@@ -119,9 +163,15 @@
 
         </button>
 
+        <div asp-validation-summary="All"
+             class="text-danger"
+             role="alert">
+        </div>
+
         <p id="loginMessage"
            class="login-message"
-           role="status"></p>
+           role="status">
+        </p>
 
     </form>
 
@@ -134,7 +184,9 @@
     <div class="register-section">
 
         <p data-i18n="noAccount">
+
             Don't have an account?
+
         </p>
 
         <a href="/Account/Register"
