@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SaigonBite.Enums;
 
 namespace SaigonBite.Models
 {
@@ -14,6 +15,9 @@ namespace SaigonBite.Models
         [Required]
         [MaxLength(255)]
         public string CodeHash { get; set; } = string.Empty;
+
+        public VerificationPurpose Purpose { get; set; }
+            = VerificationPurpose.Registration;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

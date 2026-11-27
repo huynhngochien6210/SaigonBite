@@ -371,113 +371,117 @@ public class PasswordResetService : IPasswordResetService
     // 5. RESET PASSWORD
     // ==========================================
 
-    public async Task<(bool Success, string Message)>
-        ResetPasswordAsync(
-            int userId,
-            string token,
-            ResetPasswordViewModel model)
+   public async Task<(bool Success, string Message)>
+    ResetPasswordAsync(
+        int userId,
+        string token,
+        ResetPasswordViewModel model)
+{
+    string? validationError = ValidateModel(model);
+
+    if (validationError != null)
     {
-        string? validationError = ValidateModel(model);
+        return (false, validationError);
+    }
 
-        if (validationError != null)
-        {
-            return (false, validationError);
-        }
-
-        if (string.IsNullOrEmpty(token) ||
-            token.Length != 64)
-        {
-            return (
-                false,
-                "Invalid password reset token."
-            );
-        }
-
-        await using var transaction =
-            await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable);
-
-        var user = await FindEligibleUserAsync(userId);
-
-        if (user == null)
-        {
-            return (
-                false,
-                "Invalid reset request."
-            );
-        }
-
-        string tokenHash = HashToken(token);
-
-        var reset = await _context.PasswordResets
-            .FirstOrDefaultAsync(r =>
-                r.UserId == userId &&
-                r.TokenHash == tokenHash &&
-                !r.IsUsed);
-
-        if (reset == null ||
-            !reset.VerifiedAt.HasValue ||
-            !reset.TokenExpiresAt.HasValue)
-        {
-            return (
-                false,
-                "Invalid or used password reset token."
-            );
-        }
-
-        if (reset.TokenExpiresAt.Value <= DateTime.UtcNow)
-        {
-            return (
-                false,
-                "Password reset session has expired."
-            );
-        }
-
-        // Prevent reuse of current password
-        var passwordResult =
-            _passwordHasher.VerifyHashedPassword(
-                user,
-                user.PasswordHash,
-                model.NewPassword);
-
-        if (passwordResult !=
-            PasswordVerificationResult.Failed)
-        {
-            return (
-                false,
-                "New password must differ from current password."
-            );
-        }
-
-        // Hash new password
-        user.PasswordHash =
-            _passwordHasher.HashPassword(
-                user,
-                model.NewPassword);
-
-        user.UpdatedAt = DateTime.UtcNow;
-
-        // Invalidate all remaining reset requests
-        var activeResets = await _context.PasswordResets
-            .Where(r =>
-                r.UserId == userId &&
-                !r.IsUsed)
-            .ToListAsync();
-
-        foreach (var activeReset in activeResets)
-        {
-            activeReset.IsUsed = true;
-        }
-
-        await _context.SaveChangesAsync();
-
-        await transaction.CommitAsync();
-
+    if (string.IsNullOrEmpty(token) ||
+        token.Length != 64)
+    {
         return (
-            true,
-            "Password reset successfully."
+            false,
+            "Invalid password reset token."
         );
     }
+
+    await using var transaction =
+        await _context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable);
+
+    var user = await FindEligibleUserAsync(userId);
+
+    if (user == null)
+    {
+        return (
+            false,
+            "Invalid reset request."
+        );
+    }
+
+    string tokenHash = HashToken(token);
+
+    var reset = await _context.PasswordResets
+        .FirstOrDefaultAsync(r =>
+            r.UserId == userId &&
+            r.TokenHash == tokenHash &&
+            !r.IsUsed);
+
+    if (reset == null ||
+        !reset.VerifiedAt.HasValue ||
+        !reset.TokenExpiresAt.HasValue)
+    {
+        return (
+            false,
+            "Invalid or used password reset token."
+        );
+    }
+
+    if (reset.TokenExpiresAt.Value <= DateTime.UtcNow)
+    {
+        return (
+            false,
+            "Password reset session has expired."
+        );
+    }
+
+    // Prevent reuse of current password
+    var passwordResult =
+        _passwordHasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            model.NewPassword);
+
+    if (passwordResult !=
+        PasswordVerificationResult.Failed)
+    {
+        return (
+            false,
+            "New password must differ from current password."
+        );
+    }
+
+    // Hash new password
+    user.PasswordHash =
+        _passwordHasher.HashPassword(
+            user,
+            model.NewPassword);
+
+    // Revoke all existing authentication cookies
+    user.SecurityStamp =
+        Guid.NewGuid().ToString("N");
+
+    user.UpdatedAt = DateTime.UtcNow;
+
+    // Invalidate all remaining reset requests
+    var activeResets = await _context.PasswordResets
+        .Where(r =>
+            r.UserId == userId &&
+            !r.IsUsed)
+        .ToListAsync();
+
+    foreach (var activeReset in activeResets)
+    {
+        activeReset.IsUsed = true;
+    }
+
+    await _context.SaveChangesAsync();
+
+    await transaction.CommitAsync();
+
+    return (
+        true,
+        "Password reset successfully."
+    );
+}
 
 
     // ==========================================

@@ -155,6 +155,7 @@ namespace SaigonBite.Services
             }
         }
 
+    
         // ==========================================
         // 3. CHECK ORDER OWNERSHIP
         // ==========================================
@@ -167,6 +168,7 @@ namespace SaigonBite.Services
                 .AsNoTracking()
                 .AnyAsync(o =>
                     o.OrderId == orderId &&
+                    o.Customer != null &&
                     o.Customer.UserId == userId &&
                     o.Customer.UserAccount != null &&
                     o.Customer.UserAccount.Role ==

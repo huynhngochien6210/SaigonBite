@@ -298,6 +298,13 @@ namespace SaigonBite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeactivationReason")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -319,6 +326,11 @@ namespace SaigonBite.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("SecurityStamp")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -334,7 +346,9 @@ namespace SaigonBite.Migrations
 
                     b.ToTable("UserAccounts", null, t =>
                         {
-                            t.HasCheckConstraint("CK_UserAccounts_Role_AccountType", "(\r\n                        [Role] = 'Customer'\r\n                        AND [AccountType] IS NOT NULL\r\n                        AND [AccountType] IN\r\n                            ('LocalCustomer', 'ForeignTourist')\r\n                    )\r\n                    OR\r\n                    (\r\n                        [Role] IN ('Admin', 'KitchenStaff', 'Shipper')\r\n                        AND [AccountType] IS NULL\r\n                        AND [Username] IS NOT NULL\r\n                    )");
+                            t.HasCheckConstraint("CK_UserAccounts_DeactivationStatus", "(\r\n            [IsActive] = 1\r\n            AND [DeactivationReason] IS NULL\r\n            AND [DeactivatedAt] IS NULL\r\n        )\r\n        OR\r\n        (\r\n            [IsActive] = 0\r\n            AND\r\n            (\r\n                (\r\n                    [DeactivationReason] IS NULL\r\n                    AND [DeactivatedAt] IS NULL\r\n                )\r\n                OR\r\n                (\r\n                    [DeactivationReason] IS NOT NULL\r\n                    AND [DeactivationReason] IN\r\n                        ('SelfDeactivated', 'AdminSuspended')\r\n                    AND [DeactivatedAt] IS NOT NULL\r\n                )\r\n            )\r\n        )");
+
+                            t.HasCheckConstraint("CK_UserAccounts_Role_AccountType", "(\r\n            [Role] = 'Customer'\r\n            AND [AccountType] IS NOT NULL\r\n            AND [AccountType] IN\r\n                ('LocalCustomer', 'ForeignTourist')\r\n        )\r\n        OR\r\n        (\r\n            [Role] IN ('Admin', 'KitchenStaff', 'Shipper')\r\n            AND [AccountType] IS NULL\r\n            AND [Username] IS NOT NULL\r\n        )");
                         });
                 });
 
@@ -363,6 +377,13 @@ namespace SaigonBite.Migrations
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Registration");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -370,9 +391,13 @@ namespace SaigonBite.Migrations
 
                     b.HasIndex("UserId", "IsUsed", "ExpiresAt");
 
+                    b.HasIndex("UserId", "Purpose", "CreatedAt");
+
                     b.ToTable("VerificationCodes", null, t =>
                         {
                             t.HasCheckConstraint("CK_VerificationCodes_FailedAttempts", "[FailedAttempts] >= 0");
+
+                            t.HasCheckConstraint("CK_VerificationCodes_Purpose", "[Purpose] IN ('Registration', 'Reactivation')");
                         });
                 });
 
