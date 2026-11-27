@@ -8,35 +8,47 @@
     <section class="sb-hero">
     </section>
 
+
     <!-- FOOD SECTION -->
     <section class="sb-food-section">
 
         <h2>Món ngon Sài Gòn</h2>
 
-        <!-- Categories -->
+
+        <!-- CATEGORIES -->
         <div class="sb-categories">
 
-            <button class="sb-category active">
+            <button type="button"
+                    class="sb-category active"
+                    data-filter="all">
                 <span class="category-icon">🍜</span>
                 <span>Tất cả</span>
             </button>
 
-            <button class="sb-category">
+            <button type="button"
+                    class="sb-category"
+                    data-filter="main">
                 <span class="category-icon">🍴</span>
                 <span>Món chính</span>
             </button>
 
-            <button class="sb-category">
+            <button type="button"
+                    class="sb-category"
+                    data-filter="soup">
                 <span class="category-icon">🍲</span>
                 <span>Món nước</span>
             </button>
 
-            <button class="sb-category">
+            <button type="button"
+                    class="sb-category"
+                    data-filter="snack">
                 <span class="category-icon">🍢</span>
                 <span>Ăn vặt</span>
             </button>
 
-            <button class="sb-category">
+            <button type="button"
+                    class="sb-category"
+                    data-filter="drink">
                 <span class="category-icon">🥤</span>
                 <span>Đồ uống</span>
             </button>
@@ -44,11 +56,13 @@
         </div>
 
 
-        <!-- Food cards -->
+        <!-- FOOD CARDS -->
         <div class="sb-food-grid">
 
-            <!-- Card 1 -->
-            <div class="sb-food-card">
+
+            <!-- CARD 1 - CƠM TẤM -->
+            <div class="sb-food-card"
+                 data-category="main">
 
                 <div class="sb-food-image">
                     <img src="~/image/cơm tấm long xuyên.png"
@@ -89,8 +103,9 @@
             </div>
 
 
-            <!-- Card 2 -->
-            <div class="sb-food-card">
+            <!-- CARD 2 - BÁNH MÌ -->
+            <div class="sb-food-card"
+                 data-category="main">
 
                 <div class="sb-food-image">
                     <img src="~/image/Bánh mì.png"
@@ -131,8 +146,9 @@
             </div>
 
 
-            <!-- Card 3 -->
-            <div class="sb-food-card">
+            <!-- CARD 3 - BÚN BÒ -->
+            <div class="sb-food-card"
+                 data-category="soup">
 
                 <div class="sb-food-image">
                     <img src="~/image/Bún bò.png"
@@ -173,8 +189,9 @@
             </div>
 
 
-            <!-- Card 4 -->
-            <div class="sb-food-card">
+            <!-- CARD 4 - BÚN MỌC -->
+            <div class="sb-food-card"
+                 data-category="soup">
 
                 <div class="sb-food-image">
                     <img src="~/image/Bún mộc.png"
@@ -215,8 +232,9 @@
             </div>
 
 
-            <!-- Card 5 -->
-            <div class="sb-food-card">
+            <!-- CARD 5 - BÚN ĐẬU -->
+            <div class="sb-food-card"
+                 data-category="main">
 
                 <div class="sb-food-image">
                     <img src="~/image/bún đậu.png"
@@ -257,8 +275,9 @@
             </div>
 
 
-            <!-- Card 6 -->
-            <div class="sb-food-card">
+            <!-- CARD 6 - CHÈ THÁI -->
+            <div class="sb-food-card"
+                 data-category="snack">
 
                 <div class="sb-food-image">
                     <img src="~/image/chè thái.png"
@@ -299,8 +318,9 @@
             </div>
 
 
-            <!-- Card 7 -->
-            <div class="sb-food-card">
+            <!-- CARD 7 - CHẢ LỤI -->
+            <div class="sb-food-card"
+                 data-category="snack">
 
                 <div class="sb-food-image">
                     <img src="~/image/Chả lụi.png"
@@ -341,8 +361,9 @@
             </div>
 
 
-            <!-- Card 8 -->
-            <div class="sb-food-card">
+            <!-- CARD 8 - TRÀ SỮA -->
+            <div class="sb-food-card"
+                 data-category="drink">
 
                 <div class="sb-food-image">
                     <img src="~/image/Trà sữa.png"
@@ -383,8 +404,9 @@
             </div>
 
 
-            <!-- Card 9 -->
-            <div class="sb-food-card">
+            <!-- CARD 9 - LẨU THÁI -->
+            <div class="sb-food-card"
+                 data-category="soup">
 
                 <div class="sb-food-image">
                     <img src="~/image/Lẩu thái.png"
@@ -425,22 +447,23 @@
             </div>
 
 
-            <!-- Card 10 -->
-            <div class="sb-food-card">
+            <!-- CARD 10 - STARBUCKS -->
+            <div class="sb-food-card"
+                 data-category="drink">
 
                 <div class="sb-food-image">
                     <img src="~/image/starbucks.png"
-                         alt="Starbucks" />
+                         alt="Trà chanh" />
                 </div>
 
                 <div class="sb-food-info">
 
-                    <h3>Starbucks</h3>
+                    <h3>Trà chanh</h3>
 
                     <div class="sb-food-bottom">
 
                         <span class="sb-price">
-                            100.000 ₫
+                            50.000 ₫
                         </span>
 
                         <form asp-controller="Cart"
@@ -449,11 +472,11 @@
 
                             <input type="hidden"
                                    name="itemName"
-                                   value="Starbucks" />
+                                   value="Trà chanh" />
 
                             <input type="hidden"
                                    name="unitPrice"
-                                   value="100000" />
+                                   value="50.0000" />
 
                             <button type="submit"
                                     class="sb-add-btn">
@@ -466,6 +489,49 @@
                 </div>
             </div>
 
+
         </div>
+
     </section>
+
 </div>
+
+
+<!-- CATEGORY FILTER -->
+<script>
+
+    document.querySelectorAll(".sb-category").forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const filter = this.dataset.filter;
+
+            // Active button
+            document.querySelectorAll(".sb-category")
+                .forEach(btn => {
+                    btn.classList.remove("active");
+                });
+
+            this.classList.add("active");
+
+
+            // Filter food cards
+            document.querySelectorAll(".sb-food-card")
+                .forEach(card => {
+
+                    const category = card.dataset.category;
+
+                    if (filter === "all" || category === filter) {
+                        card.style.display = "";
+                    }
+                    else {
+                        card.style.display = "none";
+                    }
+
+                });
+
+        });
+
+    });
+
+</script>
