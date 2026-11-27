@@ -111,16 +111,28 @@ namespace SaigonBite.Services
             // 3. Tính voucher discount
             decimal voucherDiscount = 0;
 
+            // Không sử dụng voucher
+            if (order.VoucherId == 0)
+            {
+                order.VoucherId = null;
+            }
+
+            // Kiểm tra voucher trong Database
             if (order.VoucherId.HasValue)
             {
                 var voucher = await _orderRepository
                     .GetVoucherByIdAsync(order.VoucherId.Value);
 
-                if (voucher != null)
+                // Không cho phép voucher không tồn tại
+                if (voucher == null)
                 {
-                    voucherDiscount =
-                        voucher.CalculateDiscount(subtotal);
+                    throw new InvalidOperationException(
+                        "Voucher does not exist.");
                 }
+
+                // Tính số tiền được giảm
+                voucherDiscount =
+                    voucher.CalculateDiscount(subtotal);
             }
 
             // 4. Pricing

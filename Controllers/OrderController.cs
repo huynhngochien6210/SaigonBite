@@ -107,35 +107,40 @@ namespace SaigonBite.Controllers
         // 5. CALCULATE VOUCHER
         // ==========================================
 
-        private async Task CalculateVoucherAsync(
+                private async Task CalculateVoucherAsync(
             PlaceOrderRequest request)
         {
             request.VoucherDiscount = 0;
 
-            if (request.VoucherId.HasValue)
+            // No voucher selected
+            if (!request.VoucherId.HasValue ||
+                request.VoucherId.Value == 0)
             {
-                var voucher = await _orderRepository
-                    .GetVoucherByIdAsync(request.VoucherId.Value);
-
-                if (voucher != null)
-                {
-                    decimal subtotal = request.Items.Sum(
-                        item => item.UnitPrice * item.Quantity);
-
-                    request.VoucherDiscount =
-                        voucher.CalculateDiscount(subtotal);
-                }
+                request.VoucherId = null;
+                return;
             }
-        }
 
-        // ==========================================
-        // 6. INDEX
-        // ==========================================
+            // Find voucher in database
+            var voucher = await _orderRepository
+                .GetVoucherByIdAsync(request.VoucherId.Value);
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
+            // Reject invalid voucher
+            if (voucher == null)
+            {
+                ModelState.AddModelError(
+                    "VoucherId",
+                    "Voucher không tồn tại.");
+
+                return;
+            }
+
+            // Calculate order subtotal
+            decimal subtotal = request.Items.Sum(
+                item => item.UnitPrice * item.Quantity);
+
+            // Calculate voucher discount
+            request.VoucherDiscount =
+                voucher.CalculateDiscount(subtotal);
         }
 
         // ==========================================
@@ -269,6 +274,11 @@ namespace SaigonBite.Controllers
 
             await CalculateVoucherAsync(request);
 
+            if (!ModelState.IsValid)
+            {
+                return View("IndexOrder", request);
+            }
+
             // Store checkout information in server session
 
             HttpContext.Session.SetString(
@@ -363,6 +373,11 @@ namespace SaigonBite.Controllers
             }
 
             await CalculateVoucherAsync(request);
+
+            if (!ModelState.IsValid)
+            {
+                return View("Confirm", request);
+            }
 
             try
             {
