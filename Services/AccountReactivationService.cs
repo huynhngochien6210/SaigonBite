@@ -13,7 +13,7 @@ public class AccountReactivationService
     : IAccountReactivationService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IOtpDeliveryService _otpDelivery;
     private readonly byte[] _secretKey;
 
     private const int ExpirationMinutes = 5;
@@ -28,10 +28,10 @@ public class AccountReactivationService
     public AccountReactivationService(
         ApplicationDbContext context,
         IConfiguration configuration,
-        IWebHostEnvironment environment)
+        IOtpDeliveryService otpDelivery)
     {
         _context = context;
-        _environment = environment;
+        _otpDelivery = otpDelivery;
 
         string secretKey =
             configuration["Otp:SecretKey"]
@@ -78,7 +78,7 @@ public class AccountReactivationService
             DateTime deactivatedAt)
     {
         // Development simulation only
-        if (!_environment.IsDevelopment())
+        if (!_otpDelivery.IsAvailable)
         {
             return (
                 false,
@@ -91,7 +91,9 @@ public class AccountReactivationService
                 IsolationLevel.Serializable);
 
         var user = await _context.UserAccounts
-            .FirstOrDefaultAsync(u => u.UserId == userId);
+        .Include(u => u.LocalCustomer)
+        .Include(u => u.ForeignTourist)
+        .FirstOrDefaultAsync(u => u.UserId == userId);
 
         if (!CanReactivate(user, deactivatedAt))
         {
@@ -182,15 +184,16 @@ public class AccountReactivationService
         await transaction.CommitAsync();
 
         // Simulated OTP delivery
-        Console.WriteLine();
-        Console.WriteLine("==================================");
-        Console.WriteLine("SAIGONBITE REACTIVATION OTP");
-        Console.WriteLine("Purpose: Reactivation");
-        Console.WriteLine($"User ID: {userId}");
-        Console.WriteLine($"OTP Code: {otp}");
-        Console.WriteLine("Expires in: 5 minutes");
-        Console.WriteLine("==================================");
-        Console.WriteLine();
+        string destination =
+            user!.AccountType == AccountType.LocalCustomer
+                ? user.LocalCustomer?.PhoneNumber ?? ""
+                : user.ForeignTourist?.Email ?? "";
+
+        await _otpDelivery.SendAsync(
+            userId,
+            destination,
+            "Reactivation",
+            otp);
 
         return (
             true,

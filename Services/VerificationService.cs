@@ -12,7 +12,7 @@ namespace SaigonBite.Services;
 public class VerificationService : IVerificationService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IOtpDeliveryService _otpDelivery;
     private readonly byte[] _secretKey;
 
     private const int ExpirationMinutes = 5;
@@ -22,10 +22,10 @@ public class VerificationService : IVerificationService
     public VerificationService(
         ApplicationDbContext context,
         IConfiguration configuration,
-        IWebHostEnvironment environment)
+        IOtpDeliveryService otpDelivery)
     {
         _context = context;
-        _environment = environment;
+        _otpDelivery = otpDelivery;
 
         string secretKey =
             configuration["Otp:SecretKey"]
@@ -49,7 +49,7 @@ public class VerificationService : IVerificationService
         SendCodeAsync(int userId)
     {
         // Only allow simulated delivery in Development
-        if (!_environment.IsDevelopment())
+        if (!_otpDelivery.IsAvailable)
         {
             return (false,
                 "OTP delivery is not configured.");
@@ -60,6 +60,8 @@ public class VerificationService : IVerificationService
                 IsolationLevel.Serializable);
 
         var user = await _context.UserAccounts
+            .Include(u => u.LocalCustomer)
+            .Include(u => u.ForeignTourist)
             .FirstOrDefaultAsync(u => u.UserId == userId);
 
         // Validate account
@@ -150,16 +152,16 @@ public class VerificationService : IVerificationService
 
         await transaction.CommitAsync();
 
-        // Simulated OTP delivery - Development only
-        Console.WriteLine();
-        Console.WriteLine("==============================");
-        Console.WriteLine("SAIGONBITE OTP SIMULATION");
-        Console.WriteLine("Purpose: Registration");
-        Console.WriteLine($"User ID: {userId}");
-        Console.WriteLine($"OTP Code: {otp}");
-        Console.WriteLine("Expires in: 5 minutes");
-        Console.WriteLine("==============================");
-        Console.WriteLine();
+        string destination =
+            user.AccountType == AccountType.LocalCustomer
+                ? user.LocalCustomer?.PhoneNumber ?? ""
+                : user.ForeignTourist?.Email ?? "";
+
+        await _otpDelivery.SendAsync(
+            userId,
+            destination,
+            "Registration",
+            otp);
 
         return (true,
             "Verification code generated successfully.");

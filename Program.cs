@@ -35,7 +35,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // UC-D: Order
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 builder.Services.AddScoped<PricingService>();
+
 builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddScoped<
@@ -47,6 +49,19 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ICustomerAccountService,
     CustomerAccountService>();
+
+// UC-E: OTP Delivery
+
+builder.Services.AddScoped<
+    IOtpDeliveryService,
+    ConsoleOtpDeliveryService>();
+
+
+// UC-E: OTP Delivery
+
+builder.Services.AddScoped<
+    IOtpDeliveryService,
+    ConsoleOtpDeliveryService>();
 
 // UC-E: Account
 
@@ -66,9 +81,13 @@ builder.Services.AddScoped<
     IPasswordResetService,
     PasswordResetService>();
 
+// UC-E: Authentication
+
 builder.Services.AddScoped<
     SaigonBite.Services.IAuthenticationService,
     SaigonBite.Services.AuthenticationService>();
+
+// UC-E: Password Hashing
 
 builder.Services.AddScoped<
     IPasswordHasher<UserAccount>,
@@ -275,6 +294,16 @@ app.UseAuthorization();
 // ==========================================
 // 9. ROUTING
 // ==========================================
+
+app.MapGet("/", (HttpContext context) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        return Results.Redirect("/Home/Index");
+    }
+
+    return Results.Redirect("/Account/Login");
+});
 
 app.MapControllerRoute(
     name: "default",
