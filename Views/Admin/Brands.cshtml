@@ -1,0 +1,628 @@
+
+@{
+    ViewData["Title"] = "Quản lý thương hiệu";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-brands.css"
+          asp-append-version="true" />
+}
+
+<div class="brand-page">
+
+    <!-- HERO -->
+    <section class="brand-hero">
+        <div class="brand-hero-content">
+            <h1>Quản lý thương hiệu</h1>
+            <p>
+                Tạo, cập nhật và quản lý danh sách thương hiệu,
+                liên kết hub.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- SEARCH AND FILTER -->
+    <section class="brand-toolbar">
+
+        <div class="brand-search">
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   id="brandSearch"
+                   placeholder="Tìm kiếm thương hiệu theo tên, mô tả..." />
+        </div>
+
+        <div class="filter-group">
+            <label for="statusFilter">Trạng thái:</label>
+
+            <select id="statusFilter">
+                <option value="all">Tất cả</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="paused">Tạm dừng</option>
+            </select>
+        </div>
+
+        <div class="filter-group hub-filter">
+            <label for="hubFilter">Hub:</label>
+
+            <select id="hubFilter">
+                <option value="all">Tất cả hub</option>
+                <option value="H1">Hub 1</option>
+                <option value="H2">Hub 2</option>
+                <option value="H3">Hub 3</option>
+                <option value="H4">Hub 4</option>
+                <option value="H5">Hub 5</option>
+                <option value="H6">Hub 6</option>
+                <option value="H7">Hub 7</option>
+                <option value="H8">Hub 8</option>
+            </select>
+        </div>
+
+       
+        <a asp-controller="Admin"
+           asp-action="CreateBrand"
+           class="add-brand-button">
+            <span>＋</span>
+            Thêm thương hiệu
+        </a>
+
+    </section>
+
+
+    <!-- BRAND TABLE -->
+    <section class="brand-table-card">
+
+        <div class="table-scroll">
+
+            <table class="brand-table" id="brandTable">
+
+                <thead>
+                    <tr>
+                        <th class="logo-column">Logo</th>
+                        <th class="name-column">Tên thương hiệu</th>
+                        <th class="description-column">Mô tả ngắn</th>
+                        <th class="hub-column">Số hub</th>
+                        <th class="status-column">Trạng thái</th>
+                        <th class="action-column">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- BRAND 1: COM TAM -->
+                    <tr data-status="active"
+                        data-hubs="H1,H2,H3,H4,H5,H6"
+                        data-dish-count="8"
+                        data-order-count="125"
+                        data-is-deleted="false">
+
+                        <td>
+                            <div class="brand-thumbnail food-rice">
+                                🍛
+                            </div>
+                        </td>
+
+                        <td class="brand-name-cell">
+                            Cơm tấm Sài Gòn
+                        </td>
+
+                        <td>
+                            Thương hiệu cơm tấm truyền thống Sài Gòn
+                            với sườn nướng, bì, chả và nước mắm đặc trưng.
+                        </td>
+
+                        <td class="hub-number">6</td>
+
+                        <td>
+                            <span class="brand-status status-active">
+                                Đang hoạt động
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="brand-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="ViewBrand"
+                                   asp-route-id="1"
+                                   class="action-button">
+                                    Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditBrand"
+                                   asp-route-id="1"
+                                   class="action-button edit-button">
+                                    ✎ Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="action-button delete-button"
+                                        onclick="deleteBrand(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <!-- BRAND 2: PHO -->
+                    <tr data-status="paused"
+                        data-hubs="H1,H2,H3,H4"
+                        data-dish-count="4"
+                        data-order-count="48"
+                        data-is-deleted="false">
+
+                        <td>
+                            <div class="brand-thumbnail food-pho">
+                                🍜
+                            </div>
+                        </td>
+
+                        <td class="brand-name-cell">
+                            Phở Nam Vang
+                        </td>
+
+                        <td>
+                            Phở Nam Vang chuẩn vị với nước dùng đậm đà,
+                            thịt bò mềm và sợi phở dai.
+                        </td>
+
+                        <td class="hub-number">4</td>
+
+                        <td>
+                            <span class="brand-status status-paused">
+                                Tạm dừng
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="brand-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="ViewBrand"
+                                   asp-route-id="1"
+                                   class="action-button">
+                                    Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditBrand"
+                                   asp-route-id="1"
+                                   class="action-button edit-button">
+                                    ✎ Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="action-button delete-button"
+                                        onclick="deleteBrand(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <!-- BRAND 3: BANH MI -->
+                    <tr data-status="active"
+                        data-hubs="H1,H2,H3,H4,H5,H6,H7,H8"
+                        data-dish-count="5"
+                        data-order-count="125"
+                        data-is-deleted="false">
+
+                        <td>
+                            <div class="brand-thumbnail food-banhmi">
+                                🥖
+                            </div>
+                        </td>
+
+                        <td class="brand-name-cell">
+                            Bánh mì thịt
+                        </td>
+
+                        <td>
+                            Bánh mì Sài Gòn giòn rụm, nhân thịt đậm đà,
+                            rau dưa tươi ngon.
+                        </td>
+
+                        <td class="hub-number">8</td>
+
+                        <td>
+                            <span class="brand-status status-active">
+                                Đang hoạt động
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="brand-actions">
+
+                                <a asp-controller="Admin"
+                                    asp-action="ViewBrand"
+                                    asp-route-id="1"
+                                    class="action-button">
+                                    Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditBrand"
+                                   asp-route-id="1"
+                                   class="action-button edit-button">
+                                    ✎ Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="action-button delete-button"
+                                        onclick="deleteBrand(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <!-- BRAND 4: DESSERT -->
+                    <tr data-status="active"
+                        data-hubs="H2,H3,H4"
+                        data-dish-count="6"
+                        data-order-count="72"
+                        data-is-deleted="false">
+
+                        <td>
+                            <div class="brand-thumbnail food-dessert">
+                                🍧
+                            </div>
+                        </td>
+
+                        <td class="brand-name-cell">
+                            Chè Sài Gòn
+                        </td>
+
+                        <td>
+                            Các món chè truyền thống Sài Gòn, thơm ngon,
+                            đa dạng và thanh mát.
+                        </td>
+
+                        <td class="hub-number">3</td>
+
+                        <td>
+                            <span class="brand-status status-active">
+                                Đang hoạt động
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="brand-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="ViewBrand"
+                                   asp-route-id="1"
+                                   class="action-button">
+                                    Xem
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="EditBrand"
+                                   asp-route-id="1"
+                                   class="action-button edit-button">
+                                    ✎ Sửa
+                                </a>
+
+                                <button type="button"
+                                        class="action-button delete-button"
+                                        onclick="deleteBrand(this)">
+                                    <span>▤</span> Xóa
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="empty-brand-message" id="emptyBrandMessage">
+                Không tìm thấy thương hiệu phù hợp.
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ADD / EDIT BRAND MODAL -->
+<div class="brand-modal-overlay" id="brandModal">
+
+    <div class="brand-modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="modalTitle">Thêm thương hiệu</h2>
+                <p>Nhập thông tin thương hiệu cần quản lý.</p>
+            </div>
+
+            <button type="button"
+                    class="modal-close"
+                    onclick="closeBrandModal()">
+                ×
+            </button>
+
+        </div>
+
+        <form id="brandForm">
+
+            <div class="form-group">
+                <label for="brandNameInput">
+                    Tên thương hiệu <span>*</span>
+                </label>
+
+                <input type="text"
+                       id="brandNameInput"
+                       placeholder="Nhập tên thương hiệu"
+                       required />
+            </div>
+
+            <div class="form-group">
+                <label for="brandDescriptionInput">
+                    Mô tả ngắn
+                </label>
+
+                <textarea id="brandDescriptionInput"
+                          rows="3"
+                          placeholder="Nhập mô tả thương hiệu"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="brandHubInput">
+                    Số hub liên kết
+                </label>
+
+                <select id="brandHubInput">
+                    <option value="3">3 hub</option>
+                    <option value="4">4 hub</option>
+                    <option value="6" selected>6 hub</option>
+                    <option value="8">8 hub</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="brandStatusInput">
+                    Trạng thái
+                </label>
+
+                <select id="brandStatusInput">
+                    <option value="active">Đang hoạt động</option>
+                    <option value="paused">Tạm dừng</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+
+                <button type="button"
+                        class="cancel-button"
+                        onclick="closeBrandModal()">
+                    Hủy
+                </button>
+
+                <button type="submit"
+                        class="save-button">
+                    Lưu thông tin
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- VIEW BRAND MODAL -->
+<div class="brand-modal-overlay" id="viewBrandModal">
+
+    <div class="brand-modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Thông tin thương hiệu</h2>
+                <p>Chi tiết thương hiệu đang được chọn.</p>
+            </div>
+
+            <button type="button"
+                    class="modal-close"
+                    onclick="closeViewModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="brand-detail-content">
+            <h3 id="viewBrandName"></h3>
+            <p id="viewBrandDescription"></p>
+            <p>
+                <strong>Số hub liên kết:</strong>
+                <span id="viewBrandHub"></span>
+            </p>
+            <p>
+                <strong>Trạng thái:</strong>
+                <span id="viewBrandStatus"></span>
+            </p>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button"
+                    class="cancel-button"
+                    onclick="closeViewModal()">
+                Đóng
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- DELETE BRAND CONFIRMATION MODAL -->
+<div class="delete-brand-overlay" id="deleteBrandModal">
+
+    <div class="delete-brand-modal">
+
+        <div class="delete-modal-header">
+
+            <div class="delete-modal-title">
+
+                <div class="delete-modal-icon">
+                    <span>▤</span>
+                </div>
+
+                <h2>Xác nhận xóa thương hiệu</h2>
+
+            </div>
+
+            <button type="button"
+                    class="delete-modal-close"
+                    onclick="closeDeleteModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="delete-warning-box">
+
+            <span class="warning-icon">⚠</span>
+
+            <div class="warning-message">
+
+                <strong id="deleteWarningTitle">
+                    Thương hiệu có dữ liệu liên quan.
+                </strong>
+
+                <p id="deleteWarningDetails">
+                    (0 món ăn, 0 đơn).
+                </p>
+
+            </div>
+
+        </div>
+
+        <p class="delete-description">
+            Hệ thống sẽ không xóa vĩnh viễn thương hiệu này,
+            mà sẽ ngừng kích hoạt thương hiệu để vẫn giữ lại
+            toàn bộ dữ liệu đơn hàng và lịch sử có liên quan.
+        </p>
+
+        <div class="delete-modal-actions">
+
+            <button type="button"
+                    class="delete-cancel-button"
+                    onclick="closeDeleteModal()">
+                Hủy
+            </button>
+
+            <button type="button"
+                    class="delete-restore-button"
+                    onclick="restoreBrand()">
+                <span>↶</span>
+                Khôi phục
+            </button>
+
+            <button type="button"
+                    class="delete-confirm-button"
+                    onclick="confirmDeleteBrand()">
+                Xác nhận xóa
+                <span>→</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="~/js/admin-brands.js"
+            asp-append-version="true"></script>
+
+    <!-- FILTER HANDLER -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const searchInput = document.getElementById("brandSearch");
+            const statusSelect = document.getElementById("statusFilter");
+            const hubSelect = document.getElementById("hubFilter");
+            const table = document.getElementById("brandTable");
+            const emptyMessage = document.getElementById("emptyBrandMessage");
+
+            if (!table) return;
+
+            function applyFilters() {
+
+                const keyword = searchInput.value
+                    .trim()
+                    .toLocaleLowerCase("vi");
+
+                const selectedStatus = statusSelect.value;
+                const selectedHub = hubSelect.value;
+
+                const rows = table.querySelectorAll("tbody tr");
+
+                let visibleCount = 0;
+
+                rows.forEach(function (row) {
+
+                    const rowStatus = row.dataset.status || "active";
+
+                    const rowHubs = (row.dataset.hubs || "")
+                        .split(",")
+                        .map(value => value.trim())
+                        .filter(value => value !== "");
+
+                    const rowText = row.innerText.toLocaleLowerCase("vi");
+
+                    const matchesKeyword =
+                        rowText.includes(keyword);
+
+                    const matchesStatus =
+                        selectedStatus === "all" ||
+                        rowStatus === selectedStatus;
+
+                    const matchesHub =
+                        selectedHub === "all" ||
+                        rowHubs.includes(selectedHub);
+
+                    const isVisible =
+                        matchesKeyword &&
+                        matchesStatus &&
+                        matchesHub;
+
+                    row.hidden = !isVisible;
+
+                    if (isVisible) {
+                        visibleCount++;
+                    }
+                });
+
+                emptyMessage.style.display =
+                    visibleCount === 0 ? "block" : "none";
+            }
+
+            searchInput.addEventListener("input", applyFilters);
+            statusSelect.addEventListener("change", applyFilters);
+            hubSelect.addEventListener("change", applyFilters);
+
+            applyFilters();
+        });
+    </script>
+}

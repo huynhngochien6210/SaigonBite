@@ -13,11 +13,16 @@ public class AdminController : Controller
     private readonly SaigonBite.Services.IAuthenticationService
         _authenticationService;
 
+    // Constructor
     public AdminController(
         SaigonBite.Services.IAuthenticationService authenticationService)
     {
         _authenticationService = authenticationService;
     }
+
+    // ==========================================
+    // ADMIN LOGIN
+    // ==========================================
 
     // Display Admin Login
     [HttpGet]
@@ -29,18 +34,14 @@ public class AdminController : Controller
     // Process Admin Login
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(
-        AdminLoginViewModel model)
+    public async Task<IActionResult> Login(AdminLoginViewModel model)
     {
-        // Validate input
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        // Authenticate admin
-        var result = await _authenticationService
-            .LoginAdminAsync(model);
+        var result = await _authenticationService.LoginAdminAsync(model);
 
         if (!result.Success || result.User == null)
         {
@@ -101,5 +102,75 @@ public class AdminController : Controller
     {
         return Content(
             $"Admin login successful. Welcome, {User.Identity?.Name}!");
+    }
+
+    // ==========================================
+    // UC-A: DASHBOARD
+    // ==========================================
+
+    [HttpGet]
+    public IActionResult Dashboard()
+    {
+        return View();
+    }
+
+    // ==========================================
+    // UC-A: BRAND MANAGEMENT
+    // ==========================================
+
+    [HttpGet]
+    public IActionResult Brands()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult CreateBrand()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult EditBrand(int id)
+    {
+        ViewBag.BrandId = id;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ViewBrand(int id)
+    {
+        ViewBag.BrandId = id;
+        return View();
+    }
+
+    // ==========================================
+    // UC-A: FOOD MANAGEMENT
+    // ==========================================
+
+    [HttpGet]
+    public IActionResult Foods()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult CreateFood()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult EditFood(int id)
+    {
+        ViewBag.FoodId = id;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ViewFood(int id)
+    {
+        ViewBag.FoodId = id;
+        return View();
     }
 }

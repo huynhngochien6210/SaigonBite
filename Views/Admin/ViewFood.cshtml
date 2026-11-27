@@ -1,0 +1,185 @@
+
+@{
+    ViewData["Title"] = "Xem món ăn";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-foods.css"
+          asp-append-version="true" />
+}
+
+<div class="view-food-page">
+
+    <!-- BANNER CHỈ HIỂN THỊ HÌNH NỀN -->
+    <section class="view-food-banner"
+         style="background-image: url('@Url.Content("~/image/background.png")')">
+    </section>
+
+    <!-- THÔNG TIN CHI TIẾT MÓN ĂN -->
+    <section class="view-food-detail-card">
+
+        <!-- HÌNH ẢNH MÓN ĂN -->
+        <div class="view-food-image">
+            <div class="food-main-image">
+                🍛
+            </div>
+        </div>
+
+        <!-- THÔNG TIN CHÍNH -->
+        <div class="view-food-main-info">
+
+            <h1>Cơm tấm Sài Gòn</h1>
+
+            <div class="food-info-row">
+                <span class="food-info-icon">♜</span>
+                <strong>Tên món ăn</strong>
+                <span class="food-info-colon">:</span>
+                <span>Cơm tấm Sài Gòn</span>
+            </div>
+
+            <div class="food-info-row">
+                <span class="food-info-icon">♧</span>
+                <strong>Thương hiệu</strong>
+                <span class="food-info-colon">:</span>
+                <span>Cơm tấm Sài Gòn</span>
+            </div>
+
+            <div class="food-info-row">
+                <span class="food-info-icon">▱</span>
+                <strong>Danh mục</strong>
+                <span class="food-info-colon">:</span>
+                <span>Cơm</span>
+            </div>
+
+            <div class="food-info-row">
+                <span class="food-info-icon">◇</span>
+                <strong>Giá bán</strong>
+                <span class="food-info-colon">:</span>
+                <span class="view-food-price">65.000 đ</span>
+            </div>
+
+            <div class="food-info-row">
+                <span class="food-info-icon">◉</span>
+                <strong>Trạng thái khả dụng</strong>
+                <span class="food-info-colon">:</span>
+                <span class="food-status status-available">
+                    <span>✓</span> Còn bán
+                </span>
+            </div>
+
+            <div class="food-info-row food-description-row">
+                <span class="food-info-icon">▤</span>
+                <strong>Mô tả món ăn</strong>
+                <span class="food-info-colon">:</span>
+                <span>
+                    Món ăn đặc trưng Sài Gòn với cơm tấm dẻo thơm,
+                    sườn nướng than hoa đậm đà, trứng ốp la, chả trứng,
+                    bì và đồ chua, ăn kèm nước mắm pha truyền thống.
+                </span>
+            </div>
+
+        </div>
+
+        <!-- THÔNG TIN BỔ SUNG -->
+        <div class="view-food-extra-info">
+
+            <div class="extra-info-section">
+
+                <h2>
+                    <span>⌖</span>
+                    Hub khả dụng
+                </h2>
+
+                <div class="food-hub-list">
+                    <span class="food-hub-tag">📍 Hub Quận 1</span>
+                    <span class="food-hub-tag">📍 Hub Quận 3</span>
+                </div>
+
+            </div>
+
+            <div class="extra-info-section">
+
+                <h2>
+                    <span>ⓘ</span>
+                    Thông tin bổ sung
+                </h2>
+
+                <div class="extra-info-row">
+                    <span class="extra-info-icon">▣</span>
+                    <strong>Ngày tạo</strong>
+                    <span>:</span>
+                    <span>19/10/2026 - 12:30</span>
+                </div>
+
+                <div class="extra-info-row">
+                    <span class="extra-info-icon">▣</span>
+                    <strong>Ngày cập nhật</strong>
+                    <span>:</span>
+                    <span>20/10/2026 - 16:45</span>
+                </div>
+
+                <div class="extra-info-row">
+                    <span class="extra-info-icon">▥</span>
+                    <strong>Mã món ăn</strong>
+                    <span>:</span>
+                    <span>#SB10245</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- MÓN ĂN LIÊN QUAN -->
+    <section class="related-food-section">
+
+        <h2>
+            <span>♧</span>
+            Món liên quan cùng thương hiệu
+        </h2>
+
+        <div class="related-food-list">
+
+            <div class="related-food-card">
+                <div class="related-food-image">🥖</div>
+                <div class="related-food-content">
+                    <strong>Bánh mì thịt</strong>
+                    <span>35.000 đ</span>
+                </div>
+            </div>
+
+            <div class="related-food-card">
+                <div class="related-food-image">🍜</div>
+                <div class="related-food-content">
+                    <strong>Hủ tiếu Nam Vang</strong>
+                    <span>62.000 đ</span>
+                </div>
+            </div>
+
+            <div class="related-food-card">
+                <div class="related-food-image">🥤</div>
+                <div class="related-food-content">
+                    <strong>Chè Sài Gòn</strong>
+                    <span>28.000 đ</span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CHỈ GIỮ NÚT QUAY LẠI -->
+    <div class="view-food-bottom-actions">
+
+        <a asp-controller="Admin"
+           asp-action="Foods"
+           class="view-food-back-button">
+            <span>←</span>
+            Quay lại
+        </a>
+
+    </div>
+
+</div>

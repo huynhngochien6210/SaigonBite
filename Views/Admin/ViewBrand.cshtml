@@ -1,0 +1,205 @@
+
+@{
+    ViewData["Title"] = "Xem thương hiệu";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-brands.css"
+          asp-append-version="true" />
+}
+
+<div class="view-brand-page">
+
+    <!-- BANNER: CHỈ HIỂN THỊ ẢNH NỀN -->
+    <section class="view-brand-banner"></section>
+
+    <!-- BRAND SUMMARY -->
+    <section class="view-brand-summary">
+
+        <div class="view-brand-logo">
+            🍛
+        </div>
+
+        <div class="view-brand-summary-content">
+
+            <div class="view-brand-title-row">
+                <h1>Cơm tấm Sài Gòn</h1>
+
+                <span class="view-brand-status">
+                    ● Đang hoạt động
+                </span>
+            </div>
+
+            <p class="view-brand-description">
+                Thương hiệu cơm tấm truyền thống Sài Gòn,
+                phục vụ các món cơm tấm đậm vị, nguyên liệu tươi ngon.
+            </p>
+
+            <div class="view-brand-statistics">
+
+                <div class="view-brand-stat">
+                    <span class="view-brand-stat-icon">▦</span>
+                    <strong>Ngày tạo:</strong>
+                    <span>19/10/2026, 10:24</span>
+                </div>
+
+                <div class="view-brand-stat">
+                    <span class="view-brand-stat-icon">♧</span>
+                    <strong>Số Hub đã liên kết:</strong>
+                    <span>3</span>
+                </div>
+
+                <div class="view-brand-stat">
+                    <span class="view-brand-stat-icon">♜</span>
+                    <strong>Số món ăn:</strong>
+                    <span>4</span>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- DETAIL CONTENT -->
+    <div class="view-brand-content">
+
+        <!-- BRAND INFORMATION -->
+        <section class="view-brand-panel">
+
+            <h2>Thông tin thương hiệu</h2>
+
+            <div class="view-brand-info-list">
+
+                <div class="view-brand-info-row">
+                    <strong>Tên thương hiệu</strong>
+                    <span>Cơm tấm Sài Gòn</span>
+                </div>
+
+                <div class="view-brand-info-row">
+                    <strong>Mô tả ngắn</strong>
+                    <span>
+                        Thương hiệu cơm tấm truyền thống Sài Gòn,
+                        phục vụ các món cơm tấm đậm vị,
+                        nguyên liệu tươi ngon.
+                    </span>
+                </div>
+
+                <div class="view-brand-info-row">
+                    <strong>Trạng thái</strong>
+                    <span>
+                        <span class="view-brand-status">
+                            ● Đang hoạt động
+                        </span>
+                    </span>
+                </div>
+
+                <div class="view-brand-info-row">
+                    <strong>Hub đã liên kết</strong>
+                    <span class="view-brand-hubs">
+                        <span>📍 Hub Quận 1</span>
+                        <span>📍 Hub Quận 3</span>
+                        <span>📍 Hub Thủ Đức</span>
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- MENU ITEMS -->
+        <section class="view-brand-panel">
+
+            <h2>Món ăn thuộc thương hiệu</h2>
+
+            <div class="view-brand-menu-table-wrapper">
+
+                <table class="view-brand-menu-table">
+
+                    <thead>
+                        <tr>
+                            <th>Món ăn</th>
+                            <th>Danh mục</th>
+                            <th>Giá bán</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>
+                                <div class="view-brand-food">
+                                    <span class="view-brand-food-image">🍛</span>
+                                    <strong>Cơm tấm Sài Gòn</strong>
+                                </div>
+                            </td>
+                            <td><span class="view-brand-category">♜ Cơm tấm</span></td>
+                            <td class="view-brand-price">65.000 đ</td>
+                            <td><span class="view-brand-food-status">● Đang bán</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="view-brand-food">
+                                    <span class="view-brand-food-image">🍱</span>
+                                    <strong>Cơm tấm sườn bì chả</strong>
+                                </div>
+                            </td>
+                            <td><span class="view-brand-category">♜ Cơm tấm</span></td>
+                            <td class="view-brand-price">72.000 đ</td>
+                            <td><span class="view-brand-food-status">● Đang bán</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="view-brand-food">
+                                    <span class="view-brand-food-image">🍗</span>
+                                    <strong>Cơm tấm gà nướng</strong>
+                                </div>
+                            </td>
+                            <td><span class="view-brand-category">♜ Cơm tấm</span></td>
+                            <td class="view-brand-price">68.000 đ</td>
+                            <td><span class="view-brand-food-status">● Đang bán</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="view-brand-food">
+                                    <span class="view-brand-food-image">🍳</span>
+                                    <strong>Cơm tấm trứng ốp la</strong>
+                                </div>
+                            </td>
+                            <td><span class="view-brand-category">♜ Món thêm</span></td>
+                            <td class="view-brand-price">10.000 đ</td>
+                            <td><span class="view-brand-food-status">● Đang bán</span></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- ONLY BACK BUTTON -->
+    <div class="view-brand-actions">
+
+        <a asp-controller="Admin"
+           asp-action="Brands"
+           class="view-brand-back-button">
+            <span>←</span>
+            Quay lại
+        </a>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-brands.js"
+            asp-append-version="true"></script>
+}

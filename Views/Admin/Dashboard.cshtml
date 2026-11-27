@@ -1,0 +1,286 @@
+@{
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-container">
+
+    <!-- HERO BANNER -->
+    <section class="dashboard-hero">
+        <div class="hero-content">
+            <h1>Dashboard quản lý</h1>
+            <p>Tổng quan thương hiệu và món ăn</p>
+        </div>
+    </section>
+
+
+    <!-- STATISTICS -->
+    <section class="statistics-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon icon-brand">
+                <svg viewBox="0 0 48 48">
+                    <path d="M7 20h34l-3-12H10L7 20Z" />
+                    <path d="M9 20v21h30V20" />
+                    <path d="M7 20c0 5 8 5 8 0 0 5 9 5 9 0 0 5 9 5 9 0 0 5 8 5 8 0" />
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <h3>Tổng thương hiệu</h3>
+                <p>12</p>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-food">
+                <svg viewBox="0 0 48 48">
+                    <path d="M14 27h20l-2 10H16l-2-10Z" />
+                    <path d="M11 27c0 9 6 14 13 14s13-5 13-14H11Z" />
+                    <path d="M18 20c-5-5 5-6 0-13" />
+                    <path d="M25 20c-5-5 5-6 0-13" />
+                    <path d="M32 20c-5-5 5-6 0-13" />
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <h3>Tổng món ăn</h3>
+                <p>256</p>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-active">
+                <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="18" />
+                    <path d="m14 24 7 7 14-15" />
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <h3>Đang hoạt động</h3>
+                <p>238</p>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon icon-stop">
+                <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="18" />
+                    <path d="M11 11 37 37" />
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <h3>Hết bán</h3>
+                <p>18</p>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- REPORTS -->
+    <section class="reports-grid">
+
+        <div class="report-card">
+
+            <div class="report-illustration report-revenue">
+                <div class="report-paper">
+                    <div class="report-label">R1</div>
+
+                    <div class="report-lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="report-chart">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+
+                    <div class="report-pie"></div>
+                </div>
+            </div>
+
+            <div class="report-content">
+                <h2>Báo cáo R1 - Doanh thu</h2>
+
+                <p>
+                    Xem thống kê doanh thu theo thời gian,
+                    nhóm thương hiệu và phương thức thanh toán.
+                </p>
+
+                <a href="/Admin/RevenueReport" class="report-button">
+                    Xem báo cáo R1
+                    <span>→</span>
+                </a>
+            </div>
+
+        </div>
+
+
+        <div class="report-card">
+
+            <div class="report-illustration report-hub">
+                <div class="report-paper">
+                    <div class="report-label">R2</div>
+
+                    <div class="report-lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="report-chart">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+
+                    <div class="report-gauge">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-content">
+                <h2>Báo cáo R2 - Hiệu suất hub</h2>
+
+                <p>
+                    Xem số đơn hàng, thời gian chuẩn bị trung bình,
+                    tải hub hiện tại và số lần áp dụng Quiet Kitchen.
+                </p>
+
+                <a href="/Admin/HubReport" class="report-button">
+                    Xem báo cáo R2
+                    <span>→</span>
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT ACTIVITIES -->
+    <section class="activity-section">
+
+        <div class="activity-heading">
+            <span class="activity-heading-icon">◴</span>
+            <h2>Hoạt động gần đây</h2>
+        </div>
+
+        <div class="activity-table-wrapper">
+            <table class="activity-table">
+
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Nội dung</th>
+                        <th>Loại</th>
+                        <th>Người thực hiện</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>20/10/2026 - 10:24</td>
+
+                        <td>
+                            <span class="activity-symbol">🍲</span>
+                            Cập nhật món ăn “Cơm tấm Sài Gòn”
+                            (giá: 60.000 đ → 65.000 đ)
+                        </td>
+
+                        <td>
+                            <span class="activity-tag tag-food">
+                                Món ăn
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="user-symbol">♙</span>
+                            Admin
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>20/10/2026 - 09:58</td>
+
+                        <td>
+                            <span class="activity-symbol">♧</span>
+                            Thêm thương hiệu mới “Hủ tiếu Nam Vang”
+                        </td>
+
+                        <td>
+                            <span class="activity-tag tag-brand">
+                                Thương hiệu
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="user-symbol">♙</span>
+                            Admin
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>19/10/2026 - 17:36</td>
+
+                        <td>
+                            <span class="activity-symbol activity-stop">⊘</span>
+                            Tắt bán món “Chè Sài Gòn”
+                        </td>
+
+                        <td>
+                            <span class="activity-tag tag-food">
+                                Món ăn
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="user-symbol">♙</span>
+                            Admin
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>19/10/2026 - 14:12</td>
+
+                        <td>
+                            <span class="activity-symbol activity-check">✓</span>
+                            Bật hoạt động thương hiệu “Cơm tấm Sài Gòn”
+                        </td>
+
+                        <td>
+                            <span class="activity-tag tag-brand">
+                                Thương hiệu
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="user-symbol">♙</span>
+                            Admin
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
+
+</div>
