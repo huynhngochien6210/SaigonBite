@@ -3141,3 +3141,40 @@ body {
             background: #f8f1eb;
             color: #c51f1f;
         }
+
+/* UC-E Account dropdown integration */
+.sb-account-name {
+    display: block;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-account-menu {
+    width: 220px;
+}
+
+.sb-account-logout-form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.sb-account-menu .sb-account-logout {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    background: transparent;
+    color: #c51f1f;
+    font-family: "Times New Roman", serif;
+    font-size: 18px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sb-account-menu .sb-account-logout:hover {
+    background: #f8f1eb;
+}
