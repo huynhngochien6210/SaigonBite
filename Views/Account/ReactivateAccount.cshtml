@@ -1,0 +1,74 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Reactivate Account";
+}
+
+<div class="auth-card">
+
+    <div class="auth-heading">
+
+        <h1>Reactivate Account</h1>
+
+        <p>
+            Your account has been deactivated.
+        </p>
+
+        <p>
+            Verify your identity to reactivate
+            your SaigonBite account.
+        </p>
+
+    </div>
+
+    @if (TempData["ReactivationError"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+
+            @TempData["ReactivationError"]
+
+        </div>
+    }
+
+    <div class="alert alert-info">
+
+        Your account information and order history
+        will be preserved after reactivation.
+
+    </div>
+
+    <form method="post"
+          action="@Url.Action("SendReactivationCode", "Account")">
+
+        @Html.AntiForgeryToken()
+
+        <button type="submit"
+                class="auth-button">
+
+            Send Verification Code
+
+        </button>
+
+    </form>
+
+    <div class="auth-divider">
+
+        <span>OR</span>
+
+    </div>
+
+    <form method="post"
+          action="@Url.Action("CancelReactivation", "Account")">
+
+        @Html.AntiForgeryToken()
+
+        <button type="submit"
+                class="outline-button"
+                style="width:100%;">
+
+            Cancel
+
+        </button>
+
+    </form>
+
+</div>

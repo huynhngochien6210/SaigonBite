@@ -1,4 +1,3 @@
-
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,7 +41,10 @@ public class VerificationService : IVerificationService
         }
     }
 
-    // Generate and send OTP
+    // ==========================================
+    // 1. GENERATE AND SEND REGISTRATION OTP
+    // ==========================================
+
     public async Task<(bool Success, string Message)>
         SendCodeAsync(int userId)
     {
@@ -76,9 +78,11 @@ public class VerificationService : IVerificationService
 
         DateTime now = DateTime.UtcNow;
 
-        // Check latest OTP
+        // Check latest registration OTP
         var latestCode = await _context.VerificationCodes
-            .Where(v => v.UserId == userId)
+            .Where(v =>
+                v.UserId == userId &&
+                v.Purpose == VerificationPurpose.Registration)
             .OrderByDescending(v => v.CreatedAt)
             .ThenByDescending(v => v.VerificationId)
             .FirstOrDefaultAsync();
@@ -91,10 +95,11 @@ public class VerificationService : IVerificationService
                 "Please wait 60 seconds before requesting another code.");
         }
 
-        // Limit OTP requests to 5 per hour
+        // Limit registration OTP requests to 5 per hour
         int recentRequests = await _context.VerificationCodes
             .CountAsync(v =>
                 v.UserId == userId &&
+                v.Purpose == VerificationPurpose.Registration &&
                 v.CreatedAt >= now.AddHours(-1));
 
         if (recentRequests >= 5)
@@ -103,10 +108,11 @@ public class VerificationService : IVerificationService
                 "Too many verification requests. Please try again later.");
         }
 
-        // Invalidate previous OTPs
+        // Invalidate previous registration OTPs
         var oldCodes = await _context.VerificationCodes
             .Where(v =>
                 v.UserId == userId &&
+                v.Purpose == VerificationPurpose.Registration &&
                 !v.IsUsed)
             .ToListAsync();
 
@@ -120,26 +126,35 @@ public class VerificationService : IVerificationService
             .GetInt32(0, 1000000)
             .ToString("D6");
 
-        // Create verification record
+        // Create registration verification record
         var verificationCode = new VerificationCode
         {
             UserId = userId,
+
+            Purpose = VerificationPurpose.Registration,
+
             CodeHash = HashCode(userId, otp),
+
             CreatedAt = now,
+
             ExpiresAt = now.AddMinutes(ExpirationMinutes),
+
             IsUsed = false,
+
             FailedAttempts = 0
         };
 
         _context.VerificationCodes.Add(verificationCode);
 
         await _context.SaveChangesAsync();
+
         await transaction.CommitAsync();
 
         // Simulated OTP delivery - Development only
         Console.WriteLine();
         Console.WriteLine("==============================");
         Console.WriteLine("SAIGONBITE OTP SIMULATION");
+        Console.WriteLine("Purpose: Registration");
         Console.WriteLine($"User ID: {userId}");
         Console.WriteLine($"OTP Code: {otp}");
         Console.WriteLine("Expires in: 5 minutes");
@@ -150,7 +165,10 @@ public class VerificationService : IVerificationService
             "Verification code generated successfully.");
     }
 
-    // Verify OTP
+    // ==========================================
+    // 2. VERIFY REGISTRATION OTP
+    // ==========================================
+
     public async Task<(bool Success, string Message)>
         VerifyCodeAsync(int userId, string code)
     {
@@ -169,6 +187,7 @@ public class VerificationService : IVerificationService
         var user = await _context.UserAccounts
             .FirstOrDefaultAsync(u => u.UserId == userId);
 
+        // Validate customer account
         if (user == null ||
             !user.IsActive ||
             user.Role != UserRole.Customer)
@@ -182,10 +201,12 @@ public class VerificationService : IVerificationService
                 "This account is already verified.");
         }
 
-        // Find latest verification code
+        // Find latest registration verification code
         var verificationCode =
             await _context.VerificationCodes
-                .Where(v => v.UserId == userId)
+                .Where(v =>
+                    v.UserId == userId &&
+                    v.Purpose == VerificationPurpose.Registration)
                 .OrderByDescending(v => v.CreatedAt)
                 .ThenByDescending(v => v.VerificationId)
                 .FirstOrDefaultAsync();
@@ -196,12 +217,14 @@ public class VerificationService : IVerificationService
                 "Verification code was not found.");
         }
 
+        // Check failed attempts
         if (verificationCode.FailedAttempts >= MaxFailedAttempts)
         {
             return (false,
                 "Too many failed attempts. Request a new code.");
         }
 
+        // Check whether OTP has already been used
         if (verificationCode.IsUsed)
         {
             return (false,
@@ -239,6 +262,7 @@ public class VerificationService : IVerificationService
             }
 
             await _context.SaveChangesAsync();
+
             await transaction.CommitAsync();
 
             return (false,
@@ -250,16 +274,21 @@ public class VerificationService : IVerificationService
         verificationCode.IsUsed = true;
 
         user.IsVerified = true;
+
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
         await transaction.CommitAsync();
 
         return (true,
             "Account verified successfully.");
     }
 
-    // Hash OTP with HMAC-SHA256
+    // ==========================================
+    // 3. HASH REGISTRATION OTP WITH HMAC-SHA256
+    // ==========================================
+
     private string HashCode(int userId, string code)
     {
         string value =

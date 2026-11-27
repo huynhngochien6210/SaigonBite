@@ -9,6 +9,7 @@ using SaigonBite.Repositories;
 using SaigonBite.Models;
 using SaigonBite.Services;
 using SaigonBite.Enums;
+using SaigonBite.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // 3. DEPENDENCY INJECTION
 // ==========================================
 
-// ---------- UC-D: Order ----------
+// UC-D: Order
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<PricingService>();
@@ -42,10 +43,12 @@ builder.Services.AddScoped<
     OrderHistoryService>();
 
 // UC-D & UC-E Integration
+
 builder.Services.AddScoped<
     ICustomerAccountService,
     CustomerAccountService>();
-// ---------- UC-E: Account ----------
+
+// UC-E: Account
 
 builder.Services.AddScoped<
     IAccountService,
@@ -54,6 +57,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IVerificationService,
     VerificationService>();
+
+builder.Services.AddScoped<
+    IAccountReactivationService,
+    AccountReactivationService>();
 
 builder.Services.AddScoped<
     IPasswordResetService,
@@ -145,14 +152,23 @@ builder.Services
                 return;
             }
 
-            // Get UserId from authentication claims.
+            // Retrieve UserId.
 
             string? userIdClaim = principal
                 .FindFirst(ClaimTypes.NameIdentifier)
                 ?.Value;
 
+            // Retrieve Security Stamp.
+
+            string? securityStamp = principal
+                .FindFirst(AuthClaimTypes.SecurityStamp)
+                ?.Value;
+
+            // Validate authentication claims.
+
             if (!int.TryParse(userIdClaim, out int userId)
-                || userId <= 0)
+                || userId <= 0
+                || string.IsNullOrWhiteSpace(securityStamp))
             {
                 context.RejectPrincipal();
 
@@ -165,24 +181,40 @@ builder.Services
                 return;
             }
 
-            // Resolve scoped database context.
+            // Resolve database context.
 
             var dbContext = context.HttpContext
                 .RequestServices
                 .GetRequiredService<ApplicationDbContext>();
 
-            // Check whether the customer is still valid.
+            // Retrieve current account state.
 
-            bool isValidAccount = await dbContext.UserAccounts
+            var account = await dbContext.UserAccounts
                 .AsNoTracking()
-                .AnyAsync(u =>
+                .Where(u =>
                     u.UserId == userId &&
                     u.Role == UserRole.Customer &&
                     u.IsActive &&
-                    u.IsVerified,
+                    u.IsVerified)
+                .Select(u => new
+                {
+                    u.SecurityStamp
+                })
+                .SingleOrDefaultAsync(
                     context.HttpContext.RequestAborted);
 
-            // Reject authentication for invalid accounts.
+            // Validate current account and Security Stamp.
+
+            bool isValidAccount =
+                account != null &&
+                !string.IsNullOrWhiteSpace(
+                    account.SecurityStamp) &&
+                string.Equals(
+                    account.SecurityStamp,
+                    securityStamp,
+                    StringComparison.Ordinal);
+
+            // Reject outdated or invalid cookies.
 
             if (!isValidAccount)
             {
