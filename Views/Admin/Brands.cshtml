@@ -59,15 +59,23 @@
             </select>
         </div>
 
+       
         <div class="filter-group hub-filter">
             <label for="hubFilter">Số hub:</label>
 
             <select id="hubFilter">
                 <option value="all">Tất cả</option>
-                <option value="3">3 hub</option>
-                <option value="4">4 hub</option>
-                <option value="6">6 hub</option>
-                <option value="8">8 hub</option>
+
+                @foreach (var hubCount in Model
+                    .Where(b => !b.IsDeleted)
+                    .Select(b => b.HubCount)
+                    .Distinct()
+                    .OrderBy(x => x))
+                {
+                    <option value="@hubCount">
+                        @hubCount hub
+                    </option>
+                }
             </select>
         </div>
 
