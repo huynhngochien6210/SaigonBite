@@ -1,0 +1,63 @@
+@model IEnumerable<SaigonBite.Models.Brand>
+
+@{
+    ViewData["Title"] = "Thương hiệu đã xóa";
+}
+
+<h2>Thương hiệu đã xóa</h2>
+
+<p>Danh sách các thương hiệu đã được xác nhận xóa.</p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tên thương hiệu</th>
+            <th>Mô tả</th>
+            <th>Số món ăn</th>
+            <th>Ngày cập nhật</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var brand in Model)
+            {
+                <tr>
+                    <td>@brand.BrandId</td>
+                    <td>@brand.BrandName</td>
+                    <td>@brand.Description</td>
+                    <td>
+                        @(brand.Foods?.Count(f => !f.IsDeleted) ?? 0)
+                    </td>
+                    <td>
+                        @(brand.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "Không rõ")
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">
+                    Thùng rác hiện chưa có thương hiệu nào.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
