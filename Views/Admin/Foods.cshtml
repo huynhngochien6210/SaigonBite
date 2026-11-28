@@ -1,6 +1,10 @@
 
+@model List<SaigonBite.Models.Food>
+@using SaigonBite.Models
+
 @{
     ViewData["Title"] = "Quản lý món ăn";
+    var totalFoods = Model?.Count ?? 0;
 }
 
 @section Styles {
@@ -22,24 +26,38 @@
     <!-- SEARCH AND FILTER -->
     <section class="food-toolbar">
 
+        <!-- SEARCH -->
         <div class="food-search">
             <span class="search-icon">⌕</span>
             <input type="text"
                    id="foodSearch"
-                   placeholder="Tìm kiếm món ăn theo tên..." />
+                   placeholder="Tìm kiếm món ăn theo tên..."
+                   autocomplete="off" />
         </div>
 
+        <!-- BRAND FILTER -->
         <div class="food-filter">
             <label for="brandFilter">Thương hiệu</label>
+
             <select id="brandFilter">
                 <option value="all">Tất cả thương hiệu</option>
-                <option value="Sài Gòn">Sài Gòn</option>
-                <option value="Bình Dương">Bình Dương</option>
+
+                @if (ViewBag.Brands != null)
+                {
+                    foreach (Brand brand in ViewBag.Brands)
+                    {
+                        <option value="@brand.BrandName">
+                            @brand.BrandName
+                        </option>
+                    }
+                }
             </select>
         </div>
 
+        <!-- CATEGORY FILTER -->
         <div class="food-filter">
             <label for="categoryFilter">Danh mục</label>
+
             <select id="categoryFilter">
                 <option value="all">Tất cả danh mục</option>
                 <option value="Món chính">Món chính</option>
@@ -49,8 +67,10 @@
             </select>
         </div>
 
+        <!-- STATUS FILTER -->
         <div class="food-filter">
             <label for="statusFilter">Trạng thái</label>
+
             <select id="statusFilter">
                 <option value="all">Tất cả trạng thái</option>
                 <option value="available">Còn bán</option>
@@ -58,6 +78,7 @@
             </select>
         </div>
 
+        <!-- ADD FOOD -->
         <a asp-controller="Admin"
            asp-action="CreateFood"
            class="add-food-button">
@@ -88,265 +109,148 @@
 
                 <tbody>
 
-                    <!-- FOOD 1 -->
-                    <tr data-id="1"
-                        data-brand="Sài Gòn"
-                        data-category="Món chính"
-                        data-status="available"
-                        data-order-count="25"
-                        data-is-deleted="false">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var food in Model)
+                        {
+                            var status = food.IsAvailable
+                                ? "available"
+                                : "unavailable";
 
-                        <td>
-                            <div class="food-image food-image-rice">🍛</div>
-                        </td>
+                            var categoryClass = food.Category switch
+                            {
+                                "Món chính" => "category-main",
+                                "Món nước" => "category-soup",
+                                "Ăn vặt" => "category-snack",
+                                "Đồ uống" => "category-drink",
+                                _ => "category-main"
+                            };
 
-                        <td class="food-name">Cơm tấm Sài Gòn</td>
+                            var brandName = food.Brand?.BrandName
+                                ?? "Chưa có thương hiệu";
 
-                        <td>
-                            <span class="food-brand">♧</span>
-                            Sài Gòn
-                        </td>
+                            <tr data-id="@food.FoodId"
+                                data-brand="@brandName"
+                                data-category="@food.Category"
+                                data-status="@status">
 
-                        <td>
-                            <span class="category-tag category-main">
-                                ♜ Món chính
-                            </span>
-                        </td>
+                                <!-- IMAGE -->
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(food.ImageUrl))
+                                    {
+                                        <img src="@food.ImageUrl"
+                                             alt="@food.FoodName"
+                                             class="food-image"
+                                             style="object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="food-image">🍽️</div>
+                                    }
+                                </td>
 
-                        <td class="food-price">65.000 đ</td>
+                                <!-- FOOD NAME -->
+                                <td class="food-name">
+                                    @food.FoodName
+                                </td>
 
-                        <td>
-                            <span class="food-status status-available">
-                                <span>✓</span> Còn bán
-                            </span>
-                        </td>
+                                <!-- BRAND -->
+                                <td>
+                                    <span class="food-brand">♧</span>
+                                    @brandName
+                                </td>
 
-                        <td>
-                            <div class="food-actions">
+                                <!-- CATEGORY -->
+                                <td>
+                                    <span class="category-tag @categoryClass">
+                                        @food.Category
+                                    </span>
+                                </td>
 
-                                <a asp-controller="Admin"
-                                   asp-action="ViewFood"
-                                   asp-route-id="1"
-                                   class="food-action view-action">
-                                    <span>◎</span> Xem
-                                </a>
+                                <!-- PRICE -->
+                                <td class="food-price">
+                                    @food.Price.ToString("N0") đ
+                                </td>
 
-                                <a asp-controller="Admin"
-                                   asp-action="EditFood"
-                                   asp-route-id="1"
-                                   class="food-action edit-action">
-                                    <span>✎</span> Sửa
-                                </a>
+                                <!-- STATUS -->
+                                <td>
+                                    @if (food.IsAvailable)
+                                    {
+                                        <span class="food-status status-available">
+                                            <span>✓</span> Còn bán
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="food-status status-unavailable">
+                                            <span>⊘</span> Hết bán
+                                        </span>
+                                    }
+                                </td>
 
-                                <button type="button"
-                                        class="food-action delete-action"
-                                        onclick="deleteFood(this)">
-                                    <span>▤</span> Xóa
-                                </button>
+                                <!-- ACTIONS -->
+                                <td>
+                                    <div class="food-actions">
 
-                            </div>
-                        </td>
-                    </tr>
+                                        <a asp-controller="Admin"
+                                           asp-action="ViewFood"
+                                           asp-route-id="@food.FoodId"
+                                           class="food-action view-action">
+                                            <span>◎</span> Xem
+                                        </a>
 
-                    <!-- FOOD 2 -->
-                    <tr data-id="2"
-                        data-brand="Sài Gòn"
-                        data-category="Món nước"
-                        data-status="available"
-                        data-order-count="18"
-                        data-is-deleted="false">
+                                        <a asp-controller="Admin"
+                                           asp-action="EditFood"
+                                           asp-route-id="@food.FoodId"
+                                           class="food-action edit-action">
+                                            <span>✎</span> Sửa
+                                        </a>
 
-                        <td>
-                            <div class="food-image food-image-noodle">🍜</div>
-                        </td>
+                                        <button type="button"
+                                                class="food-action delete-action"
+                                                data-id="@food.FoodId"
+                                                onclick="deleteFood(this)">
+                                            <span>▤</span> Xóa
+                                        </button>
 
-                        <td class="food-name">Hủ tiếu Nam Vang</td>
+                                    </div>
+                                </td>
 
-                        <td>
-                            <span class="food-brand">♧</span>
-                            Sài Gòn
-                        </td>
-
-                        <td>
-                            <span class="category-tag category-soup">
-                                ♨ Món nước
-                            </span>
-                        </td>
-
-                        <td class="food-price">62.000 đ</td>
-
-                        <td>
-                            <span class="food-status status-available">
-                                <span>✓</span> Còn bán
-                            </span>
-                        </td>
-
-                        <td>
-                            <div class="food-actions">
-
-                                <a asp-controller="Admin"
-                                   asp-action="ViewFood"
-                                   asp-route-id="2"
-                                   class="food-action view-action">
-                                    <span>◎</span> Xem
-                                </a>
-
-                                <a asp-controller="Admin"
-                                   asp-action="EditFood"
-                                   asp-route-id="2"
-                                   class="food-action edit-action">
-                                    <span>✎</span> Sửa
-                                </a>
-
-                                <button type="button"
-                                        class="food-action delete-action"
-                                        onclick="deleteFood(this)">
-                                    <span>▤</span> Xóa
-                                </button>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- FOOD 3 -->
-                    <tr data-id="3"
-                        data-brand="Sài Gòn"
-                        data-category="Ăn vặt"
-                        data-status="unavailable"
-                        data-order-count="12"
-                        data-is-deleted="false">
-
-                        <td>
-                            <div class="food-image food-image-banhmi">🥖</div>
-                        </td>
-
-                        <td class="food-name">Bánh mì thịt</td>
-
-                        <td>
-                            <span class="food-brand">♧</span>
-                            Sài Gòn
-                        </td>
-
-                        <td>
-                            <span class="category-tag category-snack">
-                                ▱ Ăn vặt
-                            </span>
-                        </td>
-
-                        <td class="food-price">35.000 đ</td>
-
-                        <td>
-                            <span class="food-status status-unavailable">
-                                <span>⊘</span> Hết bán
-                            </span>
-                        </td>
-
-                        <td>
-                            <div class="food-actions">
-
-                                <a asp-controller="Admin"
-                                   asp-action="ViewFood"
-                                   asp-route-id="3"
-                                   class="food-action view-action">
-                                    <span>◎</span> Xem
-                                </a>
-
-                                <a asp-controller="Admin"
-                                   asp-action="EditFood"
-                                   asp-route-id="3"
-                                   class="food-action edit-action">
-                                    <span>✎</span> Sửa
-                                </a>
-
-                                <button type="button"
-                                        class="food-action delete-action"
-                                        onclick="deleteFood(this)">
-                                    <span>▤</span> Xóa
-                                </button>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- FOOD 4 -->
-                    <tr data-id="4"
-                        data-brand="Sài Gòn"
-                        data-category="Đồ uống"
-                        data-status="available"
-                        data-order-count="8"
-                        data-is-deleted="false">
-
-                        <td>
-                            <div class="food-image food-image-dessert">🥤</div>
-                        </td>
-
-                        <td class="food-name">Chè Sài Gòn</td>
-
-                        <td>
-                            <span class="food-brand">♧</span>
-                            Sài Gòn
-                        </td>
-
-                        <td>
-                            <span class="category-tag category-drink">
-                                ♧ Đồ uống
-                            </span>
-                        </td>
-
-                        <td class="food-price">28.000 đ</td>
-
-                        <td>
-                            <span class="food-status status-available">
-                                <span>✓</span> Còn bán
-                            </span>
-                        </td>
-
-                        <td>
-                            <div class="food-actions">
-
-                                <a asp-controller="Admin"
-                                   asp-action="ViewFood"
-                                   asp-route-id="4"
-                                   class="food-action view-action">
-                                    <span>◎</span> Xem
-                                </a>
-
-                                <a asp-controller="Admin"
-                                   asp-action="EditFood"
-                                   asp-route-id="4"
-                                   class="food-action edit-action">
-                                    <span>✎</span> Sửa
-                                </a>
-
-                                <button type="button"
-                                        class="food-action delete-action"
-                                        onclick="deleteFood(this)">
-                                    <span>▤</span> Xóa
-                                </button>
-
-                            </div>
-                        </td>
-                    </tr>
+                            </tr>
+                        }
+                    }
 
                 </tbody>
+
             </table>
 
-            <div class="empty-food-message" id="emptyFoodMessage">
-                Không tìm thấy món ăn phù hợp.
+            <!-- EMPTY MESSAGE -->
+            <div class="empty-food-message"
+                 id="emptyFoodMessage"
+                 style="@(totalFoods > 0 ? "display:none;" : "display:block;")">
+
+                @(totalFoods > 0
+                    ? "Không tìm thấy món ăn phù hợp."
+                    : "Chưa có món ăn nào trong hệ thống.")
+
             </div>
 
         </div>
     </section>
 
-    <!-- PAGINATION -->
+    <!-- PAGINATION / FOOD COUNT -->
     <div class="food-pagination">
-        <span id="foodCount">Hiển thị 1 - 4 của 4 món ăn</span>
+
+        <span id="foodCount">
+            Hiển thị @totalFoods món ăn
+        </span>
 
         <div class="pagination-buttons">
             <button type="button" disabled>‹</button>
             <button type="button" class="current-page">1</button>
             <button type="button" disabled>›</button>
         </div>
+
     </div>
 
 </div>
@@ -412,7 +316,8 @@
             <button type="button"
                     class="food-delete-restore"
                     id="restoreFoodButton"
-                    onclick="restoreFood()">
+                    onclick="restoreFood()"
+                    style="display: none;">
                 <span>↶</span> Khôi phục
             </button>
 
@@ -430,6 +335,152 @@
 
 
 @section Scripts {
+
     <script src="~/js/admin-foods.js"
             asp-append-version="true"></script>
+
+    <!-- SEARCH AND FILTER HANDLER -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const searchInput = document.getElementById("foodSearch");
+            const brandFilter = document.getElementById("brandFilter");
+            const categoryFilter = document.getElementById("categoryFilter");
+            const statusFilter = document.getElementById("statusFilter");
+
+            const foodTable = document.getElementById("foodTable");
+            const emptyMessage = document.getElementById("emptyFoodMessage");
+            const foodCount = document.getElementById("foodCount");
+
+            if (!foodTable) return;
+
+            const rows = Array.from(
+                foodTable.querySelectorAll("tbody tr")
+            );
+
+            const totalRows = rows.length;
+
+            // Chuẩn hóa chuỗi để tìm kiếm và so sánh
+            function normalize(value) {
+                return (value || "")
+                    .trim()
+                    .toLocaleLowerCase("vi-VN");
+            }
+
+            // Thực hiện tìm kiếm và lọc
+            function applyFoodFilters() {
+
+                const keyword = normalize(searchInput?.value);
+
+                const selectedBrand = normalize(
+                    brandFilter?.value
+                );
+
+                const selectedCategory = normalize(
+                    categoryFilter?.value
+                );
+
+                const selectedStatus = statusFilter?.value || "all";
+
+                let visibleCount = 0;
+
+                rows.forEach(function (row) {
+
+                    const foodName = normalize(
+                        row.querySelector(".food-name")?.textContent
+                    );
+
+                    const brand = normalize(row.dataset.brand);
+                    const category = normalize(row.dataset.category);
+                    const status = row.dataset.status || "";
+
+                    // Điều kiện tìm kiếm theo tên món
+                    const matchesKeyword =
+                        foodName.includes(keyword);
+
+                    // Điều kiện lọc thương hiệu
+                    const matchesBrand =
+                        selectedBrand === "all" ||
+                        brand === selectedBrand;
+
+                    // Điều kiện lọc danh mục
+                    const matchesCategory =
+                        selectedCategory === "all" ||
+                        category === selectedCategory;
+
+                    // Điều kiện lọc trạng thái
+                    const matchesStatus =
+                        selectedStatus === "all" ||
+                        status === selectedStatus;
+
+                    // Kết hợp tất cả điều kiện
+                    const isVisible =
+                        matchesKeyword &&
+                        matchesBrand &&
+                        matchesCategory &&
+                        matchesStatus;
+
+                    row.style.display = isVisible ? "" : "none";
+
+                    if (isVisible) {
+                        visibleCount++;
+                    }
+                });
+
+                // Hiển thị thông báo khi không có kết quả
+                if (emptyMessage) {
+
+                    emptyMessage.textContent =
+                        totalRows === 0
+                            ? "Chưa có món ăn nào trong hệ thống."
+                            : "Không tìm thấy món ăn phù hợp.";
+
+                    emptyMessage.style.display =
+                        visibleCount === 0 ? "block" : "none";
+                }
+
+                // Cập nhật số lượng món ăn
+                if (foodCount) {
+                    foodCount.textContent =
+                        `Hiển thị ${visibleCount} / ${totalRows} món ăn`;
+                }
+            }
+
+            // Gắn sự kiện tìm kiếm
+            if (searchInput) {
+                searchInput.addEventListener(
+                    "input",
+                    applyFoodFilters
+                );
+            }
+
+            // Gắn sự kiện lọc thương hiệu
+            if (brandFilter) {
+                brandFilter.addEventListener(
+                    "change",
+                    applyFoodFilters
+                );
+            }
+
+            // Gắn sự kiện lọc danh mục
+            if (categoryFilter) {
+                categoryFilter.addEventListener(
+                    "change",
+                    applyFoodFilters
+                );
+            }
+
+            // Gắn sự kiện lọc trạng thái
+            if (statusFilter) {
+                statusFilter.addEventListener(
+                    "change",
+                    applyFoodFilters
+                );
+            }
+
+            // Khởi tạo bộ lọc
+            applyFoodFilters();
+
+        });
+    </script>
 }

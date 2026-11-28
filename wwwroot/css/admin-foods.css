@@ -1482,3 +1482,1007 @@
         font-size: 15px;
     }
 }
+
+
+.create-food-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 32px 55px;
+    color: #3b302b;
+    font-family: "Times New Roman", serif;
+}
+
+
+.create-food-hero {
+    height: 142px;
+    min-height: 142px;
+    box-sizing: border-box;
+    padding: 24px 30px;
+    background: linear-gradient( 90deg, rgba(91, 35, 29, 0.88), rgba(91, 35, 29, 0.58) ), url('/image/Logo%20Ch%E1%BB%A3%20B%E1%BA%BFn%20Th%C3%A0nh%20C%E1%BB%95%20%C4%90i%E1%BB%83n.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 16px;
+    color: #fff8ef;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+    .create-food-hero h1 {
+        margin: 10px 0 6px;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .create-food-hero p {
+        margin: 0;
+        font-size: 15px;
+        color: #fff4e9;
+    }
+
+.hero-decoration {
+    display: none;
+}
+
+
+.create-food-eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: .8;
+}
+
+.create-food-hero h1 {
+    margin: 12px 0 8px;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.create-food-hero p {
+    margin: 0;
+    font-size: 16px;
+    color: #f7e6dc;
+}
+
+.hero-decoration {
+    font-size: 76px;
+    opacity: .9;
+    margin-right: 25px;
+}
+
+.create-food-breadcrumb {
+    display: flex;
+    gap: 10px;
+    margin: 22px 2px;
+    color: #96877d;
+    font-size: 15px;
+}
+
+    .create-food-breadcrumb a {
+        color: #a34438;
+        text-decoration: none;
+    }
+
+    .create-food-breadcrumb strong {
+        color: #493a32;
+    }
+
+.create-food-card {
+    background: #fffdf9;
+    border: 1px solid #eadfd4;
+    border-radius: 17px;
+    padding: 30px 36px;
+    box-shadow: 0 8px 25px rgba(80, 47, 30, .06);
+}
+
+.create-food-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #eee4da;
+    margin-bottom: 26px;
+}
+
+    .create-food-card-heading h2 {
+        margin: 0 0 7px;
+        font-size: 25px;
+        color: #4c342b;
+    }
+
+    .create-food-card-heading p {
+        margin: 0;
+        color: #94867c;
+        font-size: 14px;
+    }
+
+.food-form-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: #f8e9df;
+    color: #a34438;
+    font-size: 22px;
+}
+
+.required {
+    color: #bd4037;
+}
+
+.create-food-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 23px 28px;
+}
+
+.food-field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+    .food-field.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .food-field > label {
+        font-size: 16px;
+        font-weight: 700;
+        color: #493a32;
+    }
+
+    .food-field input[type="text"],
+    .food-field input[type="number"],
+    .food-field select,
+    .food-field textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #dfd3c8;
+        border-radius: 9px;
+        background: #fff;
+        padding: 12px 14px;
+        font-family: "Times New Roman", serif;
+        font-size: 16px;
+        color: #42352e;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+        .food-field input:focus,
+        .food-field select:focus,
+        .food-field textarea:focus {
+            border-color: #ad5144;
+            box-shadow: 0 0 0 3px rgba(173, 81, 68, .1);
+        }
+
+    .food-field textarea {
+        resize: vertical;
+        min-height: 105px;
+    }
+
+    .food-field small {
+        color: #998c82;
+        font-size: 13px;
+    }
+
+.price-input-wrap {
+    position: relative;
+}
+
+    .price-input-wrap input {
+        padding-right: 65px !important;
+    }
+
+    .price-input-wrap > span {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #98877c;
+        font-size: 13px;
+    }
+
+.food-status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+    .food-status-toggle input {
+        position: absolute;
+        opacity: 0;
+    }
+
+.toggle-track {
+    width: 43px;
+    height: 24px;
+    border-radius: 20px;
+    background: #c9c0b9;
+    position: relative;
+    transition: .2s;
+}
+
+    .toggle-track::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        border-radius: 50%;
+        background: white;
+        transition: .2s;
+    }
+
+.food-status-toggle input:checked + .toggle-track {
+    background: #638c68;
+}
+
+    .food-status-toggle input:checked + .toggle-track::after {
+        transform: translateX(19px);
+    }
+
+.description-counter {
+    text-align: right;
+    color: #a1948a;
+    font-size: 12px;
+    margin-top: -3px;
+}
+
+.food-upload-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 18px;
+}
+
+.food-upload-box {
+    min-height: 165px;
+    border: 1.5px dashed #d6b9a8;
+    border-radius: 12px;
+    background: #fffaf5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #6b5548;
+    text-align: center;
+    padding: 15px;
+}
+
+    .food-upload-box:hover {
+        border-color: #a34438;
+        background: #fff6ef;
+    }
+
+.upload-symbol {
+    font-family: Arial, sans-serif;
+    font-size: 29px;
+    color: #a34438;
+}
+
+.food-upload-box strong {
+    font-size: 16px;
+}
+
+.food-upload-box > span:not(.upload-symbol) {
+    font-size: 13px;
+    color: #99877b;
+}
+
+.food-upload-box .upload-browse {
+    margin-top: 4px;
+    background: #f3e2d7;
+    color: #8c382f !important;
+    padding: 7px 17px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.food-preview-box {
+    min-height: 165px;
+    border: 1px solid #eadfd4;
+    border-radius: 12px;
+    background: #f8f3ed;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+    .food-preview-box img {
+        width: 100%;
+        height: 165px;
+        object-fit: cover;
+    }
+
+#foodPreviewPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #a99a8e;
+}
+
+    #foodPreviewPlaceholder span {
+        font-size: 38px;
+    }
+
+    #foodPreviewPlaceholder small {
+        font-size: 13px;
+    }
+
+.selected-file-name {
+    color: #8c786b;
+    font-size: 13px;
+}
+
+.field-error,
+.validation-summary {
+    color: #b52e2e;
+    font-size: 13px;
+}
+
+    .validation-summary ul {
+        margin-top: 0;
+    }
+
+.create-food-divider {
+    height: 1px;
+    background: #eee4da;
+    margin: 30px 0 22px;
+}
+
+.create-food-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 13px;
+}
+
+.food-cancel-button,
+.food-save-button {
+    min-width: 125px;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.food-cancel-button {
+    border: 1px solid #d9c9bd;
+    color: #725f53;
+    background: #fff;
+}
+
+    .food-cancel-button:hover {
+        background: #f7f1eb;
+    }
+
+.food-save-button {
+    border: 0;
+    color: #fffaf5;
+    background: #9e4036;
+}
+
+    .food-save-button:hover {
+        background: #7e2d27;
+    }
+
+    .food-save-button span {
+        margin-right: 5px;
+    }
+
+@media (max-width: 700px) {
+    /* =====================================================
+   CREATE FOOD PAGE
+   Banner đồng bộ kích thước với Edit Food
+===================================================== */
+
+
+    /* =====================================================
+   20. CREATE FOOD PAGE
+   Banner đồng bộ với EDIT FOOD PAGE
+===================================================== */
+
+    .create-food-page {
+        position: relative;
+        width: 100%;
+        min-height: calc(100vh - 75px);
+        padding: 0 0 35px;
+        box-sizing: border-box;
+        color: #3b302b;
+        background: #fff8f1;
+        font-family: "Times New Roman", Times, serif;
+    }
+
+        /* Cùng hình nền, chiều cao và cách hiển thị với Edit Food */
+        .create-food-page .create-food-hero {
+            width: 100%;
+            height: 255px;
+            min-height: 255px;
+            box-sizing: border-box;
+            padding: 30px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            border-radius: 0;
+            color: #a51f19;
+            background-image: url("/image/background.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+        }
+
+    .create-food-eyebrow {
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: #8d2b22;
+        opacity: 0.9;
+    }
+
+    .create-food-page .create-food-hero h1 {
+        margin: 10px 0 6px;
+        color: #a51f19;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .create-food-page .create-food-hero p {
+        margin: 0;
+        color: #493a32;
+        font-size: 16px;
+    }
+
+    .create-food-page .hero-decoration {
+        display: none;
+    }
+
+    .create-food-breadcrumb {
+        display: flex;
+        gap: 10px;
+        margin: 22px 3% 18px;
+        color: #96877d;
+        font-size: 15px;
+    }
+
+        .create-food-breadcrumb a {
+            color: #a34438;
+            text-decoration: none;
+        }
+
+        .create-food-breadcrumb strong {
+            color: #493a32;
+        }
+
+    .create-food-card {
+        width: 94%;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 30px 36px;
+        box-sizing: border-box;
+        border: 1px solid #eadfd4;
+        border-radius: 17px;
+        background: #fffdf9;
+        box-shadow: 0 8px 25px rgba(80, 47, 30, 0.06);
+    }
+
+    .create-food-card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eee4da;
+        margin-bottom: 26px;
+    }
+
+        .create-food-card-heading h2 {
+            margin: 0 0 7px;
+            font-size: 25px;
+            color: #4c342b;
+        }
+
+        .create-food-card-heading p {
+            margin: 0;
+            color: #94867c;
+            font-size: 14px;
+        }
+
+    .food-form-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        background: #f8e9df;
+        color: #a34438;
+        font-size: 22px;
+    }
+
+    .required {
+        color: #bd4037;
+    }
+
+    .create-food-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 23px 28px;
+    }
+
+    .food-field {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+        .food-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .food-field > label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #493a32;
+        }
+
+        .food-field input[type="text"],
+        .food-field input[type="number"],
+        .food-field select,
+        .food-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #dfd3c8;
+            border-radius: 9px;
+            background: #fff;
+            padding: 12px 14px;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 16px;
+            color: #42352e;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+            .food-field input:focus,
+            .food-field select:focus,
+            .food-field textarea:focus {
+                border-color: #ad5144;
+                box-shadow: 0 0 0 3px rgba(173, 81, 68, 0.1);
+            }
+
+        .food-field textarea {
+            resize: vertical;
+            min-height: 105px;
+        }
+
+        .food-field small {
+            color: #998c82;
+            font-size: 13px;
+        }
+
+    .price-input-wrap {
+        position: relative;
+    }
+
+        .price-input-wrap input {
+            padding-right: 65px !important;
+        }
+
+        .price-input-wrap > span {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #98877c;
+            font-size: 13px;
+        }
+
+    .food-status-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 44px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+        .food-status-toggle input {
+            position: absolute;
+            opacity: 0;
+        }
+
+    .toggle-track {
+        width: 43px;
+        height: 24px;
+        border-radius: 20px;
+        background: #c9c0b9;
+        position: relative;
+        transition: 0.2s;
+    }
+
+        .toggle-track::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            border-radius: 50%;
+            background: white;
+            transition: 0.2s;
+        }
+
+    .food-status-toggle input:checked + .toggle-track {
+        background: #638c68;
+    }
+
+        .food-status-toggle input:checked + .toggle-track::after {
+            transform: translateX(19px);
+        }
+
+    .description-counter {
+        text-align: right;
+        color: #a1948a;
+        font-size: 12px;
+        margin-top: -3px;
+    }
+
+    .food-upload-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 180px;
+        gap: 18px;
+    }
+
+    .food-upload-box {
+        min-height: 165px;
+        border: 1.5px dashed #d6b9a8;
+        border-radius: 12px;
+        background: #fffaf5;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        color: #6b5548;
+        text-align: center;
+        padding: 15px;
+    }
+
+        .food-upload-box:hover {
+            border-color: #a34438;
+            background: #fff6ef;
+        }
+
+    .upload-symbol {
+        font-family: Arial, sans-serif;
+        font-size: 29px;
+        color: #a34438;
+    }
+
+    .food-upload-box strong {
+        font-size: 16px;
+    }
+
+    .food-upload-box > span:not(.upload-symbol) {
+        font-size: 13px;
+        color: #99877b;
+    }
+
+    .food-upload-box .upload-browse {
+        margin-top: 4px;
+        background: #f3e2d7;
+        color: #8c382f !important;
+        padding: 7px 17px;
+        border-radius: 20px;
+        font-weight: 700;
+    }
+
+    .food-preview-box {
+        min-height: 165px;
+        border: 1px solid #eadfd4;
+        border-radius: 12px;
+        background: #f8f3ed;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+    }
+
+        .food-preview-box img {
+            width: 100%;
+            height: 165px;
+            object-fit: cover;
+        }
+
+    #foodPreviewPlaceholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: #a99a8e;
+    }
+
+        #foodPreviewPlaceholder span {
+            font-size: 38px;
+        }
+
+        #foodPreviewPlaceholder small {
+            font-size: 13px;
+        }
+
+    .selected-file-name {
+        color: #8c786b;
+        font-size: 13px;
+    }
+
+    .field-error,
+    .validation-summary {
+        color: #b52e2e;
+        font-size: 13px;
+    }
+
+        .validation-summary ul {
+            margin-top: 0;
+        }
+
+    .create-food-divider {
+        height: 1px;
+        background: #eee4da;
+        margin: 30px 0 22px;
+    }
+
+    .create-food-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 13px;
+    }
+
+    .food-cancel-button,
+    .food-save-button {
+        min-width: 125px;
+        padding: 12px 22px;
+        border-radius: 9px;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 16px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .food-cancel-button {
+        border: 1px solid #d9c9bd;
+        color: #725f53;
+        background: #fff;
+    }
+
+        .food-cancel-button:hover {
+            background: #f7f1eb;
+        }
+
+    .food-save-button {
+        border: 0;
+        color: #fffaf5;
+        background: #9e4036;
+    }
+
+        .food-save-button:hover {
+            background: #7e2d27;
+        }
+
+        .food-save-button span {
+            margin-right: 5px;
+        }
+
+    @media (max-width: 700px) {
+        .create-food-page {
+            padding: 0 0 35px;
+        }
+
+            .create-food-page .create-food-hero {
+                height: 190px;
+                min-height: 190px;
+                padding: 20px;
+                background-position: center center;
+            }
+
+                .create-food-page .create-food-hero h1 {
+                    font-size: 30px;
+                }
+
+                .create-food-page .create-food-hero p {
+                    font-size: 15px;
+                }
+
+        .create-food-breadcrumb {
+            margin: 18px 3%;
+        }
+
+        .create-food-card {
+            width: 95%;
+            padding: 22px 18px;
+        }
+
+        .create-food-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .food-field.full-width {
+            grid-column: auto;
+        }
+
+        .food-upload-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .food-preview-box {
+            min-height: 150px;
+        }
+
+        .create-food-actions {
+            flex-direction: column-reverse;
+        }
+
+        .food-cancel-button,
+        .food-save-button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+
+    /* =====================================================
+   FINAL OVERRIDE - CREATE FOOD BANNER
+   Đồng bộ background với trang Edit Food
+   Sử dụng cùng ảnh /image/background.png
+===================================================== */
+
+    .create-food-page {
+        position: relative;
+        width: 100%;
+        max-width: none;
+        min-height: calc(100vh - 75px);
+        margin: 0;
+        padding: 0 0 35px;
+        box-sizing: border-box;
+        overflow: hidden;
+        background: #fff8f1;
+        color: #3b302b;
+        font-family: "Times New Roman", Times, serif;
+    }
+
+        /* Ảnh nền full width, đúng chiều cao banner Edit Food */
+        .create-food-page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            display: block;
+            width: 100%;
+            height: 255px;
+            background-image: url("/image/background.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+        }
+
+        /* Bỏ khung màu đỏ, chỉ giữ nội dung tiêu đề trên ảnh nền */
+        .create-food-page .create-food-hero {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 255px;
+            min-height: 255px;
+            margin: 0;
+            padding: 30px 5%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            border: 0;
+            border-radius: 0;
+            background: transparent !important;
+            color: #a51f19;
+        }
+
+        .create-food-page .create-food-eyebrow {
+            color: #7a211b;
+        }
+
+        .create-food-page .create-food-hero h1 {
+            margin: 10px 0 6px;
+            color: #a51f19;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .create-food-page .create-food-hero p {
+            margin: 0;
+            color: #493a32;
+            font-size: 16px;
+        }
+
+        .create-food-page .hero-decoration {
+            display: none;
+        }
+
+        /* Breadcrumb và form nằm trên nền trang, không bị ảnh hưởng */
+        .create-food-page .create-food-breadcrumb {
+            position: relative;
+            z-index: 1;
+            width: 94%;
+            margin: 18px auto 20px;
+        }
+
+        .create-food-page .create-food-card {
+            position: relative;
+            z-index: 1;
+            width: 94%;
+            max-width: 1600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+    @media (max-width: 768px) {
+        .create-food-page::before {
+            height: 190px;
+        }
+
+        .create-food-page .create-food-hero {
+            height: 190px;
+            min-height: 190px;
+            padding: 20px 5%;
+        }
+
+            .create-food-page .create-food-hero h1 {
+                font-size: 26px;
+            }
+
+            .create-food-page .create-food-hero p {
+                font-size: 14px;
+            }
+
+        .create-food-page .create-food-breadcrumb,
+        .create-food-page .create-food-card {
+            width: 95%;
+        }
+    }
+
+    /* =====================================================
+   FINAL OVERRIDE - CREATE FOOD BACKGROUND BLANK
+   Không hiển thị bất kỳ nội dung nào trên vùng ảnh nền
+===================================================== */
+
+    .create-food-page .create-food-hero > * {
+        display: none !important;
+    }
+
+    .create-food-page .create-food-hero {
+        background: transparent !important;
+    }
+}
+
+/* VIEW FOOD - IMAGE FROM DATABASE */
+img.food-main-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+    border-radius: 17px;
+}

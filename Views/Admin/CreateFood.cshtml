@@ -1,0 +1,251 @@
+
+@using SaigonBite.Models
+
+@{
+    ViewData["Title"] = "Thêm món ăn";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-foods.css"
+          asp-append-version="true" />
+}
+
+<div class="create-food-page">
+
+    
+
+    
+
+    <section class="create-food-card">
+
+        <div class="create-food-card-heading">
+            <div>
+                <h2>Điền thông tin món ăn</h2>
+                <p>Các trường có dấu <span class="required">*</span> là bắt buộc.</p>
+            </div>
+            <span class="food-form-icon">✦</span>
+        </div>
+
+        <form asp-controller="Admin"
+              asp-action="CreateFood"
+              method="post"
+              enctype="multipart/form-data"
+              id="createFoodForm">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+            <div class="create-food-grid">
+
+                <div class="food-field full-width">
+                    <label for="FoodName">Tên món ăn <span class="required">*</span></label>
+                    <input type="text"
+                           id="FoodName"
+                           name="FoodName"
+                           value="@ViewData["FoodName"]"
+                           maxlength="150"
+                           placeholder="Ví dụ: Cơm tấm Long Xuyên"
+                           required />
+                    <span class="field-error">@Html.ValidationMessage("FoodName")</span>
+                </div>
+
+                <div class="food-field">
+                    <label for="BrandId">Thương hiệu <span class="required">*</span></label>
+                    <select id="BrandId" name="BrandId" required>
+                        <option value="">-- Chọn thương hiệu --</option>
+                        @if (ViewBag.Brands != null)
+                        {
+                            foreach (Brand brand in ViewBag.Brands)
+                            {
+                                <option value="@brand.BrandId"
+                                        selected="@(ViewData["SelectedBrandId"]?.ToString() == brand.BrandId.ToString())">
+                                    @brand.BrandName
+                                </option>
+                            }
+                        }
+                    </select>
+                    <span class="field-error">@Html.ValidationMessage("BrandId")</span>
+                    <small>Danh sách được lấy từ database Brands.</small>
+                </div>
+
+                <div class="food-field">
+                    <label for="Category">Danh mục <span class="required">*</span></label>
+                    <select id="Category" name="Category" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        @{
+                            var categories = new[] { "Món chính", "Món nước", "Ăn vặt", "Đồ uống" };
+                            var selectedCategory = ViewData["SelectedCategory"]?.ToString();
+                        }
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category"
+                                    selected="@(selectedCategory == category)">
+                                @category
+                            </option>
+                        }
+                    </select>
+                    <span class="field-error">@Html.ValidationMessage("Category")</span>
+                </div>
+
+                <div class="food-field">
+                    <label for="Price">Giá bán (VNĐ) <span class="required">*</span></label>
+                    <div class="price-input-wrap">
+                        <input type="number"
+                               id="Price"
+                               name="Price"
+                               value="@ViewData["Price"]"
+                               min="1000"
+                               max="999999999"
+                               step="1000"
+                               placeholder="Ví dụ: 65000"
+                               required />
+                        <span>VNĐ</span>
+                    </div>
+                    <span class="field-error">@Html.ValidationMessage("Price")</span>
+                </div>
+
+                <div class="food-field">
+                    <label>Trạng thái kinh doanh</label>
+                    <label class="food-status-toggle">
+                        <input type="checkbox"
+                               id="IsAvailable"
+                               name="IsAvailable"
+                               value="true"
+                               checked="@(ViewData["IsAvailable"] == null || ViewData["IsAvailable"]?.ToString() == "true")" />
+                        <span class="toggle-track"></span>
+                        <span id="statusLabel">Còn bán</span>
+                    </label>
+                    <small>Bỏ chọn nếu món ăn hiện không được kinh doanh.</small>
+                </div>
+
+                <div class="food-field full-width">
+                    <label for="Description">Mô tả món ăn</label>
+                    <textarea id="Description"
+                              name="Description"
+                              rows="4"
+                              maxlength="1000"
+                              placeholder="Mô tả thành phần, hương vị hoặc thông tin nổi bật của món ăn...">@ViewData["Description"]</textarea>
+                    <div class="description-counter">
+                        <span id="descriptionCount">0</span>/1000 ký tự
+                    </div>
+                    <span class="field-error">@Html.ValidationMessage("Description")</span>
+                </div>
+
+                <div class="food-field full-width">
+                    <label for="imageFile">Hình ảnh món ăn</label>
+
+                    <div class="food-upload-layout">
+                        <label for="imageFile" class="food-upload-box">
+                            <span class="upload-symbol">⇧</span>
+                            <strong>Chọn hình ảnh món ăn</strong>
+                            <span>JPG, JPEG, PNG hoặc WEBP. Tối đa 5MB.</span>
+                            <span class="upload-browse">Chọn tệp</span>
+                        </label>
+
+                        <div class="food-preview-box">
+                            <img id="foodImagePreview"
+                                 src=""
+                                 alt="Xem trước hình ảnh"
+                                 hidden />
+                            <div id="foodPreviewPlaceholder">
+                                <span>🍽️</span>
+                                <small>Ảnh xem trước</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="file"
+                           id="imageFile"
+                           name="imageFile"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           hidden />
+
+                    <div id="selectedFileName" class="selected-file-name">
+                        Chưa chọn hình ảnh
+                    </div>
+                    <span class="field-error" id="imageError"></span>
+                </div>
+
+            </div>
+
+            <div class="create-food-divider"></div>
+
+            <div class="create-food-actions">
+                <a asp-controller="Admin"
+                   asp-action="Foods"
+                   class="food-cancel-button">
+                    Hủy
+                </a>
+
+                <button type="submit" class="food-save-button">
+                    <span>＋</span> Lưu món ăn
+                </button>
+            </div>
+
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const imageInput = document.getElementById("imageFile");
+        const imagePreview = document.getElementById("foodImagePreview");
+        const previewPlaceholder = document.getElementById("foodPreviewPlaceholder");
+        const fileName = document.getElementById("selectedFileName");
+        const imageError = document.getElementById("imageError");
+
+        imageInput.addEventListener("change", function () {
+            imageError.textContent = "";
+
+            const file = this.files[0];
+
+            if (!file) {
+                imagePreview.hidden = true;
+                previewPlaceholder.hidden = false;
+                fileName.textContent = "Chưa chọn hình ảnh";
+                return;
+            }
+
+            const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+            if (!allowedTypes.includes(file.type)) {
+                this.value = "";
+                imageError.textContent = "Vui lòng chọn ảnh JPG, PNG hoặc WEBP.";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                this.value = "";
+                imageError.textContent = "Dung lượng ảnh không được vượt quá 5MB.";
+                return;
+            }
+
+            imagePreview.src = URL.createObjectURL(file);
+            imagePreview.hidden = false;
+            previewPlaceholder.hidden = true;
+            fileName.textContent = file.name;
+        });
+
+        const description = document.getElementById("Description");
+        const descriptionCount = document.getElementById("descriptionCount");
+
+        function updateDescriptionCount() {
+            descriptionCount.textContent = description.value.length;
+        }
+
+        description.addEventListener("input", updateDescriptionCount);
+        updateDescriptionCount();
+
+        const statusCheckbox = document.getElementById("IsAvailable");
+        const statusLabel = document.getElementById("statusLabel");
+
+        statusCheckbox.addEventListener("change", function () {
+            statusLabel.textContent = this.checked ? "Còn bán" : "Hết bán";
+        });
+    </script>
+}

@@ -48,7 +48,7 @@ function filterBrands() {
     if (!table) return;
 
     const keyword = brandSearch
-        ? brandSearch.value.toLowerCase().trim()
+        ? brandSearch.value.toLocaleLowerCase("vi").trim()
         : "";
 
     const selectedStatus = statusFilter
@@ -59,20 +59,24 @@ function filterBrands() {
         ? hubFilter.value
         : "all";
 
-    const rows = table.querySelectorAll("tbody tr");
+    const rows = table.querySelectorAll(
+        "tbody tr[data-brand-id]"
+    );
 
     let visibleCount = 0;
 
     rows.forEach(row => {
-        const rowText = row.innerText.toLowerCase();
-        const rowStatus = row.dataset.status || "active";
 
-        const rowHubs = (row.dataset.hubs || "")
-            .split(",")
-            .map(hub => hub.trim())
-            .filter(Boolean);
+        const rowText = row.innerText
+            .toLocaleLowerCase("vi");
 
-        const matchesKeyword = rowText.includes(keyword);
+        const rowStatus = row.dataset.status || "";
+
+        // Đọc đúng data-hub-count trong Brands.cshtml
+        const rowHubCount = row.dataset.hubCount || "";
+
+        const matchesKeyword =
+            rowText.includes(keyword);
 
         const matchesStatus =
             selectedStatus === "all" ||
@@ -80,7 +84,7 @@ function filterBrands() {
 
         const matchesHub =
             selectedHub === "all" ||
-            rowHubs.includes(selectedHub);
+            Number(rowHubCount) === Number(selectedHub);
 
         const isVisible =
             matchesKeyword &&
@@ -357,32 +361,52 @@ function editBrand(button) {
 // 8. DELETE BRAND - CUSTOM CONFIRMATION POPUP
 // =====================================================
 
-// Mở popup xác nhận xóa
+// Mở popup thao tác thương hiệu
 function deleteBrand(button) {
     const row = button.closest("tr");
 
-    if (!row) return;
+    if (!row) {
+        console.error("Không tìm thấy dòng thương hiệu.");
+        return;
+    }
 
     selectedDeleteRow = row;
 
-    const brandName = row
-        .querySelector(".brand-name-cell")
-        .textContent.trim();
+    const brandNameElement =
+        row.querySelector(".brand-name-cell");
+
+    const brandName = brandNameElement
+        ? brandNameElement.textContent.trim()
+        : "thương hiệu";
 
     const dishCount = row.dataset.dishCount || "0";
     const orderCount = row.dataset.orderCount || "0";
 
+    // Trạng thái được lấy trực tiếp từ dữ liệu database
+    const isPaused = row.dataset.status === "paused";
     const isDeleted = row.dataset.isDeleted === "true";
 
     const modal = getElement("deleteBrandModal");
 
     if (!modal) {
-        alert("Không tìm thấy popup xác nhận xóa thương hiệu.");
+        alert("Không tìm thấy popup xác nhận thương hiệu.");
         return;
     }
 
-    const title = getElement("deleteWarningTitle");
-    const details = getElement("deleteWarningDetails");
+    // Không cho thao tác lại với thương hiệu đã xóa mềm
+    if (isDeleted) {
+        alert("Thương hiệu này đã được xóa.");
+        return;
+    }
+
+    const heading =
+        getElement("deleteModalHeading");
+
+    const title =
+        getElement("deleteWarningTitle");
+
+    const details =
+        getElement("deleteWarningDetails");
 
     const restoreButton =
         document.querySelector(".delete-restore-button");
@@ -393,21 +417,29 @@ function deleteBrand(button) {
     const description =
         document.querySelector(".delete-description");
 
-    // TRƯỜNG HỢP THƯƠNG HIỆU ĐÃ NGỪNG HOẠT ĐỘNG
-    if (isDeleted) {
+    // ---------------------------------------------
+    // TRƯỜNG HỢP 1: THƯƠNG HIỆU ĐANG TẠM DỪNG
+    // ---------------------------------------------
+    if (isPaused) {
+
+        if (heading) {
+            heading.textContent =
+                "Quản lý thương hiệu đang tạm dừng";
+        }
+
         if (title) {
             title.textContent =
-                `Thương hiệu '${brandName}' đã ngừng hoạt động.`;
+                `Thương hiệu '${brandName}' đang tạm dừng.`;
         }
 
         if (details) {
             details.textContent =
-                `(${dishCount} món ăn, ${orderCount} đơn đang được lưu trữ).`;
+                `(${dishCount} món ăn, ${orderCount} đơn hàng liên quan).`;
         }
 
         if (description) {
             description.textContent =
-                "Bạn có thể khôi phục thương hiệu này để tiếp tục hoạt động. Dữ liệu món ăn, đơn hàng và lịch sử liên quan vẫn được giữ nguyên.";
+                "Bạn có thể khôi phục thương hiệu để tiếp tục kinh doanh hoặc xác nhận xóa để đưa thương hiệu ra khỏi danh sách quản lý. Dữ liệu liên quan vẫn được giữ trong hệ thống.";
         }
 
         if (restoreButton) {
@@ -417,36 +449,48 @@ function deleteBrand(button) {
         }
 
         if (confirmButton) {
-            confirmButton.style.display = "none";
+            confirmButton.disabled = false;
+            confirmButton.style.display = "flex";
+            confirmButton.innerHTML =
+                'Xác nhận xóa <span>→</span>';
         }
     }
 
-    // TRƯỜNG HỢP THƯƠNG HIỆU CHƯA BỊ NGỪNG HOẠT ĐỘNG
+    // ---------------------------------------------
+    // TRƯỜNG HỢP 2: THƯƠNG HIỆU ĐANG HOẠT ĐỘNG
+    // ---------------------------------------------
     else {
+
+        if (heading) {
+            heading.textContent =
+                "Xác nhận tạm dừng thương hiệu";
+        }
+
         if (title) {
             title.textContent =
-                `Thương hiệu '${brandName}' đã có dữ liệu liên quan`;
+                `Bạn muốn tạm dừng '${brandName}'?`;
         }
 
         if (details) {
             details.textContent =
-                `(${dishCount} món ăn, ${orderCount} đơn).`;
+                `(${dishCount} món ăn, ${orderCount} đơn hàng liên quan).`;
         }
 
         if (description) {
             description.textContent =
-                "Hệ thống sẽ không xóa vĩnh viễn thương hiệu này, mà sẽ ngừng kích hoạt thương hiệu để vẫn giữ lại toàn bộ dữ liệu đơn hàng và lịch sử có liên quan.";
+                "Thương hiệu sẽ chuyển sang trạng thái Tạm dừng và không tiếp tục kinh doanh. Dữ liệu món ăn, đơn hàng và lịch sử liên quan vẫn được giữ lại. Bạn có thể khôi phục thương hiệu sau đó.";
         }
 
         if (restoreButton) {
             restoreButton.disabled = true;
-            restoreButton.style.display = "flex";
-            restoreButton.title =
-                "Thương hiệu chưa bị ngừng hoạt động nên chưa cần khôi phục";
+            restoreButton.style.display = "none";
         }
 
         if (confirmButton) {
+            confirmButton.disabled = false;
             confirmButton.style.display = "flex";
+            confirmButton.innerHTML =
+                'Xác nhận tạm dừng <span>→</span>';
         }
     }
 
@@ -454,7 +498,10 @@ function deleteBrand(button) {
 }
 
 
-// Đóng popup
+// =====================================================
+// 9. CLOSE DELETE MODAL
+// =====================================================
+
 function closeDeleteModal() {
     const modal = getElement("deleteBrandModal");
 
@@ -467,70 +514,121 @@ function closeDeleteModal() {
 
 
 // =====================================================
-// 9. CONFIRM SOFT DELETE
+// 10. CONFIRM PAUSE OR DELETE BRAND
 // =====================================================
 
 function confirmDeleteBrand() {
-    if (!selectedDeleteRow) return;
 
-    const row = selectedDeleteRow;
-
-    if (row.dataset.isDeleted === "true") {
+    if (!selectedDeleteRow) {
+        alert("Vui lòng chọn thương hiệu cần thao tác.");
         return;
     }
 
-    row.dataset.previousStatus =
-        row.dataset.status || "active";
+    const row = selectedDeleteRow;
 
-    row.dataset.isDeleted = "true";
+    const brandId = row.dataset.brandId;
 
-    row.dataset.status = "paused";
-
-    const statusElement = row.querySelector(".brand-status");
-
-    if (statusElement) {
-        statusElement.textContent = "Ngừng hoạt động";
-        statusElement.className = "brand-status status-paused";
+    if (!brandId) {
+        alert("Không tìm thấy mã thương hiệu.");
+        return;
     }
 
-    closeDeleteModal();
+    const isPaused = row.dataset.status === "paused";
+    const isDeleted = row.dataset.isDeleted === "true";
 
-    filterBrands();
+    if (isDeleted) {
+        alert("Thương hiệu này đã được xóa.");
+        return;
+    }
 
-    alert(
-        "Đã ngừng kích hoạt thương hiệu.\n" +
-        "Dữ liệu món ăn, đơn hàng và lịch sử vẫn được giữ lại."
-    );
+    // ---------------------------------------------
+    // THƯƠNG HIỆU ĐANG HOẠT ĐỘNG
+    // => GỬI YÊU CẦU TẠM DỪNG
+    // ---------------------------------------------
+    if (!isPaused) {
+
+        const form =
+            getElement("pauseBrandForm");
+
+        const idInput =
+            getElement("pauseBrandId");
+
+        if (!form || !idInput) {
+            alert("Không tìm thấy form tạm dừng thương hiệu.");
+            return;
+        }
+
+        idInput.value = brandId;
+
+        form.submit();
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // THƯƠNG HIỆU ĐANG TẠM DỪNG
+    // => GỬI YÊU CẦU XÓA MỀM
+    // ---------------------------------------------
+
+    const form =
+        getElement("deleteBrandForm");
+
+    const idInput =
+        getElement("deleteBrandId");
+
+    if (!form || !idInput) {
+        alert("Không tìm thấy form xóa thương hiệu.");
+        return;
+    }
+
+    idInput.value = brandId;
+
+    form.submit();
 }
 
 
 // =====================================================
-// 10. RESTORE BRAND
+// 11. RESTORE BRAND
 // =====================================================
 
 function restoreBrand() {
-    if (!selectedDeleteRow) return;
 
-    const row = selectedDeleteRow;
-
-    if (row.dataset.isDeleted !== "true") {
+    if (!selectedDeleteRow) {
+        alert("Vui lòng chọn thương hiệu cần khôi phục.");
         return;
     }
 
-    const previousStatus =
-        row.dataset.previousStatus || "active";
+    const row = selectedDeleteRow;
 
-    row.dataset.isDeleted = "false";
+    const brandId = row.dataset.brandId;
 
-    updateStatus(row, previousStatus);
+    if (!brandId) {
+        alert("Không tìm thấy mã thương hiệu.");
+        return;
+    }
 
-    closeDeleteModal();
+    const isPaused = row.dataset.status === "paused";
+    const isDeleted = row.dataset.isDeleted === "true";
 
-    filterBrands();
+    if (!isPaused || isDeleted) {
+        alert("Chỉ có thể khôi phục thương hiệu đang tạm dừng.");
+        return;
+    }
 
-    alert(
-        "Đã khôi phục thương hiệu thành công."
-    );
+    const form =
+        getElement("restoreBrandForm");
+
+    const idInput =
+        getElement("restoreBrandId");
+
+    if (!form || !idInput) {
+        alert("Không tìm thấy form khôi phục thương hiệu.");
+        return;
+    }
+
+    idInput.value = brandId;
+
+    form.submit();
 }
 
 

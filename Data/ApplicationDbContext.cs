@@ -32,6 +32,11 @@ namespace SaigonBite.Data
         public DbSet<VerificationCode> VerificationCodes { get; set; }
 
         public DbSet<PasswordReset> PasswordResets { get; set; }
+        //uca
+        
+        public DbSet<Brand> Brands { get; set; }
+
+        public DbSet<Food> Foods { get; set; }
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -318,6 +323,55 @@ namespace SaigonBite.Data
                     "CK_PasswordResets_FailedAttempts",
                     "[FailedAttempts] >= 0"
                 ));
+            });
+            // ==========================================
+            // UC-A: BRAND & FOOD MANAGEMENT
+            // ==========================================
+
+            modelBuilder.Entity<Brand>(entity =>
+            {
+                entity.ToTable("Brands");
+
+                entity.HasKey(x => x.BrandId);
+
+                entity.Property(x => x.BrandName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.Description)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.Logo)
+                    .HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<Food>(entity =>
+            {
+                entity.ToTable("Foods");
+
+                entity.HasKey(x => x.FoodId);
+
+                entity.Property(x => x.FoodName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.Category)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(x => x.Price)
+                    .HasPrecision(18, 2);
+
+                entity.Property(x => x.Description)
+                    .HasMaxLength(1000);
+
+                entity.Property(x => x.ImageUrl)
+                    .HasMaxLength(255);
+
+                entity.HasOne(x => x.Brand)
+                    .WithMany(x => x.Foods)
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

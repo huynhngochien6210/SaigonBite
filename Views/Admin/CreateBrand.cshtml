@@ -1,4 +1,6 @@
 
+@model SaigonBite.Models.Brand
+
 @{
     ViewData["Title"] = "Thêm thương hiệu";
 }
@@ -7,340 +9,295 @@
     <link rel="stylesheet"
           href="~/css/admin-brands.css"
           asp-append-version="true" />
+
+    <style>
+        .create-brand-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        .create-brand-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        }
+
+        .create-brand-heading {
+            margin-bottom: 25px;
+        }
+
+        .create-brand-heading h1 {
+            margin-bottom: 8px;
+        }
+
+        .create-brand-form .form-group {
+            margin-bottom: 22px;
+        }
+
+        .create-brand-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .create-brand-form input[type="text"],
+        .create-brand-form input[type="number"],
+        .create-brand-form textarea,
+        .create-brand-form select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        .create-brand-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .brand-logo-preview {
+            display: none;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-top: 15px;
+        }
+
+        .brand-logo-preview.show {
+            display: block;
+        }
+
+        .brand-form-error {
+            display: block;
+            color: #c0392b;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .brand-form-summary {
+            color: #c0392b;
+            margin-bottom: 15px;
+        }
+
+        .brand-status-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .brand-form-actions a,
+        .brand-form-actions button {
+            padding: 12px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .brand-cancel-button {
+            border: 1px solid #ccc;
+            background: white;
+            color: #333;
+        }
+
+        .brand-save-button {
+            border: none;
+            background: #a83232;
+            color: white;
+        }
+    </style>
 }
 
 <div class="create-brand-page">
 
-    <!-- BACKGROUND IMAGE -->
-    <section class="create-brand-banner">
-        <!-- Không đặt heading hoặc category tabs tại đây -->
-    </section>
+    <div class="create-brand-heading">
+        <h1>Thêm thương hiệu mới</h1>
+        <p>Nhập thông tin để tạo thương hiệu mới trong hệ thống SaigonBite.</p>
+    </div>
 
+    <div class="create-brand-card">
 
-    <!-- BRAND FORM -->
-    <section class="create-brand-card">
+        <form asp-controller="Admin"
+              asp-action="CreateBrand"
+              method="post"
+              enctype="multipart/form-data"
+              class="create-brand-form">
 
-        <form id="createBrandForm"
-              enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="brand-form-summary"></div>
 
             <!-- BRAND NAME -->
-            <div class="create-form-row">
-
-                <label for="brandName">
+            <div class="form-group">
+                <label asp-for="BrandName">
                     Tên thương hiệu <span>*</span>
                 </label>
 
-                <div class="form-field">
+                <input asp-for="BrandName"
+                       type="text"
+                       placeholder="Ví dụ: Bếp Việt" />
 
-                    <input type="text"
-                           id="brandName"
-                           name="BrandName"
-                           placeholder="Nhập tên thương hiệu (ví dụ: Cơm tấm Sài Gòn)"
-                           maxlength="100"
-                           required />
-
-                </div>
-
+                <span asp-validation-for="BrandName"
+                      class="brand-form-error"></span>
             </div>
-
 
             <!-- DESCRIPTION -->
-            <div class="create-form-row">
-
-                <label for="brandDescription">
-                    Mô tả ngắn
+            <div class="form-group">
+                <label asp-for="Description">
+                    Mô tả thương hiệu
                 </label>
 
-                <div class="form-field">
+                <textarea asp-for="Description"
+                          maxlength="500"
+                          placeholder="Nhập mô tả ngắn về thương hiệu..."></textarea>
 
-                    <textarea id="brandDescription"
-                              name="Description"
-                              maxlength="200"
-                              rows="3"
-                              placeholder="Nhập mô tả ngắn về thương hiệu (tối đa 200 ký tự)"></textarea>
-
-                    <div class="character-count">
-                        <span id="descriptionCount">0</span>/200 ký tự
-                    </div>
-
-                </div>
-
+                <span asp-validation-for="Description"
+                      class="brand-form-error"></span>
             </div>
 
-
-            <!-- BRAND LOGO -->
-            <div class="create-form-row">
-
-                <label for="brandLogo">
-                    Hình ảnh / Logo <span>*</span>
+            <!-- LOGO -->
+            <div class="form-group">
+                <label for="logoFile">
+                    Logo thương hiệu <span>*</span>
                 </label>
 
-                <div class="form-field">
+                <input type="file"
+                       id="logoFile"
+                       name="logoFile"
+                       accept=".jpg,.jpeg,.png"
+                       required />
 
-                    <label for="brandLogo"
-                           class="upload-box">
+                <span asp-validation-for="Logo"
+                      class="brand-form-error"></span>
 
-                        <div class="upload-icon">
-                            <span>▧</span>
-                        </div>
+                <small>
+                    Chấp nhận JPG, JPEG, PNG. Dung lượng tối đa 5MB.
+                </small>
 
-                        <div class="upload-text">
-
-                            <strong>
-                                Tải lên hình ảnh hoặc logo thương hiệu
-                            </strong>
-
-                            <p>
-                                Định dạng: JPG, PNG. Dung lượng tối đa: 5MB.
-                            </p>
-
-                        </div>
-
-                        <img id="logoPreview"
-                             class="logo-preview"
-                             alt="Logo xem trước" />
-
-                    </label>
-
-                    <input type="file"
-                           id="brandLogo"
-                           name="LogoFile"
-                           accept=".jpg,.jpeg,.png"
-                           hidden
-                           required />
-
-                    <span class="file-error"
-                          id="fileError"></span>
-
-                </div>
-
+                <img id="logoPreview"
+                     class="brand-logo-preview"
+                     alt="Xem trước logo thương hiệu" />
             </div>
 
+            <!-- HUB COUNT -->
+            <div class="form-group">
+                <label asp-for="HubCount">
+                    Số Hub liên kết
+                </label>
+
+                <select asp-for="HubCount">
+                    <option value="0">0 Hub</option>
+                    <option value="3">3 Hub</option>
+                    <option value="4">4 Hub</option>
+                    <option value="6">6 Hub</option>
+                    <option value="8">8 Hub</option>
+                </select>
+
+                <span asp-validation-for="HubCount"
+                      class="brand-form-error"></span>
+
+                <small>
+                    Đây là số lượng Hub hiển thị. Danh sách Hub cụ thể
+                    chưa được lưu thành quan hệ trong database.
+                </small>
+            </div>
 
             <!-- STATUS -->
-            <div class="create-form-row">
+            <div class="form-group">
+                <label>Trạng thái thương hiệu</label>
 
-                <label for="brandStatus">
-                    Trạng thái <span>*</span>
-                </label>
+                <div class="brand-status-control">
+                    <input asp-for="IsActive"
+                           type="checkbox" />
 
-                <div class="form-field">
-
-                    <label class="status-toggle">
-
-                        <input type="checkbox"
-                               id="brandStatus"
-                               name="IsActive"
-                               checked />
-
-                        <span class="toggle-slider"></span>
-
-                        <span class="toggle-status-text"
-                              id="statusText">
-                            Đang hoạt động
-                        </span>
-
+                    <label asp-for="IsActive" style="margin: 0;">
+                        Hoạt động
                     </label>
-
                 </div>
-
             </div>
 
+            <!-- ACTIONS -->
+            <div class="brand-form-actions">
 
-            <div class="form-divider"></div>
-
-
-            <!-- HUB SELECTION -->
-            <div class="create-form-row hub-create-row">
-
-                <label>
-                    Hub liên kết
-                </label>
-
-                <div class="form-field">
-
-                    <button type="button"
-                            class="choose-hub-button"
-                            onclick="openHubModal()">
-
-                        <span>＋</span>
-                        Chọn hub liên kết
-
-                    </button>
-
-                    <div class="selected-hubs"
-                         id="selectedHubs">
-
-                        <span class="no-hub-text">
-                            Chưa chọn Hub nào
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-divider bottom-divider"></div>
-
-
-            <!-- FORM ACTIONS -->
-            <div class="create-form-actions">
-
-                <a href="/Admin/Brands"
-                   class="form-cancel-button">
+                <a asp-controller="Admin"
+                   asp-action="Brands"
+                   class="brand-cancel-button">
                     Hủy
                 </a>
 
                 <button type="submit"
-                        class="form-save-button">
-                    Lưu
+                        class="brand-save-button">
+                    Lưu thương hiệu
                 </button>
 
             </div>
 
         </form>
 
-    </section>
-
-</div>
-
-
-<!-- HUB SELECTION MODAL -->
-<div class="hub-modal-overlay" id="hubModal">
-
-    <div class="hub-modal">
-
-        <!-- HEADER -->
-        <div class="hub-modal-header">
-
-            <h2>Chọn hub liên kết</h2>
-
-            <button type="button"
-                    class="hub-modal-close"
-                    onclick="closeHubModal()">
-                ×
-            </button>
-
-        </div>
-
-
-        <!-- HUB LIST -->
-        <div class="hub-list">
-
-            <!-- HUB 1 -->
-            <label class="hub-option">
-
-                <input type="checkbox"
-                       value="H1"
-                       data-name="Hub Quận 1"
-                       checked />
-
-                <span class="hub-checkbox"></span>
-
-                <span class="hub-location-icon">♧</span>
-
-                <span class="hub-information">
-                    <strong>Hub Quận 1</strong>
-                    <small>
-                        19 Nguyễn Thái Bình, Quận 1, TP. Hồ Chí Minh
-                    </small>
-                </span>
-
-            </label>
-
-
-            <!-- HUB 2 -->
-            <label class="hub-option">
-
-                <input type="checkbox"
-                       value="H2"
-                       data-name="Hub Quận 2" />
-
-                <span class="hub-checkbox"></span>
-
-                <span class="hub-location-icon">♧</span>
-
-                <span class="hub-information">
-                    <strong>Hub Quận 2</strong>
-                    <small>
-                        215 Trần Não, TP. Thủ Đức, TP. Hồ Chí Minh
-                    </small>
-                </span>
-
-            </label>
-
-
-            <!-- HUB 3 -->
-            <label class="hub-option">
-
-                <input type="checkbox"
-                       value="H3"
-                       data-name="Hub Quận 3"
-                       checked />
-
-                <span class="hub-checkbox"></span>
-
-                <span class="hub-location-icon">♧</span>
-
-                <span class="hub-information">
-                    <strong>Hub Quận 3</strong>
-                    <small>
-                        182 Võ Văn Tần, Quận 3, TP. Hồ Chí Minh
-                    </small>
-                </span>
-
-            </label>
-
-
-            <!-- HUB 10 -->
-            <label class="hub-option">
-
-                <input type="checkbox"
-                       value="H10"
-                       data-name="Hub Quận 10" />
-
-                <span class="hub-checkbox"></span>
-
-                <span class="hub-location-icon">♧</span>
-
-                <span class="hub-information">
-                    <strong>Hub Quận 10</strong>
-                    <small>
-                        455 Sư Vạn Hạnh, Quận 10, TP. Hồ Chí Minh
-                    </small>
-                </span>
-
-            </label>
-
-        </div>
-
-
-        <!-- MODAL ACTIONS -->
-        <div class="hub-modal-actions">
-
-            <button type="button"
-                    class="hub-close-button"
-                    onclick="closeHubModal()">
-                Đóng
-            </button>
-
-            <button type="button"
-                    class="hub-save-button"
-                    onclick="saveSelectedHubs()">
-                Lưu
-            </button>
-
-        </div>
-
     </div>
-
 </div>
-
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 
-    <script src="~/js/admin-brands.js"
-            asp-append-version="true"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const logoInput = document.getElementById("logoFile");
+            const preview = document.getElementById("logoPreview");
+
+            if (!logoInput || !preview) return;
+
+            logoInput.addEventListener("change", function () {
+
+                const file = this.files[0];
+
+                preview.classList.remove("show");
+                preview.removeAttribute("src");
+
+                if (!file) return;
+
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png"
+                ];
+
+                const maxSize = 5 * 1024 * 1024;
+
+                if (!allowedTypes.includes(file.type)) {
+                    alert("Chỉ chấp nhận ảnh JPG, JPEG hoặc PNG.");
+                    this.value = "";
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert("Dung lượng ảnh không được vượt quá 5MB.");
+                    this.value = "";
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    preview.src = event.target.result;
+                    preview.classList.add("show");
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
 }

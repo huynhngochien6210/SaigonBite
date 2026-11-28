@@ -1,7 +1,24 @@
- 
+
+@model SaigonBite.Models.Food
+@using SaigonBite.Models
+
 @{
     ViewData["Title"] = "Sửa món ăn";
-    var foodId = ViewBag.FoodId ?? 1;
+
+    var foodId = Model.FoodId;
+    var categories = new[]
+    {
+        "Món chính",
+        "Món nước",
+        "Ăn vặt",
+        "Đồ uống"
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/admin-foods.css"
+          asp-append-version="true" />
 }
 
 <div class="edit-food-page">
@@ -13,102 +30,217 @@
                 <h1>Chỉnh sửa món ăn</h1>
                 <p>Cập nhật thông tin và trạng thái kinh doanh của món ăn.</p>
             </div>
-            <span class="edit-food-id">Mã món: FD-@foodId</span>
+
+            <span class="edit-food-id">
+                Mã món: FD-@foodId
+            </span>
         </div>
 
-        <form id="editFoodForm">
+        <form id="editFoodForm"
+              asp-controller="Admin"
+              asp-action="EditFood"
+              asp-route-id="@Model.FoodId"
+              method="post"
+              enctype="multipart/form-data">
 
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="FoodId" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+            <!-- TÊN MÓN ĂN -->
             <div class="edit-food-row">
-                <label for="editFoodName">Tên món ăn <span>*</span></label>
+                <label asp-for="FoodName">
+                    Tên món ăn <span>*</span>
+                </label>
+
                 <div class="edit-food-field">
-                    <input type="text" id="editFoodName"
-                           value="Cơm tấm sườn nướng" required />
+                    <input asp-for="FoodName"
+                           id="editFoodName"
+                           maxlength="150"
+                           required />
+
+                    <span asp-validation-for="FoodName"
+                          class="field-error"></span>
                 </div>
             </div>
 
+            <!-- THƯƠNG HIỆU -->
             <div class="edit-food-row">
-                <label for="editFoodBrand">Thương hiệu <span>*</span></label>
+                <label asp-for="BrandId">
+                    Thương hiệu <span>*</span>
+                </label>
+
                 <div class="edit-food-field">
-                    <select id="editFoodBrand" required>
-                        <option value="Cơm tấm Sài Gòn" selected>Cơm tấm Sài Gòn</option>
-                        <option value="Bún bò Huế">Bún bò Huế</option>
-                        <option value="Bánh mì Sài Gòn">Bánh mì Sài Gòn</option>
-                        <option value="Chè Sài Gòn">Chè Sài Gòn</option>
+                    <select asp-for="BrandId"
+                            id="editFoodBrand"
+                            required>
+
+                        <option value="">-- Chọn thương hiệu --</option>
+
+                        @if (ViewBag.Brands != null)
+                        {
+                            foreach (Brand brand in ViewBag.Brands)
+                            {
+                                <option value="@brand.BrandId">
+                                    @brand.BrandName
+                                </option>
+                            }
+                        }
                     </select>
+
+                    <span asp-validation-for="BrandId"
+                          class="field-error"></span>
                 </div>
             </div>
 
+            <!-- DANH MỤC -->
             <div class="edit-food-row">
-                <label for="editFoodCategory">Danh mục <span>*</span></label>
+                <label asp-for="Category">
+                    Danh mục <span>*</span>
+                </label>
+
                 <div class="edit-food-field">
-                    <select id="editFoodCategory" required>
-                        <option value="Món chính" selected>Món chính</option>
-                        <option value="Món nước">Món nước</option>
-                        <option value="Ăn vặt">Ăn vặt</option>
-                        <option value="Đồ uống">Đồ uống</option>
+                    <select asp-for="Category"
+                            id="editFoodCategory"
+                            required>
+
+                        <option value="">-- Chọn danh mục --</option>
+
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category">
+                                @category
+                            </option>
+                        }
                     </select>
+
+                    <span asp-validation-for="Category"
+                          class="field-error"></span>
                 </div>
             </div>
 
+            <!-- GIÁ BÁN -->
             <div class="edit-food-row">
-                <label for="editFoodPrice">Giá bán (VNĐ) <span>*</span></label>
+                <label asp-for="Price">
+                    Giá bán (VNĐ) <span>*</span>
+                </label>
+
                 <div class="edit-food-field">
-                    <input type="number" id="editFoodPrice"
-                           value="45000" min="0" required />
+                    <input asp-for="Price"
+                           id="editFoodPrice"
+                           type="number"
+                           min="1000"
+                           max="999999999"
+                           step="1000"
+                           required />
+
+                    <span asp-validation-for="Price"
+                          class="field-error"></span>
                 </div>
             </div>
 
+            <!-- MÔ TẢ -->
             <div class="edit-food-row">
-                <label for="editFoodDescription">Mô tả món ăn</label>
+                <label asp-for="Description">
+                    Mô tả món ăn
+                </label>
+
                 <div class="edit-food-field">
-                    <textarea id="editFoodDescription" rows="3">Cơm tấm sườn nướng thơm ngon, ăn kèm bì, chả và nước mắm đặc trưng.</textarea>
+                    <textarea asp-for="Description"
+                              id="editFoodDescription"
+                              rows="3"
+                              maxlength="1000"></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="field-error"></span>
                 </div>
             </div>
 
+            <!-- HÌNH ẢNH -->
             <div class="edit-food-row">
                 <label>Hình ảnh món ăn</label>
+
                 <div class="edit-food-field">
+
                     <div class="edit-food-image-area">
 
-                        <div class="edit-food-current-image" id="editFoodImageBox">
-                            <span id="editFoodImageEmoji">🍛</span>
-                            <img id="editFoodImagePreview" alt="Ảnh món ăn hiện tại" />
+                        <div class="edit-food-current-image"
+                             id="editFoodImageBox">
+
+                            <span id="editFoodImageEmoji"
+                                  style="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "" : "display:none;")">
+                                🍛
+                            </span>
+
+                            <img id="editFoodImagePreview"
+                                 src="@Model.ImageUrl"
+                                 alt="Ảnh món ăn hiện tại"
+                                 style="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "display:none;" : "display:block;")" />
                         </div>
 
-                        <label for="editFoodImage" class="edit-food-upload-button">
+                        <label for="editFoodImage"
+                               class="edit-food-upload-button">
+
                             <span>📷</span>
                             <strong>Thay đổi hình ảnh</strong>
-                            <small>JPG hoặc PNG, tối đa 5MB</small>
+                            <small>JPG, JPEG, PNG hoặc WEBP, tối đa 5MB</small>
                         </label>
 
-                        <input type="file" id="editFoodImage"
-                               accept="image/png,image/jpeg" hidden />
+                        <input type="file"
+                               id="editFoodImage"
+                               name="imageFile"
+                               accept=".jpg,.jpeg,.png,.webp"
+                               hidden />
                     </div>
-                    <small class="edit-food-note" id="editFoodImageError"></small>
+
+                    <small class="edit-food-note"
+                           id="editFoodImageError"></small>
+
+                    <small id="editFoodFileName">
+                        Giữ ảnh hiện tại nếu không chọn ảnh mới.
+                    </small>
                 </div>
             </div>
 
+            <!-- TRẠNG THÁI -->
             <div class="edit-food-row">
-                <label for="editFoodStatus">Trạng thái kinh doanh</label>
+                <label asp-for="IsAvailable">
+                    Trạng thái kinh doanh
+                </label>
+
                 <div class="edit-food-field">
-                    <select id="editFoodStatus" class="edit-food-status-select">
-                        <option value="available" selected>Đang kinh doanh</option>
-                        <option value="unavailable">Tạm ngừng kinh doanh</option>
+                    <select asp-for="IsAvailable"
+                            id="editFoodStatus"
+                            class="edit-food-status-select">
+
+                        <option value="true">Đang kinh doanh</option>
+                        <option value="false">Tạm ngừng kinh doanh</option>
                     </select>
+
+                    <span asp-validation-for="IsAvailable"
+                          class="field-error"></span>
                 </div>
             </div>
 
             <div class="edit-food-divider"></div>
 
+            <!-- BUTTONS -->
             <div class="edit-food-actions">
-                <a asp-controller="Admin" asp-action="Foods"
+
+                <a asp-controller="Admin"
+                   asp-action="Foods"
                    class="edit-food-cancel-button">
                     Hủy
                 </a>
 
-                <button type="submit" class="edit-food-save-button">
+                <button type="submit"
+                        class="edit-food-save-button">
                     <span>✓</span> Lưu thay đổi
                 </button>
+
             </div>
 
         </form>
@@ -116,9 +248,99 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/admin-foods.js" asp-append-version="true"></script>
-    
-}
-@section Styles {
-    <link rel="stylesheet" href="~/css/admin-foods.css" asp-append-version="true" />
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const imageInput =
+                document.getElementById("editFoodImage");
+
+            const imagePreview =
+                document.getElementById("editFoodImagePreview");
+
+            const imageEmoji =
+                document.getElementById("editFoodImageEmoji");
+
+            const imageError =
+                document.getElementById("editFoodImageError");
+
+            const fileName =
+                document.getElementById("editFoodFileName");
+
+            const form =
+                document.getElementById("editFoodForm");
+
+            const maxFileSize = 5 * 1024 * 1024;
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+            let previewUrl = null;
+
+            imageInput.addEventListener("change", function () {
+
+                imageError.textContent = "";
+
+                const file = this.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                if (!allowedTypes.includes(file.type)) {
+                    imageError.textContent =
+                        "Chỉ chấp nhận ảnh JPG, JPEG, PNG hoặc WEBP.";
+
+                    this.value = "";
+                    return;
+                }
+
+                if (file.size > maxFileSize) {
+                    imageError.textContent =
+                        "Dung lượng ảnh không được vượt quá 5MB.";
+
+                    this.value = "";
+                    return;
+                }
+
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                }
+
+                previewUrl = URL.createObjectURL(file);
+
+                imagePreview.src = previewUrl;
+                imagePreview.style.display = "block";
+
+                imageEmoji.style.display = "none";
+
+                fileName.textContent =
+                    "Ảnh mới: " + file.name;
+            });
+
+            form.addEventListener("submit", function (event) {
+
+                const file = imageInput.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                if (!allowedTypes.includes(file.type) ||
+                    file.size > maxFileSize) {
+
+                    event.preventDefault();
+
+                    imageError.textContent =
+                        "Vui lòng chọn ảnh hợp lệ, dung lượng tối đa 5MB.";
+                }
+            });
+
+        });
+    </script>
 }
