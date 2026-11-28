@@ -20,14 +20,17 @@ public class AdminController : Controller
     private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _environment;
 
+    // Constructor
     public AdminController(
         SaigonBite.Services.IAuthenticationService authenticationService,
         ApplicationDbContext context,
         IWebHostEnvironment environment)
     {
         _authenticationService = authenticationService;
+
         _context = context;
         _environment = environment;
+
     }
 
     // ==========================================
@@ -129,6 +132,7 @@ public class AdminController : Controller
     // ==========================================
 
     [HttpGet]
+
     public async Task<IActionResult> Brands()
     {
         var brands = await _context.Brands
@@ -887,5 +891,60 @@ public class AdminController : Controller
         }
 
         return View(food);
+
+    public IActionResult Brands()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult CreateBrand()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult EditBrand(int id)
+    {
+        ViewBag.BrandId = id;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ViewBrand(int id)
+    {
+        ViewBag.BrandId = id;
+        return View();
+    }
+
+    // ==========================================
+    // UC-A: FOOD MANAGEMENT
+    // ==========================================
+
+    [HttpGet]
+    public IActionResult Foods()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult CreateFood()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult EditFood(int id)
+    {
+        ViewBag.FoodId = id;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ViewFood(int id)
+    {
+        ViewBag.FoodId = id;
+        return View();
+
     }
 }
