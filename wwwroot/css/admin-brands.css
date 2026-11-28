@@ -2305,3 +2305,23 @@
 .view-button {
     color: #a33b1c;
 }
+
+.trash-brand-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: #fff;
+    color: #dc3545;
+    border: 1px solid;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+    .trash-brand-button:hover {
+        background: #dc3545;
+        color: #fff;
+    }
