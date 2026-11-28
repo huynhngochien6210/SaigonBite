@@ -48,7 +48,7 @@ function filterBrands() {
     if (!table) return;
 
     const keyword = brandSearch
-        ? brandSearch.value.toLowerCase().trim()
+        ? brandSearch.value.toLocaleLowerCase("vi").trim()
         : "";
 
     const selectedStatus = statusFilter
@@ -59,20 +59,24 @@ function filterBrands() {
         ? hubFilter.value
         : "all";
 
-    const rows = table.querySelectorAll("tbody tr");
+    const rows = table.querySelectorAll(
+        "tbody tr[data-brand-id]"
+    );
 
     let visibleCount = 0;
 
     rows.forEach(row => {
-        const rowText = row.innerText.toLowerCase();
-        const rowStatus = row.dataset.status || "active";
 
-        const rowHubs = (row.dataset.hubs || "")
-            .split(",")
-            .map(hub => hub.trim())
-            .filter(Boolean);
+        const rowText = row.innerText
+            .toLocaleLowerCase("vi");
 
-        const matchesKeyword = rowText.includes(keyword);
+        const rowStatus = row.dataset.status || "";
+
+        // Đọc đúng data-hub-count trong Brands.cshtml
+        const rowHubCount = row.dataset.hubCount || "";
+
+        const matchesKeyword =
+            rowText.includes(keyword);
 
         const matchesStatus =
             selectedStatus === "all" ||
@@ -80,7 +84,7 @@ function filterBrands() {
 
         const matchesHub =
             selectedHub === "all" ||
-            rowHubs.includes(selectedHub);
+            Number(rowHubCount) === Number(selectedHub);
 
         const isVisible =
             matchesKeyword &&
